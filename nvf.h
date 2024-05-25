@@ -34,6 +34,7 @@ typedef struct nvf_array {
 	} data[];
 } nvf_array;
 
+// TODO: Try to find a more efficient memory layout. I'm fairly sure we could make this better.
 typedef struct nvf_map {
 	uintptr_t num;
 	char **keys;
@@ -47,7 +48,15 @@ typedef struct nvf_map {
 typedef void* (*realloc_fn)(void *, size_t);
 typedef void (*free_fn)(void *);
 
-typedef struct nvf_alloc {
+// These are in one struct because the allocator and the memory used in the base map are linked.
+// You neeed to keep the allocators and the map together because you'll need to manipulate the memory
+// allocated with the same allocator.
+typedef struct nvf_root {
 	realloc_fn realloc_inst;
 	free_fn free_inst;
-} nvf_alloc;
+	nvf_map base_map;
+} nvf_root;
+
+nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
+
+nvf_root nvf_alloc_default_init(void);

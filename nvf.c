@@ -1,4 +1,6 @@
 #include "nvf.h"
+#include <stdlib.h>
+#include <ctype.h>
 
 
 /* Format example:
@@ -20,10 +22,34 @@
    }
 */
    
-nvf_alloc nvf_alloc_init(realloc_fn realloc_inst, free_fn free_inst) {
-	nvf_alloc r = {
+nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst) {
+	nvf_root r = {
 		.realloc_inst = realloc_inst,
 		.free_inst = free_inst,
+		.base_map = {0},
 	};
 	return r;
+}
+
+nvf_root nvf_root_default_init(void) {
+	nvf_root r = {
+		.realloc_inst = realloc,
+		.free_inst = free,
+		.base_map = {0},
+	};
+	return r;
+}
+
+nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) {
+
+	for (uintptr_t d_i = 0; d_i < data_len; ++d_i) {
+		if (isspace(data[d_i])) {
+			continue;
+		}
+
+
+	}
+	
+
+	return NVF_OK;
 }
