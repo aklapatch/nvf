@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <limits.h>
 
 
 /* Format example:
@@ -65,7 +66,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 				if (data[d_i] == '.') {
 					if (is_float) {
 						// That's a badly formatted floating point number..
-						return NVF_BAD_VALUE_FMT:
+						return NVF_BAD_VALUE_FMT;
 					}
 					is_float = true;
 				}
@@ -86,7 +87,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 
 				// Grow the current map if we need to.
 				if (out_root->name_num + 1 > out_root->name_cap) {
-					nvf_num next_cap = out_root->cap*2 + 8;
+					nvf_num next_cap = out_root->name_cap*2 + 8;
 					char **new_names = out_root->realloc_inst(out_root->names, next_cap * sizeof(*new_names));
 					if (new_names == NULL) {
 						return NVF_BAD_ALLOC;
@@ -97,7 +98,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 					if (new_types == NULL) {
 						return NVF_BAD_ALLOC;
 					}
-					out_root->types = new_types;
+					out_root->value_types = new_types;
 					out_root->name_cap = next_cap;
 				}
 				if (out_root->value_num + 1 > out_root->value_cap) {
@@ -110,6 +111,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 					out_root->value_cap = next_cap;
 				}
 				out_root->values[out_root->value_num].v_int = bin_value;
+				out_root->value_types[out_root->value_num] = NVF_INT;
 				out_root->value_num++;
 			}
 
