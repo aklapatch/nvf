@@ -58,7 +58,7 @@ typedef struct nvf_array {
 typedef struct nvf_map {
 	nvf_num num,
 		cap;
-	const char **names;
+	char **names;
 	uint8_t *value_types;
 	union {
 		nvf_num map_i;
@@ -71,6 +71,13 @@ typedef void* (*realloc_fn)(void *, size_t);
 typedef void (*free_fn)(void *);
 
 #define NVF_INIT_VAL (0x72)
+
+#define IF_RET(expr, rv) \
+	do {			  \
+		if ((expr)) {     \
+			return rv;\
+		}		  \
+	} while (0)
 
 // These are in one struct because the allocator and the memory used in the base map are linked.
 // You neeed to keep the allocators and the map together because you'll need to manipulate the memory

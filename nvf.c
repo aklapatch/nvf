@@ -38,23 +38,52 @@ nvf_root nvf_root_default_init(void) {
 	return nvf_root_init(realloc, free);
 }
 
-nvf_err nvf_deinit(nvf_root *n_r) {
-	if (n_r->init_val != NVF_INIT_VAL) {
-		return NVF_NOT_INIT;
-	}
+nvf_err nvf_deinit_array(nvf_root *n_r, nvf_array *a) {
+	IF_RET(n_r->init_val != NVF_INIT_VAL, NVF_NOT_INIT);
 	free_fn f_fn = n_r->free_inst;
-	if (f_fn == NULL) {
-		return NVF_BAD_ARG;
+	IF_RET(f_fn == NULL, NVF_BAD_ARG);
+
+	f_fn(a->value_types);
+	f_fn(a->values);
+	
+	bzero(a, sizeof(*a));
+	return NVF_OK;
+}
+nvf_err nvf_deinit_map(nvf_root *n_r, nvf_map *m) {
+	IF_RET(n_r->init_val != NVF_INIT_VAL, NVF_NOT_INIT);
+	free_fn f_fn = n_r->free_inst;
+	IF_RET(f_fn == NULL, NVF_BAD_ARG);
+
+	f_fn(m->value_types);
+	f_fn(m->values);
+
+	for (nvf_num i = 0; i < m->num; ++i) {
+		f_fn(m->names[i]);
 	}
-	f_fn(n_r->value_types);
-	f_fn(n_r->name_value_i);
-	f_fn(n_r->values);
+	f_fn(m->names);
+
+	bzero(m, sizeof(*m));
+	return NVF_OK;
+}
+
+nvf_err nvf_deinit(nvf_root *n_r) {
+	IF_RET(n_r->init_val != NVF_INIT_VAL, NVF_NOT_INIT);
+	free_fn f_fn = n_r->free_inst;
+	IF_RET(f_fn == NULL, NVF_BAD_ARG);
+	
+	for (nvf_num a_i = 0; a_i < n_r->array_num; ++a_i){
+		nvf_err r = nvf_deinit_array(n_r, &n_r->arrays[a_i]);
+		IF_RET(r != NVF_OK, r);
+	}
 	f_fn(n_r->arrays);
-	f_fn(n_r->maps);
-	for (nvf_num n_i = 0; n_i < n_r->name_num; ++n_i){
-		f_fn(n_r->names[n_i]);
+
+	nvf_err r = nvf_deinit_map(n_r, &n_r->root_map);
+	IF_RET(r != NVF_OK, r);
+	for (nvf_num m_i = 0; m_i < n_r->map_num; ++m_i){
+		r = nvf_deinit_map(n_r, &n_r->maps[m_i]);
+		IF_RET(r != NVF_OK, r);
 	}
-	f_fn(n_r->names);
+	
 	// This zeros out the init_value member too, which we absolutely want.
 	// That prevents this struct from being passed into another function.
 	bzero(n_r, sizeof(*n_r));
@@ -72,13 +101,10 @@ nvf_err nvf_get_int(const char **names, int64_t *out) {
 // TODO: Add a bool to the nvf_root to indicate it's initialized.
 // TODO: Re-think how to make cleanup simpler if an allocation fails.
 nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) {
-	if (out_root == NULL) {
-		return NVF_BAD_ARG;
-	}
-	if (out_root->init_val != NVF_INIT_VAL) {
-		return NVF_NOT_INIT;
-	}
+	IF_RET(out_root == NULL, NVF_BAD_ARG);
+	IF_RET(out_root->init_val != NVF_INIT_VAL, NVF_NOT_INIT);
 
+	nvf_map *cur_map = &out_root->root_map;
 	for (uintptr_t d_i = 0; d_i < data_len; ++d_i) {
 		if (isspace(data[d_i])) {
 			continue;
@@ -127,54 +153,35 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 				}
 
 				// Grow the current map if we need to.
-				if (out_root->name_num + 1 > out_root->name_cap) {
-					nvf_num next_cap = out_root->name_cap*2 + 8;
-					char **new_names = out_root->realloc_inst(out_root->names, next_cap * sizeof(*new_names));
-					if (new_names == NULL) {
-						return NVF_BAD_ALLOC;
-					}
-					out_root->names = new_names;
+				if (cur_map->num + 1 > cur_map->cap) {
+					nvf_num next_cap = cur_map->cap*2 + 8;
+					char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+					IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+					cur_map->names = new_names;
 
-					uint8_t *new_types = out_root->realloc_inst(out_root->value_types, next_cap * sizeof(*new_types));
-					if (new_types == NULL) {
-						return NVF_BAD_ALLOC;
-					}
-					out_root->value_types = new_types;
+					uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+					IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+					cur_map->value_types = new_types;
 
-					nvf_num *new_name_value_i = out_root->realloc_inst(out_root->name_value_i, next_cap * sizeof(*new_name_value_i));
-					if (new_name_value_i == NULL) {
-						return NVF_BAD_ALLOC;
-					}
-					out_root->name_value_i = new_name_value_i;
-					out_root->name_cap = next_cap;
+					void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+					IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+					cur_map->values = new_values;
+					cur_map->cap = next_cap;
 				}
-				if (out_root->value_num + 1 > out_root->value_cap) {
-					nvf_num next_cap = out_root->value_cap*2 + 8;
-					nvf_value *new_values = out_root->realloc_inst(out_root->values, next_cap * sizeof(*out_root->values));
-					if (new_values == NULL) {
-						return NVF_BAD_ALLOC;
-					}
-					out_root->values = new_values;
-					out_root->value_cap = next_cap;
-				}
-				out_root->values[out_root->value_num].v_int = bin_value;
-				out_root->value_types[out_root->name_num] = NVF_INT;
-				out_root->name_value_i[out_root->name_num] = out_root->value_num;
-				out_root->value_num++;
+				// Now that we have enough memory, add the integer value to the map.
+				cur_map->values[cur_map->num].p_val.v_int = bin_value;
+				cur_map->value_types[cur_map->num] = NVF_INT;
 			}
-			
 		} else {
 			return NVF_BAD_VALUE_TYPE;
 		}
-		char *name_mem = out_root->realloc_inst(out_root->names[out_root->name_num], name_len + 1);
-		if (name_mem == NULL) {
-			return NVF_BAD_ALLOC;
-		}
-		out_root->names[out_root->name_num]= name_mem;
+		char *name_mem = out_root->realloc_inst(cur_map->names[cur_map->num], name_len + 1);
+		IF_RET(name_mem == NULL, NVF_BAD_ALLOC);
+		cur_map->names[cur_map->num]= name_mem;
 		// Make sure we have a null terminator like all good C strings do.
-		out_root->names[out_root->name_num][name_len] = '\0';
-		memcpy(out_root->names[out_root->name_num], name, name_len);
-		out_root->name_num++;
+		cur_map->names[cur_map->num][name_len] = '\0';
+		memcpy(cur_map->names[cur_map->num], name, name_len);
+		cur_map->num++;
 	}
 
 	return NVF_OK;
