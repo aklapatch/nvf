@@ -1,10 +1,13 @@
 CFLAGS := -O2
-BUILD_DIR := build/
+BUILD_DIR := ./build/
 
 all: $(BUILD_DIR)nvf_test $(BUILD_DIR)libnvf.a
 
+debug: $(BUILD_DIR)nvf_test
+	gdb $(BUILD_DIR)nvf_test
+
 test: $(BUILD_DIR)nvf_test
-	./$(BUILD_DIR)nvf_test
+	$(BUILD_DIR)nvf_test
 
 $(BUILD_DIR)nvf_test: nvf_test.c $(BUILD_DIR)libnvf_debug.a
 	$(CC) -g3 $(CFLAGS) $^ -o $@

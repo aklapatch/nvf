@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <string.h>
 #include <limits.h>
 
 
@@ -16,7 +17,7 @@
                     "line two"
    other_str_ex |line one again
                 |line two again
-   BLOB_ex Bx010203040506070809
+   BLOB_ex bx010203040506070809
    array_ex [ 1 2 "elem" ]
    map_ex {
    	key1 "val1"
@@ -28,6 +29,7 @@ nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst) {
 	nvf_root r = {
 		.realloc_inst = realloc_inst,
 		.free_inst = free_inst,
+		.init_val = NVF_INIT_VAL,
 	};
 	return r;
 }
@@ -36,7 +38,41 @@ nvf_root nvf_root_default_init(void) {
 	return nvf_root_init(realloc, free);
 }
 
+nvf_err nvf_deinit(nvf_root *n_r) {
+	if (n_r->init_val != NVF_INIT_VAL) {
+		return NVF_NOT_INIT;
+	}
+	free_fn f_fn = n_r->free_inst;
+	if (f_fn == NULL) {
+		return NVF_BAD_ARG;
+	}
+	f_fn(n_r->value_types);
+	f_fn(n_r->name_value_i);
+	f_fn(n_r->values);
+	f_fn(n_r->arrays);
+	f_fn(n_r->maps);
+	for (nvf_num n_i = 0; n_i < n_r->name_num; ++n_i){
+		f_fn(n_r->names[n_i]);
+	}
+	f_fn(n_r->names);
+	// This zeros out the init_value member too, which we absolutely want.
+	// That prevents this struct from being passed into another function.
+	bzero(n_r, sizeof(*n_r));
+	return NVF_OK;	
+}
+
+// We reallocate instead of mallocing just in case the old pointer points to allocated memory.
+// That means we don't really need to do cleanup if the old pointer points to allocated memory.
+// That implies we need to zero all the pointers in the struct before they are passed into this function.
+// TODO: Add a bool to the nvf_root to indicate it's initialized.
+// TODO: Re-think how to make cleanup simpler if an allocation fails.
 nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) {
+	if (out_root == NULL) {
+		return NVF_BAD_ARG;
+	}
+	if (out_root->init_val != NVF_INIT_VAL) {
+		return NVF_NOT_INIT;
+	}
 
 	for (uintptr_t d_i = 0; d_i < data_len; ++d_i) {
 		if (isspace(data[d_i])) {
@@ -47,7 +83,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 		while (!isspace(data[d_i]) && d_i < data_len) {
 			d_i++;
 		}
-		if (data_len >= d_i){
+		if (data_len < d_i){
 			return NVF_BUF_OVF;
 		}
 		uintptr_t name_len = (data + d_i) - name;
@@ -94,11 +130,17 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 					}
 					out_root->names = new_names;
 
-					uint8_t *new_types = out_root->realloc_inst(out_root->value_types, next_cap * sizeof(out_root->value_types));
+					uint8_t *new_types = out_root->realloc_inst(out_root->value_types, next_cap * sizeof(*new_types));
 					if (new_types == NULL) {
 						return NVF_BAD_ALLOC;
 					}
 					out_root->value_types = new_types;
+
+					nvf_num *new_name_value_i = out_root->realloc_inst(out_root->name_value_i, next_cap * sizeof(*new_name_value_i));
+					if (new_name_value_i == NULL) {
+						return NVF_BAD_ALLOC;
+					}
+					out_root->name_value_i = new_name_value_i;
 					out_root->name_cap = next_cap;
 				}
 				if (out_root->value_num + 1 > out_root->value_cap) {
@@ -111,14 +153,23 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 					out_root->value_cap = next_cap;
 				}
 				out_root->values[out_root->value_num].v_int = bin_value;
-				out_root->value_types[out_root->value_num] = NVF_INT;
+				out_root->value_types[out_root->name_num] = NVF_INT;
+				out_root->name_value_i[out_root->name_num] = out_root->value_num;
 				out_root->value_num++;
 			}
-
-
 			
+		} else {
+			return NVF_BAD_VALUE_TYPE;
 		}
-
+		char *name_mem = out_root->realloc_inst(out_root->names[out_root->name_num], name_len + 1);
+		if (name_mem == NULL) {
+			return NVF_BAD_ALLOC;
+		}
+		out_root->names[out_root->name_num]= name_mem;
+		// Make sure we have a null terminator like all good C strings do.
+		out_root->names[out_root->name_num][name_len] = '\0';
+		memcpy(out_root->names[out_root->name_num], name, name_len);
+		out_root->name_num++;
 	}
 
 	return NVF_OK;
