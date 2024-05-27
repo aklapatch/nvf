@@ -61,6 +61,11 @@ nvf_err nvf_deinit(nvf_root *n_r) {
 	return NVF_OK;	
 }
 
+nvf_err nvf_get_int(const char **names, int64_t *out) {
+
+	return NVF_OK;
+}
+
 // We reallocate instead of mallocing just in case the old pointer points to allocated memory.
 // That means we don't really need to do cleanup if the old pointer points to allocated memory.
 // That implies we need to zero all the pointers in the struct before they are passed into this function.

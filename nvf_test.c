@@ -30,6 +30,7 @@ int main(int argc, char *argv[]){
 
 	num_tests++;
 	rc = nvf_deinit(&root);
+	// TODO: Add a test that the root is zeroed.
 	if (rc != NVF_OK){
 		printf("Deiniting the root failed! rc=%u\n", rc);
 	} else {

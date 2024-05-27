@@ -35,25 +35,36 @@ typedef struct nvf_blob {
 	uint8_t data[];
 } nvf_blob;
 
-typedef union nvf_value {
+typedef union nvf_primitive_value {
 	int64_t v_int;
 	double v_float;
 	char *v_string;
 	nvf_blob *v_blob;
-} nvf_value;
+} nvf_primitive_value;
 
 
+// Arrays can't contain maps. I think that's fine for now.
 typedef struct nvf_array {
 	nvf_num   num, 
 		  cap;
-	nvf_value *values;
+	uint8_t *value_types;
+	union {
+		nvf_num array_i;
+		nvf_primitive_value p_val;
+	} *values;
 } nvf_array;
 
 // TODO: Try to find a more efficient memory layout. I'm fairly sure we could make this better.
 typedef struct nvf_map {
 	nvf_num num,
 		cap;
-	nvf_name_i *value_name_is;
+	const char **names;
+	uint8_t *value_types;
+	union {
+		nvf_num map_i;
+		nvf_num array_i;
+		nvf_primitive_value p_val;
+	} *values;
 } nvf_map;
 
 typedef void* (*realloc_fn)(void *, size_t);
@@ -64,18 +75,22 @@ typedef void (*free_fn)(void *);
 // These are in one struct because the allocator and the memory used in the base map are linked.
 // You neeed to keep the allocators and the map together because you'll need to manipulate the memory
 // allocated with the same allocator.
+// NOTE: I tried to make this structure flat, using arrays to hold differently typed values, but I ran into a problem.
+// I couldn't know how deep an item was in a structure. To search for a named value, I could look through the array of all the names,
+// but that array didn't have the nesting level of the name. I could add a nesting level, but that could
+// make search times bad for an unsuccessful linear search.
+// I may go back to having a root map, and storing items in tagged unions.
+// I'll probably have to use void* to nest maps in maps. Making maps self referential is difficult otherwise.
+// I had an epiphany. Only the names need to be nested. The values don't.
+// I can store all the blobs and types and values in one array, with indicies referencing it if necessary.
+// I'm not sure how efficient that will be though. I need to think about this further.
+// There's only an extra storage cost if I add an extra pointer to something.
+// BLOBS don't cost extra because I need to store data behind a pointer anyway. A reference to a map might cost extra because that could be an index into an array of maps. 
+// Same for arrays. There will be pointers to those, but they could be indexes into an array of arrays.
 typedef struct nvf_root {
 	realloc_fn realloc_inst;
 	free_fn free_inst;
-	nvf_num name_num,
-	        name_cap; 
-	uint8_t *value_types;
-	char **names;
-	nvf_num *name_value_i;
-
-	nvf_num value_num,
-	        value_cap; 
-	nvf_value *values;
+	nvf_map root_map;
 
 	nvf_num array_num,
 	        array_cap; 
