@@ -28,6 +28,25 @@ int main(int argc, char *argv[]){
 		passed_tests++;
 	}
 
+	int64_t bin_int = 0;
+	++num_tests;
+	const char *names[] = {"i_name"};
+	rc = nvf_get_int(&root, names, 1, &bin_int);
+	if (rc != NVF_OK){
+		printf("Getting the int failed! rc=%u\n", rc);
+	} else {
+		passed_tests++;
+	}
+
+	++num_tests;
+	int64_t exp_val = 32343;
+	if (bin_int != exp_val) {
+		printf("Value %ld didn't match expected %ld\n", bin_int, exp_val);
+	} else {
+		passed_tests++;
+	}
+
+
 	num_tests++;
 	rc = nvf_deinit(&root);
 	// TODO: Add a test that the root is zeroed.
@@ -37,6 +56,6 @@ int main(int argc, char *argv[]){
 		passed_tests++;
 	}
 
-	printf("%d/%d tests passed\n", num_tests, passed_tests);
+	printf("%d/%d tests passed\n", passed_tests, num_tests);
 	return 0;
 }

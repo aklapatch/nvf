@@ -90,9 +90,57 @@ nvf_err nvf_deinit(nvf_root *n_r) {
 	return NVF_OK;	
 }
 
-nvf_err nvf_get_int(const char **names, int64_t *out) {
+nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, nvf_map *map_out) {
+	IF_RET(root == NULL || m_names == NULL || map_out == NULL, NVF_BAD_ARG);
 
-	return NVF_OK;
+	nvf_map *cur_map = &root->root_map;
+	nvf_num n_i = 0;
+	for (; n_i < name_depth; ++n_i) {
+		nvf_num m_i = 0;
+		for (; m_i < cur_map->num; ++m_i) {
+			if (strcmp(m_names[n_i], cur_map->names[m_i]) == 0) {
+				if (cur_map->value_types[m_i] == NVF_MAP) {
+					nvf_num new_map_i = cur_map->values[m_i].map_i;
+					cur_map = &root->maps[new_map_i];
+					break;
+				} else {
+					return NVF_NOT_FOUND;
+				}
+			}
+		}
+		// If we didn't find a name after going through the whole list, it's not here.
+		// That's an error.
+		IF_RET(m_i >= cur_map->num, NVF_NOT_FOUND);
+	}
+	if (n_i == name_depth) {
+		*map_out = *cur_map;
+		return NVF_OK;
+	}
+
+	return NVF_NOT_FOUND;
+}
+
+nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int64_t *out) {
+	IF_RET(root == NULL || names == NULL || out == NULL, NVF_BAD_ARG);
+
+	// We assume this array of names is null terminated.
+	nvf_map parent_map;
+	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
+	IF_RET(e != NVF_OK, e);
+
+	nvf_num n_i = 0;
+	const char *name = names[name_depth - 1];
+	for (; n_i < parent_map.num; ++n_i) {
+		if (strcmp(name, parent_map.names[n_i]) == 0) {
+			if (parent_map.value_types[n_i] == NVF_INT) {
+				*out = parent_map.values[n_i].p_val.v_int;
+				return NVF_OK;
+			}
+		}
+
+	}
+
+	return NVF_NOT_FOUND;
 }
 
 // We reallocate instead of mallocing just in case the old pointer points to allocated memory.

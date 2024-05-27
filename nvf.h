@@ -11,6 +11,7 @@ typedef enum {
 	NVF_BAD_ARG,
 	NVF_BAD_VALUE_TYPE,
 	NVF_NOT_INIT,
+	NVF_NOT_FOUND,
 	NVF_NUM_OVF,
 	NVF_NUM_ERRS,
 } nvf_err;
@@ -115,4 +116,9 @@ nvf_root nvf_root_default_init(void);
 
 nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root);
 
+nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int64_t *out);
+
+nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, nvf_map *map_out);
+
 nvf_err nvf_deinit(nvf_root *n_r);
+
