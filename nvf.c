@@ -25,6 +25,15 @@
 	key2 "val2"
    }
 */
+
+// Return UINT8_MAX on error.
+uint8_t nvf_hex_char_to_u8(char in) {
+	IF_RET(in >= '0' && in <= '9', in - '0');
+	IF_RET(in >= 'a' && in <= 'f', 10 + in - 'a');
+	IF_RET(in >= 'A' && in <= 'F', 10 + in - 'A');
+
+	return UINT8_MAX;
+}
    
 nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst) {
 	nvf_root r = {
@@ -251,7 +260,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			
 			// It's a number.
 			bool is_float = false;
-			for (; isdigit(data[d_i]) || data[d_i] == '.'; ++d_i) {
+			for (; d_i < data_len && (isdigit(data[d_i]) || data[d_i] == '.'); ++d_i) {
 				if (data[d_i] == '.') {
 					if (is_float) {
 						// That's a badly formatted floating point number..
@@ -311,7 +320,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			++d_i;
 			uintptr_t str_start = d_i;
 			// Find the end of the string.
-			for (; data[d_i] != '"' && d_i < data_len; ++d_i) {
+			for (; d_i < data_len && data[d_i] != '"'; ++d_i) {
 				// Skip escape sequences.
 				// TODO: Convert escape sequences to their binary values.
 				if (data[d_i] == '\\') {
@@ -340,6 +349,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 				void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
 				IF_RET(new_values == NULL, NVF_BAD_ALLOC);
 				cur_map->values = new_values;
+				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
 				cur_map->cap = next_cap;
 			}
 
@@ -350,6 +360,63 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			// Now that we have enough memory, add the string to the map.
 			cur_map->values[cur_map->num].p_val.v_string = d_str;
 			cur_map->value_types[cur_map->num] = NVF_STRING;
+		} else if (data[d_i] == 'b') {
+			// This case could be a blob.
+			// Make sure there's space for 'x' and one nibble of data.
+			IF_RET(d_i + 2 >= data_len, NVF_BUF_OVF);
+			++d_i;
+			IF_RET(data[d_i] != 'x', NVF_BAD_VALUE_FMT);
+			++d_i;
+			uintptr_t blob_start = d_i;
+			// Find the length of the BLOB before allocating memory.
+			for (; d_i < data_len && isxdigit(data[d_i]); ++d_i) {
+			}
+			uintptr_t blob_len = d_i - blob_start;
+			IF_RET(blob_len == 0, NVF_BAD_VALUE_FMT);
+
+			// Grow the current map if we need to.
+			if (cur_map->num + 1 > cur_map->cap) {
+				nvf_num next_cap = cur_map->cap*2 + 8;
+				char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+				IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+				// Zero the new allocated pointers.
+				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
+				cur_map->names = new_names;
+
+				uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+				IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+				cur_map->value_types = new_types;
+
+				void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+				IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+				cur_map->values = new_values;
+				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
+				cur_map->cap = next_cap;
+			}
+
+
+			nvf_blob **map_blob = &cur_map->values[cur_map->num].p_val.v_blob;
+			uintptr_t bin_blob_len = (blob_len + 1) / 2;
+			nvf_blob *blob = out_root->realloc_inst(*map_blob, sizeof(*blob) + bin_blob_len);
+			IF_RET(blob == NULL, NVF_BAD_ALLOC);
+			blob->len = bin_blob_len;
+
+			// Get the data into the memory we allocated.
+			bool first_nibble = true;
+			for (uintptr_t b_i = 0; b_i < blob_len; ++b_i) {
+				uintptr_t b_d_i = blob_start + b_i;
+				uint8_t bin_val = nvf_hex_char_to_u8(data[b_d_i]);
+				IF_RET(bin_val == UINT8_MAX, NVF_BAD_VALUE_FMT);
+
+				if (first_nibble) {
+					blob->data[b_i/2] = bin_val << 4;
+					first_nibble = false;
+				} else {
+					blob->data[b_i/2] |= bin_val;
+					first_nibble = true;
+				}
+			}
+			*map_blob = blob;
 		} else {
 			return NVF_BAD_VALUE_TYPE;
 		}

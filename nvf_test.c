@@ -16,6 +16,7 @@
 int main(int argc, char *argv[]){
 	nvf_root root = {0};
 
+	// TODO: Add tests where all values are at the end of the string..
 	const char int_test[] = "i_name 32343\nf_name 3.423\ns_name \"test str\"";
 
 	nvf_err rc = nvf_parse_buf(int_test, strlen(int_test), &root);
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]){
 	double bin_f = 0;
 	const char *f_names[] = {"f_name"};
 	rc = nvf_get_float(&root, f_names, 1, &bin_f);
-	ASSERT_INT(rc, NVF_OK, 1, "Getting an int");
+	ASSERT_INT(rc, NVF_OK, 1, "Getting a float");
 
 	char str_out[32] = {0};
 	uintptr_t out_len = sizeof(str_out); 
@@ -49,7 +50,6 @@ int main(int argc, char *argv[]){
 
 	rc = nvf_deinit(&root);
 	ASSERT_INT(rc, NVF_OK, 1, "Deiniting the root");
-	// TODO: Add a test that the root is zeroed.
 
 	nvf_root zero_root = {0};
 	ASSERT_INT(memcmp(&zero_root, &root, sizeof(zero_root)), 0, 1, "Checking deinited root is zero");
