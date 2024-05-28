@@ -194,6 +194,18 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			return NVF_BUF_OVF;
 		}
 		uintptr_t name_len = (data + d_i) - name;
+		// Make sure the name doesn't collide with anything we already have.
+		nvf_num n_i = 0;
+		for (; n_i < cur_map->num; ++n_i) {
+			// The name we inferred isn't null terminated.
+			// That means we can't use strcmp.
+			// Do it more manually instead.
+			size_t m_name_len = strlen(cur_map->names[n_i]);
+			if (m_name_len == name_len && memcmp(cur_map->names[n_i], name, m_name_len) == 0) {
+				return NVF_DUP_NAME;
+			}
+		}
+
 
 		while (isspace(data[d_i]) && d_i < data_len) {
 			d_i++;
