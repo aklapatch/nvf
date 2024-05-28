@@ -123,3 +123,4 @@ nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, n
 
 nvf_err nvf_deinit(nvf_root *n_r);
 
+nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, double *out);

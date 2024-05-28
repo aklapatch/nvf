@@ -200,12 +200,12 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			// The name we inferred isn't null terminated.
 			// That means we can't use strcmp.
 			// Do it more manually instead.
+			// TODO: Add a test for this.
 			size_t m_name_len = strlen(cur_map->names[n_i]);
 			if (m_name_len == name_len && memcmp(cur_map->names[n_i], name, m_name_len) == 0) {
 				return NVF_DUP_NAME;
 			}
 		}
-
 
 		while (isspace(data[d_i]) && d_i < data_len) {
 			d_i++;
@@ -239,6 +239,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 					// The float didn't parse.
 					return NVF_BAD_VALUE_FMT;
 				}
+				npt = NVF_FLOAT;
 			} else {
 				char *end = (char*)value; 
 				npv.v_int = strtoll(value, &end, 10);

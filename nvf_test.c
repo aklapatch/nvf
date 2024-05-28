@@ -34,6 +34,11 @@ int main(int argc, char *argv[]){
 	int exp_val = 32343;
 	ASSERT_INT((int)bin_int, exp_val, 1, "Comparing int values");
 
+	double bin_f = 0;
+	const char *f_names[] = {"f_name"};
+	rc = nvf_get_float(&root, f_names, 1, &bin_f);
+	ASSERT_INT(rc, NVF_OK, 1, "Getting an int");
+
 	rc = nvf_deinit(&root);
 	ASSERT_INT(rc, NVF_OK, 1, "Deiniting the root");
 	// TODO: Add a test that the root is zeroed.
