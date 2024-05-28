@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
 	int passed_tests = 0;
 	nvf_root root = {0};
 
-	const char int_test[] = "i_name 32343";
+	const char int_test[] = "i_name 32343\nf_name 3.423";
 
 	num_tests++;
 	nvf_err rc = nvf_parse_buf(int_test, strlen(int_test), &root);

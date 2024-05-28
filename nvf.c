@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <limits.h>
+#include <math.h>
 
 
 /* Format example:
@@ -120,6 +121,32 @@ nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, n
 	return NVF_NOT_FOUND;
 }
 
+// TODO: Consolidate the get_primitive() functions.
+nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, double *out) {
+	IF_RET(root == NULL || names == NULL || out == NULL, NVF_BAD_ARG);
+
+	// We assume this array of names is null terminated.
+	nvf_map parent_map;
+	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
+	IF_RET(e != NVF_OK, e);
+
+	nvf_num n_i = 0;
+	const char *name = names[name_depth - 1];
+	for (; n_i < parent_map.num; ++n_i) {
+		if (strcmp(name, parent_map.names[n_i]) == 0) {
+			if (parent_map.value_types[n_i] == NVF_FLOAT) {
+				*out = parent_map.values[n_i].p_val.v_float;
+				return NVF_OK;
+			} else {
+				return NVF_BAD_VALUE_TYPE;
+			}
+		}
+
+	}
+
+	return NVF_NOT_FOUND;
+}
+
 nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int64_t *out) {
 	IF_RET(root == NULL || names == NULL || out == NULL, NVF_BAD_ARG);
 
@@ -135,6 +162,8 @@ nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int6
 			if (parent_map.value_types[n_i] == NVF_INT) {
 				*out = parent_map.values[n_i].p_val.v_int;
 				return NVF_OK;
+			} else {
+				return NVF_BAD_VALUE_TYPE;
 			}
 		}
 
@@ -146,7 +175,6 @@ nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int6
 // We reallocate instead of mallocing just in case the old pointer points to allocated memory.
 // That means we don't really need to do cleanup if the old pointer points to allocated memory.
 // That implies we need to zero all the pointers in the struct before they are passed into this function.
-// TODO: Add a bool to the nvf_root to indicate it's initialized.
 // TODO: Re-think how to make cleanup simpler if an allocation fails.
 nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) {
 	IF_RET(out_root == NULL, NVF_BAD_ARG);
@@ -186,40 +214,51 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 					is_float = true;
 				}
 			}
+			nvf_primitive_value npv = {0};
 			uintptr_t value_len = (data + d_i) - value;
+			nvf_data_type npt = NVF_NUM_TYPES;
 			if (is_float) {
-
+				char *end = (char*)value; 
+				npv.v_float = strtod(value, &end);
+				if (npv.v_float == HUGE_VAL || npv.v_float == HUGE_VALF || npv.v_float == HUGE_VALL) {
+					return NVF_NUM_OVF;
+				}
+				if (value == end) {
+					// The float didn't parse.
+					return NVF_BAD_VALUE_FMT;
+				}
 			} else {
-				char *end; 
-				int64_t bin_value = strtoll(value, &end, 10);
-				if (bin_value == LLONG_MAX || bin_value == LLONG_MIN) {
+				char *end = (char*)value; 
+				npv.v_int = strtoll(value, &end, 10);
+				if (npv.v_int == LLONG_MAX || npv.v_int == LLONG_MIN) {
 					return NVF_NUM_OVF;
 				}
 				if (value == end) {
 					// The integer didn't parse.
 					return NVF_BAD_VALUE_FMT;
 				}
-
-				// Grow the current map if we need to.
-				if (cur_map->num + 1 > cur_map->cap) {
-					nvf_num next_cap = cur_map->cap*2 + 8;
-					char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-					IF_RET(new_names == NULL, NVF_BAD_ALLOC);
-					cur_map->names = new_names;
-
-					uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-					IF_RET(new_types == NULL, NVF_BAD_ALLOC);
-					cur_map->value_types = new_types;
-
-					void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-					IF_RET(new_values == NULL, NVF_BAD_ALLOC);
-					cur_map->values = new_values;
-					cur_map->cap = next_cap;
-				}
-				// Now that we have enough memory, add the integer value to the map.
-				cur_map->values[cur_map->num].p_val.v_int = bin_value;
-				cur_map->value_types[cur_map->num] = NVF_INT;
+				npt = NVF_INT;
 			}
+
+			// Grow the current map if we need to.
+			if (cur_map->num + 1 > cur_map->cap) {
+				nvf_num next_cap = cur_map->cap*2 + 8;
+				char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+				IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+				cur_map->names = new_names;
+
+				uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+				IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+				cur_map->value_types = new_types;
+
+				void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+				IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+				cur_map->values = new_values;
+				cur_map->cap = next_cap;
+			}
+			// Now that we have enough memory, add the integer value to the map.
+			cur_map->values[cur_map->num].p_val = npv;
+			cur_map->value_types[cur_map->num] = npt;
 		} else {
 			return NVF_BAD_VALUE_TYPE;
 		}
