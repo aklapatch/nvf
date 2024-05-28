@@ -272,6 +272,18 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			// Now that we have enough memory, add the integer value to the map.
 			cur_map->values[cur_map->num].p_val = npv;
 			cur_map->value_types[cur_map->num] = npt;
+
+		} else if (data[d_i] == '"') {
+			// Find the end of the string
+			for (; data[d_i] != '"' && d_i < data_len; ++d_i) {
+				// Skip escape sequences.
+				if (data[d_i] == '\\') {
+					d_i++;
+				}
+			}
+			if (d_i >= data_len) {
+				return NVF_BUF_OVF;
+			}
 		} else {
 			return NVF_BAD_VALUE_TYPE;
 		}
