@@ -16,7 +16,7 @@
 int main(int argc, char *argv[]){
 	nvf_root root = {0};
 
-	const char int_test[] = "i_name 32343\nf_name 3.423";
+	const char int_test[] = "i_name 32343\nf_name 3.423\ns_name \"test str\"";
 
 	nvf_err rc = nvf_parse_buf(int_test, strlen(int_test), &root);
 	ASSERT_INT(rc, NVF_NOT_INIT, 1, "Testing init failure");
@@ -39,9 +39,20 @@ int main(int argc, char *argv[]){
 	rc = nvf_get_float(&root, f_names, 1, &bin_f);
 	ASSERT_INT(rc, NVF_OK, 1, "Getting an int");
 
+	char str_out[32] = {0};
+	uintptr_t out_len = sizeof(str_out); 
+	const char *s_names[] = {"s_name"};
+	rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
+	ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
+
+	ASSERT_INT(strcmp("test str", str_out), 0, 1, "Comparing string results");
+
 	rc = nvf_deinit(&root);
 	ASSERT_INT(rc, NVF_OK, 1, "Deiniting the root");
 	// TODO: Add a test that the root is zeroed.
+
+	nvf_root zero_root = {0};
+	ASSERT_INT(memcmp(&zero_root, &root, sizeof(zero_root)), 0, 1, "Checking deinited root is zero");
 
 	printf("All tests passed.\n");
 	return 0;

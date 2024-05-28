@@ -147,6 +147,40 @@ nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, do
 	return NVF_NOT_FOUND;
 }
 
+// str_out_len should include the null terminator.
+nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth, char *str_out, uintptr_t *str_out_len) {
+	IF_RET(root == NULL || names == NULL || str_out == NULL || name_depth == 0 || str_out_len == NULL, NVF_BAD_ARG);
+
+	// We assume this array of names is null terminated.
+	nvf_map parent_map;
+	// NOTE: this can overflow if name_depth == 0
+	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
+	IF_RET(e != NVF_OK, e);
+
+	nvf_num n_i = 0;
+	const char *name = names[name_depth - 1];
+	for (; n_i < parent_map.num; ++n_i) {
+		if (strcmp(name, parent_map.names[n_i]) == 0) {
+			if (parent_map.value_types[n_i] == NVF_STRING) {
+				uintptr_t stored_len = strlen(parent_map.values[n_i].p_val.v_string) + 1;
+				if (stored_len > *str_out_len) {
+					*str_out_len = stored_len;
+					return NVF_BUF_OVF;
+				}
+				*str_out_len = stored_len;
+				memcpy(str_out, parent_map.values[n_i].p_val.v_string, stored_len);
+				return NVF_OK;
+			} else {
+				return NVF_BAD_VALUE_TYPE;
+			}
+		}
+
+	}
+
+	return NVF_NOT_FOUND;
+}
+
+
 nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int64_t *out) {
 	IF_RET(root == NULL || names == NULL || out == NULL, NVF_BAD_ARG);
 
@@ -274,9 +308,12 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			cur_map->value_types[cur_map->num] = npt;
 
 		} else if (data[d_i] == '"') {
-			// Find the end of the string
+			++d_i;
+			uintptr_t str_start = d_i;
+			// Find the end of the string.
 			for (; data[d_i] != '"' && d_i < data_len; ++d_i) {
 				// Skip escape sequences.
+				// TODO: Convert escape sequences to their binary values.
 				if (data[d_i] == '\\') {
 					d_i++;
 				}
@@ -284,15 +321,44 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			if (d_i >= data_len) {
 				return NVF_BUF_OVF;
 			}
+			// Don't include the end quote.
+			uintptr_t str_len = d_i - str_start;
+
+			// Grow the current map if we need to.
+			if (cur_map->num + 1 > cur_map->cap) {
+				nvf_num next_cap = cur_map->cap*2 + 8;
+				char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+				IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+				// Zero the new allocated pointers.
+				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
+				cur_map->names = new_names;
+
+				uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+				IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+				cur_map->value_types = new_types;
+
+				void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+				IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+				cur_map->values = new_values;
+				cur_map->cap = next_cap;
+			}
+
+			char *d_str = out_root->realloc_inst(cur_map->values[cur_map->num].p_val.v_string, str_len + 1);
+			IF_RET(d_str == NULL, NVF_BAD_ALLOC);
+			d_str[str_len] = '\0';
+			memcpy(d_str, &data[str_start], str_len);
+			// Now that we have enough memory, add the string to the map.
+			cur_map->values[cur_map->num].p_val.v_string = d_str;
+			cur_map->value_types[cur_map->num] = NVF_STRING;
 		} else {
 			return NVF_BAD_VALUE_TYPE;
 		}
 		char *name_mem = out_root->realloc_inst(cur_map->names[cur_map->num], name_len + 1);
 		IF_RET(name_mem == NULL, NVF_BAD_ALLOC);
-		cur_map->names[cur_map->num]= name_mem;
 		// Make sure we have a null terminator like all good C strings do.
-		cur_map->names[cur_map->num][name_len] = '\0';
-		memcpy(cur_map->names[cur_map->num], name, name_len);
+		name_mem[name_len] = '\0';
+		memcpy(name_mem, name, name_len);
+		cur_map->names[cur_map->num]= name_mem;
 		cur_map->num++;
 	}
 
