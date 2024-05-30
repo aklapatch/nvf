@@ -156,6 +156,38 @@ nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, do
 	return NVF_NOT_FOUND;
 }
 
+nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth, uint8_t *bin_out, uintptr_t *bin_out_len) {
+	IF_RET(root == NULL || names == NULL || bin_out == NULL || name_depth == 0 || bin_out_len == NULL, NVF_BAD_ARG);
+
+	// We assume this array of names is null terminated.
+	nvf_map parent_map;
+	// NOTE: this can overflow if name_depth == 0
+	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
+	IF_RET(e != NVF_OK, e);
+
+	nvf_num n_i = 0;
+	const char *name = names[name_depth - 1];
+	for (; n_i < parent_map.num; ++n_i) {
+		if (strcmp(name, parent_map.names[n_i]) == 0) {
+			if (parent_map.value_types[n_i] == NVF_BLOB) {
+				uintptr_t stored_len = parent_map.values[n_i].p_val.v_blob->len;
+				if (stored_len > *bin_out_len) {
+					*bin_out_len = stored_len;
+					return NVF_BUF_OVF;
+				}
+				*bin_out_len = stored_len;
+				memcpy(bin_out, parent_map.values[n_i].p_val.v_blob->data, stored_len);
+				return NVF_OK;
+			} else {
+				return NVF_BAD_VALUE_TYPE;
+			}
+		}
+
+	}
+
+	return NVF_NOT_FOUND;
+}
+
 // str_out_len should include the null terminator.
 nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth, char *str_out, uintptr_t *str_out_len) {
 	IF_RET(root == NULL || names == NULL || str_out == NULL || name_depth == 0 || str_out_len == NULL, NVF_BAD_ARG);
@@ -188,7 +220,6 @@ nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth, char
 
 	return NVF_NOT_FOUND;
 }
-
 
 nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int64_t *out) {
 	IF_RET(root == NULL || names == NULL || out == NULL, NVF_BAD_ARG);
@@ -417,6 +448,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 				}
 			}
 			*map_blob = blob;
+			cur_map->value_types[cur_map->num] = NVF_BLOB;
 		} else {
 			return NVF_BAD_VALUE_TYPE;
 		}
