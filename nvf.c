@@ -87,10 +87,8 @@ nvf_err nvf_deinit(nvf_root *n_r) {
 	}
 	f_fn(n_r->arrays);
 
-	nvf_err r = nvf_deinit_map(n_r, &n_r->root_map);
-	IF_RET(r != NVF_OK, r);
 	for (nvf_num m_i = 0; m_i < n_r->map_num; ++m_i){
-		r = nvf_deinit_map(n_r, &n_r->maps[m_i]);
+		nvf_err	r = nvf_deinit_map(n_r, &n_r->maps[m_i]);
 		IF_RET(r != NVF_OK, r);
 	}
 	
@@ -103,7 +101,7 @@ nvf_err nvf_deinit(nvf_root *n_r) {
 nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, nvf_map *map_out) {
 	IF_RET(root == NULL || m_names == NULL || map_out == NULL, NVF_BAD_ARG);
 
-	nvf_map *cur_map = &root->root_map;
+	nvf_map *cur_map = root->maps;
 	nvf_num n_i = 0;
 	for (; n_i < name_depth; ++n_i) {
 		nvf_num m_i = 0;
@@ -246,6 +244,16 @@ nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int6
 	return NVF_NOT_FOUND;
 }
 
+nvf_err_data_i nvf_parse_map(const char *data, uintptr_t data_len, nvf_root *root, nvf_num map_i) {
+
+	nvf_err_data_i r = {
+		.data_i = data_len,
+		.err = NVF_OK,
+	};
+	return r;
+}
+
+
 // We reallocate instead of mallocing just in case the old pointer points to allocated memory.
 // That means we don't really need to do cleanup if the old pointer points to allocated memory.
 // That implies we need to zero all the pointers in the struct before they are passed into this function.
@@ -254,7 +262,16 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 	IF_RET(out_root == NULL, NVF_BAD_ARG);
 	IF_RET(out_root->init_val != NVF_INIT_VAL, NVF_NOT_INIT);
 
-	nvf_map *cur_map = &out_root->root_map;
+	// Allocate space for the first map.
+	if (out_root->map_cap == 0 || out_root->maps == NULL) {
+		nvf_map *new_map = out_root->realloc_inst(NULL, sizeof(*new_map));
+		IF_RET(new_map == NULL, NVF_BAD_ALLOC);
+		bzero(new_map, sizeof(*new_map));
+		out_root->maps = new_map;
+		out_root->map_num = 1;
+		out_root->map_cap = 1;
+	}
+	nvf_map *cur_map = out_root->maps;
 	for (uintptr_t d_i = 0; d_i < data_len; ++d_i) {
 		if (isspace(data[d_i])) {
 			continue;

@@ -99,7 +99,6 @@ typedef void (*free_fn)(void *);
 typedef struct nvf_root {
 	realloc_fn realloc_inst;
 	free_fn free_inst;
-	nvf_map root_map;
 
 	nvf_num array_num,
 	        array_cap; 
@@ -110,6 +109,12 @@ typedef struct nvf_root {
 	nvf_map *maps;
 	uint8_t init_val;
 } nvf_root;
+
+// A return type used to figure out where the called function stopped while parsing.
+typedef struct {
+	uintptr_t data_i;
+	nvf_err err;
+} nvf_err_data_i;
 
 nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
 
