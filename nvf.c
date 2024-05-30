@@ -244,47 +244,28 @@ nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int6
 	return NVF_NOT_FOUND;
 }
 
-nvf_err_data_i nvf_parse_map(const char *data, uintptr_t data_len, nvf_root *root, nvf_num map_i) {
-
+nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root *root, nvf_num map_i) {
 	nvf_err_data_i r = {
-		.data_i = data_len,
+		.data_i = 0,
 		.err = NVF_OK,
 	};
-	return r;
-}
+	IF_RET_DATA(root == NULL, r, NVF_BAD_ARG);
+	IF_RET_DATA(root->init_val != NVF_INIT_VAL, r, NVF_NOT_INIT);
 
-
-// We reallocate instead of mallocing just in case the old pointer points to allocated memory.
-// That means we don't really need to do cleanup if the old pointer points to allocated memory.
-// That implies we need to zero all the pointers in the struct before they are passed into this function.
-// TODO: Re-think how to make cleanup simpler if an allocation fails.
-nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) {
-	IF_RET(out_root == NULL, NVF_BAD_ARG);
-	IF_RET(out_root->init_val != NVF_INIT_VAL, NVF_NOT_INIT);
-
-	// Allocate space for the first map.
-	if (out_root->map_cap == 0 || out_root->maps == NULL) {
-		nvf_map *new_map = out_root->realloc_inst(NULL, sizeof(*new_map));
-		IF_RET(new_map == NULL, NVF_BAD_ALLOC);
-		bzero(new_map, sizeof(*new_map));
-		out_root->maps = new_map;
-		out_root->map_num = 1;
-		out_root->map_cap = 1;
-	}
-	nvf_map *cur_map = out_root->maps;
-	for (uintptr_t d_i = 0; d_i < data_len; ++d_i) {
-		if (isspace(data[d_i])) {
+	// TODO: make a better error code for this.
+	IF_RET_DATA(map_i >= root->map_num, r, NVF_BUF_OVF);
+	nvf_map *cur_map = &root->maps[map_i];
+	for (; r.data_i < data_len; ++r.data_i) {
+		if (isspace(data[r.data_i])) {
 			continue;
 		}
 
-		const char *name = &data[d_i];
-		while (!isspace(data[d_i]) && d_i < data_len) {
-			d_i++;
+		const char *name = &data[r.data_i];
+		while (!isspace(data[r.data_i]) && r.data_i < data_len) {
+			r.data_i++;
 		}
-		if (data_len < d_i){
-			return NVF_BUF_OVF;
-		}
-		uintptr_t name_len = (data + d_i) - name;
+		IF_RET_DATA(data_len < r.data_i, r, NVF_BUF_OVF);
+		uintptr_t name_len = (data + r.data_i) - name;
 		// Make sure the name doesn't collide with anything we already have.
 		nvf_num n_i = 0;
 		for (; n_i < cur_map->num; ++n_i) {
@@ -293,70 +274,58 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			// Do it more manually instead.
 			// TODO: Add a test for this.
 			size_t m_name_len = strlen(cur_map->names[n_i]);
-			if (m_name_len == name_len && memcmp(cur_map->names[n_i], name, m_name_len) == 0) {
-				return NVF_DUP_NAME;
-			}
+			IF_RET_DATA(m_name_len == name_len && memcmp(cur_map->names[n_i], name, m_name_len) == 0, r, NVF_BUF_OVF);
 		}
 
-		while (isspace(data[d_i]) && d_i < data_len) {
-			d_i++;
+		while (isspace(data[r.data_i]) && r.data_i < data_len) {
+			r.data_i++;
 		}
 
 		// We've found value. Parse it depending on what it is.
-		const char *value = &data[d_i];
-		if (data[d_i] == '-' || isdigit(data[d_i])){
+		const char *value = &data[r.data_i];
+		if (data[r.data_i] == '-' || isdigit(data[r.data_i])){
 			
 			// It's a number.
 			bool is_float = false;
-			for (; d_i < data_len && (isdigit(data[d_i]) || data[d_i] == '.'); ++d_i) {
-				if (data[d_i] == '.') {
-					if (is_float) {
-						// That's a badly formatted floating point number..
-						return NVF_BAD_VALUE_FMT;
-					}
+			for (; r.data_i < data_len && (isdigit(data[r.data_i]) || data[r.data_i] == '.'); ++r.data_i) {
+				if (data[r.data_i] == '.') {
+					// That's a badly formatted floating point number..
+					IF_RET_DATA(is_float, r, NVF_BAD_VALUE_FMT);
 					is_float = true;
 				}
 			}
 			nvf_primitive_value npv = {0};
-			uintptr_t value_len = (data + d_i) - value;
+			uintptr_t value_len = (data + r.data_i) - value;
 			nvf_data_type npt = NVF_NUM_TYPES;
 			if (is_float) {
 				char *end = (char*)value; 
 				npv.v_float = strtod(value, &end);
-				if (npv.v_float == HUGE_VAL || npv.v_float == HUGE_VALF || npv.v_float == HUGE_VALL) {
-					return NVF_NUM_OVF;
-				}
-				if (value == end) {
-					// The float didn't parse.
-					return NVF_BAD_VALUE_FMT;
-				}
+				IF_RET_DATA(npv.v_float == HUGE_VAL || npv.v_float == HUGE_VALF || npv.v_float == HUGE_VALL, r, NVF_NUM_OVF);
+				// The float didn't parse.
+				IF_RET_DATA(value == end, r, NVF_BAD_VALUE_FMT);
 				npt = NVF_FLOAT;
 			} else {
 				char *end = (char*)value; 
 				npv.v_int = strtoll(value, &end, 10);
-				if (npv.v_int == LLONG_MAX || npv.v_int == LLONG_MIN) {
-					return NVF_NUM_OVF;
-				}
-				if (value == end) {
-					// The integer didn't parse.
-					return NVF_BAD_VALUE_FMT;
-				}
+				IF_RET_DATA(npv.v_int == LLONG_MAX || npv.v_int == LLONG_MIN, r, NVF_NUM_OVF);
+				// The integer didn't parse.
+				IF_RET_DATA(value == end, r, NVF_BAD_VALUE_FMT);
 				npt = NVF_INT;
 			}
 
 			// Grow the current map if we need to.
 			if (cur_map->num + 1 > cur_map->cap) {
 				nvf_num next_cap = cur_map->cap*2 + 8;
-				char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-				IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
 				cur_map->names = new_names;
 
-				uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-				IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
 				cur_map->value_types = new_types;
 
-				void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-				IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
 				cur_map->values = new_values;
 				cur_map->cap = next_cap;
 			}
@@ -364,79 +333,77 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			cur_map->values[cur_map->num].p_val = npv;
 			cur_map->value_types[cur_map->num] = npt;
 
-		} else if (data[d_i] == '"') {
-			++d_i;
-			uintptr_t str_start = d_i;
+		} else if (data[r.data_i] == '"') {
+			++r.data_i;
+			uintptr_t str_start = r.data_i;
 			// Find the end of the string.
-			for (; d_i < data_len && data[d_i] != '"'; ++d_i) {
+			for (; r.data_i < data_len && data[r.data_i] != '"'; ++r.data_i) {
 				// Skip escape sequences.
 				// TODO: Convert escape sequences to their binary values.
-				if (data[d_i] == '\\') {
-					d_i++;
+				if (data[r.data_i] == '\\') {
+					r.data_i++;
 				}
 			}
-			if (d_i >= data_len) {
-				return NVF_BUF_OVF;
-			}
+			IF_RET_DATA(r.data_i >= data_len, r, NVF_BUF_OVF);
 			// Don't include the end quote.
-			uintptr_t str_len = d_i - str_start;
+			uintptr_t str_len = r.data_i - str_start;
 
 			// Grow the current map if we need to.
 			if (cur_map->num + 1 > cur_map->cap) {
 				nvf_num next_cap = cur_map->cap*2 + 8;
-				char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-				IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
 				// Zero the new allocated pointers.
 				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
 				cur_map->names = new_names;
 
-				uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-				IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
 				cur_map->value_types = new_types;
 
-				void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-				IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
 				cur_map->values = new_values;
 				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
 				cur_map->cap = next_cap;
 			}
 
-			char *d_str = out_root->realloc_inst(cur_map->values[cur_map->num].p_val.v_string, str_len + 1);
-			IF_RET(d_str == NULL, NVF_BAD_ALLOC);
+			char *d_str = root->realloc_inst(cur_map->values[cur_map->num].p_val.v_string, str_len + 1);
+			IF_RET_DATA(d_str == NULL, r, NVF_BAD_ALLOC);
 			d_str[str_len] = '\0';
 			memcpy(d_str, &data[str_start], str_len);
 			// Now that we have enough memory, add the string to the map.
 			cur_map->values[cur_map->num].p_val.v_string = d_str;
 			cur_map->value_types[cur_map->num] = NVF_STRING;
-		} else if (data[d_i] == 'b') {
+		} else if (data[r.data_i] == 'b') {
 			// This case could be a blob.
 			// Make sure there's space for 'x' and one nibble of data.
-			IF_RET(d_i + 2 >= data_len, NVF_BUF_OVF);
-			++d_i;
-			IF_RET(data[d_i] != 'x', NVF_BAD_VALUE_FMT);
-			++d_i;
-			uintptr_t blob_start = d_i;
+			IF_RET_DATA(r.data_i + 2 >= data_len, r, NVF_BUF_OVF);
+			++r.data_i;
+			IF_RET_DATA(data[r.data_i] != 'x', r, NVF_BAD_VALUE_FMT);
+			++r.data_i;
+			uintptr_t blob_start = r.data_i;
 			// Find the length of the BLOB before allocating memory.
-			for (; d_i < data_len && isxdigit(data[d_i]); ++d_i) {
+			for (; r.data_i < data_len && isxdigit(data[r.data_i]); ++r.data_i) {
 			}
-			uintptr_t blob_len = d_i - blob_start;
-			IF_RET(blob_len == 0, NVF_BAD_VALUE_FMT);
+			uintptr_t blob_len = r.data_i - blob_start;
+			IF_RET_DATA(blob_len == 0, r, NVF_BAD_VALUE_FMT);
 
 			// Grow the current map if we need to.
 			if (cur_map->num + 1 > cur_map->cap) {
 				nvf_num next_cap = cur_map->cap*2 + 8;
-				char **new_names = out_root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-				IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
 				// Zero the new allocated pointers.
 				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
 				cur_map->names = new_names;
 
-				uint8_t *new_types = out_root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-				IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
 				cur_map->value_types = new_types;
 
-				void* new_values = out_root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-				IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
 				cur_map->values = new_values;
 				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
 				cur_map->cap = next_cap;
@@ -445,8 +412,8 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 
 			nvf_blob **map_blob = &cur_map->values[cur_map->num].p_val.v_blob;
 			uintptr_t bin_blob_len = (blob_len + 1) / 2;
-			nvf_blob *blob = out_root->realloc_inst(*map_blob, sizeof(*blob) + bin_blob_len);
-			IF_RET(blob == NULL, NVF_BAD_ALLOC);
+			nvf_blob *blob = root->realloc_inst(*map_blob, sizeof(*blob) + bin_blob_len);
+			IF_RET_DATA(blob == NULL, r, NVF_BAD_ALLOC);
 			blob->len = bin_blob_len;
 
 			// Get the data into the memory we allocated.
@@ -454,7 +421,7 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			for (uintptr_t b_i = 0; b_i < blob_len; ++b_i) {
 				uintptr_t b_d_i = blob_start + b_i;
 				uint8_t bin_val = nvf_hex_char_to_u8(data[b_d_i]);
-				IF_RET(bin_val == UINT8_MAX, NVF_BAD_VALUE_FMT);
+				IF_RET_DATA(bin_val == UINT8_MAX, r, NVF_BAD_VALUE_FMT);
 
 				if (first_nibble) {
 					blob->data[b_i/2] = bin_val << 4;
@@ -467,10 +434,11 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 			*map_blob = blob;
 			cur_map->value_types[cur_map->num] = NVF_BLOB;
 		} else {
-			return NVF_BAD_VALUE_TYPE;
+			r.err = NVF_BAD_VALUE_TYPE;	
+			return r;
 		}
-		char *name_mem = out_root->realloc_inst(cur_map->names[cur_map->num], name_len + 1);
-		IF_RET(name_mem == NULL, NVF_BAD_ALLOC);
+		char *name_mem = root->realloc_inst(cur_map->names[cur_map->num], name_len + 1);
+		IF_RET_DATA(name_mem == NULL, r, NVF_BAD_ALLOC);
 		// Make sure we have a null terminator like all good C strings do.
 		name_mem[name_len] = '\0';
 		memcpy(name_mem, name, name_len);
@@ -478,5 +446,30 @@ nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) 
 		cur_map->num++;
 	}
 
-	return NVF_OK;
+	return r;
+}
+
+
+// We reallocate instead of mallocing just in case the old pointer points to allocated memory.
+// That means we don't really need to do cleanup if the old pointer points to allocated memory.
+// That implies we need to zero all the pointers in the struct before they are passed into this function.
+// TODO: Re-think how to make cleanup simpler if an allocation fails.
+nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root) {
+	nvf_err_data_i r = {
+		.data_i = 0,
+		.err = NVF_OK,
+	};
+	IF_RET_DATA(out_root == NULL, r, NVF_BAD_ARG);
+	IF_RET_DATA(out_root->init_val != NVF_INIT_VAL, r, NVF_NOT_INIT);
+
+	// Allocate space for the first map.
+	if (out_root->map_cap == 0 || out_root->maps == NULL) {
+		nvf_map *new_map = out_root->realloc_inst(NULL, sizeof(*new_map));
+		IF_RET_DATA(new_map == NULL, r, NVF_BAD_ALLOC);
+		bzero(new_map, sizeof(*new_map));
+		out_root->maps = new_map;
+		out_root->map_num = 1;
+		out_root->map_cap = 1;
+	}
+	return nvf_parse_buf_map(data, data_len, out_root, 0);
 }

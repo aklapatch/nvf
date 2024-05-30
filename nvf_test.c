@@ -23,17 +23,25 @@ int main(int argc, char *argv[]){
 		"s_name \"test str\"\n"
 		"b_name bx01020304\n";
 
-	nvf_err rc = nvf_parse_buf(int_test, strlen(int_test), &root);
-	ASSERT_INT(rc, NVF_NOT_INIT, 1, "Testing init failure");
+	nvf_err_data_i rd = nvf_parse_buf(int_test, strlen(int_test), &root);
+	nvf_err_data_i exp_rd = {
+		.data_i = 0,
+		.err = NVF_NOT_INIT,
+	};
+	ASSERT_INT(memcmp(&exp_rd, &rd, sizeof(exp_rd)), 0, 1, "Testing init failure");
 
 	root = nvf_root_default_init();
 
-	rc = nvf_parse_buf(int_test, strlen(int_test), &root);
-	ASSERT_INT(rc, NVF_OK, 1, "Parsing data");
+	rd = nvf_parse_buf(int_test, strlen(int_test), &root);
+	nvf_err_data_i exp_suc_rd = {
+		.data_i = strlen(int_test),
+		.err = NVF_OK,
+	};
+	ASSERT_INT(memcmp(&exp_suc_rd, &rd, sizeof(rd)), 0, 1, "Parsing data");
 
 	int64_t bin_int = 0;
 	const char *names[] = {"i_name"};
-	rc = nvf_get_int(&root, names, 1, &bin_int);
+	nvf_err rc = nvf_get_int(&root, names, 1, &bin_int);
 	ASSERT_INT(rc, NVF_OK, 1, "Getting an int");
 
 	int exp_val = 32343;

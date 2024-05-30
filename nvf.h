@@ -81,6 +81,14 @@ typedef void (*free_fn)(void *);
 		}		  \
 	} while (0)
 
+#define IF_RET_DATA(expr, rv, e) \
+	do {			  \
+		if ((expr)) {     \
+			rv.err = e;\
+			return rv;\
+		}		  \
+	} while (0)
+
 // These are in one struct because the allocator and the memory used in the base map are linked.
 // You neeed to keep the allocators and the map together because you'll need to manipulate the memory
 // allocated with the same allocator.
@@ -120,7 +128,7 @@ nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
 
 nvf_root nvf_root_default_init(void);
 
-nvf_err nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root);
+nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out_root);
 
 nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int64_t *out);
 
