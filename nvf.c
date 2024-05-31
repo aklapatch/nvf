@@ -433,6 +433,51 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			}
 			*map_blob = blob;
 			cur_map->value_types[cur_map->num] = NVF_BLOB;
+		} else if (data[r.data_i] == '{') {
+			// Allocate a new map, then parse the data in the new map.
+			if (root->map_num + 1 > root->map_cap) {
+				// TODO: Make a macro for the 8 constant.
+				nvf_num new_cap = root->map_cap * 2 + 8;
+				nvf_map *new_map = root->realloc_inst(root->maps, new_cap * sizeof(*new_map));
+				IF_RET_DATA(new_map == NULL, r, NVF_BAD_ALLOC);
+				bzero(new_map + root->map_num, (new_cap - root->map_num) * sizeof(*new_map));
+				root->maps = new_map;
+				root->map_cap = new_cap;
+			}
+
+			// Grow the current map if we need to.
+			if (cur_map->num + 1 > cur_map->cap) {
+				nvf_num next_cap = cur_map->cap*2 + 8;
+				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
+				// Zero the new allocated pointers.
+				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
+				cur_map->names = new_names;
+
+				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
+				cur_map->value_types = new_types;
+
+				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
+				cur_map->values = new_values;
+				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
+				cur_map->cap = next_cap;
+			}
+
+			// TODO: See if we should increment map_num before or after this function.
+			r = nvf_parse_buf_map(data + r.data_i, data_len - r.data_i, root, root->map_num);
+			IF_RET(r.err != NVF_OK, r);
+
+			cur_map->values[cur_map->num].map_i = root->map_num;
+			cur_map->value_types[cur_map->num] = NVF_MAP;
+			++root->map_num;
+		} else if (data[r.data_i] == '}') {
+			IF_RET_DATA(map_i == 0, r, NVF_UNMATCHED_BRACE);
+			// Skip over the brace so the next function doesn't detect it.
+			++r.data_i;
+			r.err = NVF_OK;
+			return r;
 		} else {
 			r.err = NVF_BAD_VALUE_TYPE;	
 			return r;

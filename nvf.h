@@ -13,6 +13,7 @@ typedef enum {
 	NVF_NOT_INIT,
 	NVF_NOT_FOUND,
 	NVF_DUP_NAME,
+	NVF_UNMATCHED_BRACE,
 	NVF_NUM_OVF,
 	NVF_NUM_ERRS,
 } nvf_err;
