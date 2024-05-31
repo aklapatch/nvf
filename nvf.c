@@ -110,8 +110,7 @@ nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, n
 				if (cur_map->value_types[m_i] == NVF_MAP) {
 					nvf_num new_map_i = cur_map->values[m_i].map_i;
 					cur_map = &root->maps[new_map_i];
-					m_i = 0;
-					break;
+					goto search_next;
 				} else {
 					return NVF_NOT_FOUND;
 				}
@@ -120,6 +119,7 @@ nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, n
 		// If we didn't find a name after going through the whole list, it's not here.
 		// That's an error.
 		IF_RET(m_i >= cur_map->num, NVF_NOT_FOUND);
+search_next:;
 	}
 	if (n_i == name_depth) {
 		*map_out = *cur_map;
