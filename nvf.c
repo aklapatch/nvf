@@ -245,6 +245,33 @@ nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int6
 	return NVF_NOT_FOUND;
 }
 
+uintptr_t nvf_next_token_i(const char *data, uintptr_t data_len) {
+	uintptr_t d_i = 0;
+	for (; d_i < data_len; ++d_i) {
+		if (isspace(data[d_i])) {
+			continue;
+		} 
+		if (data[d_i] == '#') {
+			++d_i;
+			if (d_i < data_len && data[d_i] == '[')  {
+scan_till_bracket:
+				for(; d_i < data_len && data[d_i] != ']'; ++d_i) {}
+				++d_i;
+				// Keep looking for the end of the comment.
+				if (d_i < data_len && data[d_i] != '#') {
+					goto scan_till_bracket;
+				}
+			} else {
+				// Just go to a newline.
+				for(; d_i < data_len && data[d_i] != '\n'; ++d_i) {}
+			}
+			continue;
+		}
+		break;
+	}
+	return d_i;
+}
+
 nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root *root, nvf_num map_i) {
 	nvf_err_data_i r = {
 		.data_i = 0,
@@ -257,22 +284,22 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 	IF_RET_DATA(map_i >= root->map_num, r, NVF_BUF_OVF);
 	nvf_map *cur_map = &root->maps[map_i];
 	for (; r.data_i < data_len; ++r.data_i) {
-		if (isspace(data[r.data_i])) {
-			continue;
-		} 
+		r.data_i += nvf_next_token_i(data + r.data_i, data_len - r.data_i);
+		IF_RET_DATA(r.data_i >= data_len, r, NVF_OK);
 		if (data[r.data_i] == '}') {
 			IF_RET_DATA(map_i == 0, r, NVF_UNMATCHED_BRACE);
-			// Skip over the brace so the next function doesn't detect it.
+			// Skip over the brace so the calling function doesn't detect it.
 			++r.data_i;
 			r.err = NVF_OK;
 			return r;
 		}
+		// TODO: Add multiline comment scanning between the names and values.
 
 		const char *name = &data[r.data_i];
-		while (!isspace(data[r.data_i]) && r.data_i < data_len) {
+		while (r.data_i < data_len && !isspace(data[r.data_i])) {
 			r.data_i++;
 		}
-		IF_RET_DATA(data_len < r.data_i, r, NVF_BUF_OVF);
+		IF_RET_DATA(data_len <= r.data_i, r, NVF_BUF_OVF);
 		uintptr_t name_len = (data + r.data_i) - name;
 		// Make sure the name doesn't collide with anything we already have.
 		nvf_num n_i = 0;
@@ -285,9 +312,8 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			IF_RET_DATA(m_name_len == name_len && memcmp(cur_map->names[n_i], name, m_name_len) == 0, r, NVF_BUF_OVF);
 		}
 
-		while (isspace(data[r.data_i]) && r.data_i < data_len) {
-			r.data_i++;
-		}
+		r.data_i += nvf_next_token_i(data + r.data_i, data_len - r.data_i);
+		IF_RET_DATA(r.data_i >= data_len, r, NVF_BUF_OVF);
 
 		// We've found value. Parse it depending on what it is.
 		const char *value = &data[r.data_i];

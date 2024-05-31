@@ -33,14 +33,14 @@ int main(int argc, char *argv[]){
 	nvf_err_data_i rd = nvf_parse_buf(int_test, test_len, &root);
 	// I tried using memcmp(), but it compares uninitialized bytes and fails because of that.
 	// Compare the variables directly to avoid this.
-	ASSERT_INT(rd.data_i , 0, 1, "Testing init failure data index");
+	ASSERT_INT(rd.data_i, 0, 1, "Testing init failure data index");
 	ASSERT_INT(rd.err  , NVF_NOT_INIT, 1, "Testing init failure error");
 
 	root = nvf_root_default_init();
 
 	rd = nvf_parse_buf(int_test, test_len, &root);
-	ASSERT_INT(rd.data_i >= test_len, 1, 1, "Testing parsing failure data index");
 	ASSERT_INT(rd.err, NVF_OK, 1, "Testing parsing failure error");
+	ASSERT_INT(rd.data_i >= test_len, 1, 1, "Testing parsing failure data index");
 
 	int64_t bin_int = 0;
 	const char *names[] = {"i_name", "i_name"};
