@@ -43,12 +43,18 @@ int main(int argc, char *argv[]){
 	ASSERT_INT(rd.err, NVF_OK, 1, "Testing parsing failure error");
 
 	int64_t bin_int = 0;
-	const char *names[] = {"i_name"};
+	const char *names[] = {"i_name", "i_name"};
 	nvf_err rc = nvf_get_int(&root, names, 1, &bin_int);
 	ASSERT_INT(rc, NVF_OK, 1, "Getting an int");
 
-	int exp_val = 32343;
-	ASSERT_INT((int)bin_int, exp_val, 1, "Comparing int values");
+	ASSERT_INT((int)bin_int, 32343, 1, "Comparing int values");
+
+	const char *m_i_names[] = {"m_name", "i_name"};
+	rc = nvf_get_int(&root, m_i_names, 2, &bin_int);
+	ASSERT_INT(rc, NVF_OK, 1, "Getting a nested int");
+
+	ASSERT_INT((int)bin_int, 72333, 1, "Comparing int values");
+
 
 	double bin_f = 0;
 	const char *f_names[] = {"f_name"};

@@ -110,6 +110,7 @@ nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, n
 				if (cur_map->value_types[m_i] == NVF_MAP) {
 					nvf_num new_map_i = cur_map->values[m_i].map_i;
 					cur_map = &root->maps[new_map_i];
+					m_i = 0;
 					break;
 				} else {
 					return NVF_NOT_FOUND;
