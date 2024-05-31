@@ -258,6 +258,13 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 	for (; r.data_i < data_len; ++r.data_i) {
 		if (isspace(data[r.data_i])) {
 			continue;
+		} 
+		if (data[r.data_i] == '}') {
+			IF_RET_DATA(map_i == 0, r, NVF_UNMATCHED_BRACE);
+			// Skip over the brace so the next function doesn't detect it.
+			++r.data_i;
+			r.err = NVF_OK;
+			return r;
 		}
 
 		const char *name = &data[r.data_i];
@@ -434,6 +441,7 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			*map_blob = blob;
 			cur_map->value_types[cur_map->num] = NVF_BLOB;
 		} else if (data[r.data_i] == '{') {
+			++r.data_i;
 			// Allocate a new map, then parse the data in the new map.
 			if (root->map_num + 1 > root->map_cap) {
 				// TODO: Make a macro for the 8 constant.
@@ -444,6 +452,7 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 				root->maps = new_map;
 				root->map_cap = new_cap;
 			}
+			cur_map = root->maps + map_i;
 
 			// Grow the current map if we need to.
 			if (cur_map->num + 1 > cur_map->cap) {
@@ -466,18 +475,15 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			}
 
 			// TODO: See if we should increment map_num before or after this function.
-			r = nvf_parse_buf_map(data + r.data_i, data_len - r.data_i, root, root->map_num);
+			++root->map_num;
+			nvf_err_data_i r2 = nvf_parse_buf_map(data + r.data_i, data_len - r.data_i, root, root->map_num - 1);
+			r.data_i += r2.data_i;
+			r.err = r2.err;
+			// The pointer to the map array may have moved, udpate it.
 			IF_RET(r.err != NVF_OK, r);
 
-			cur_map->values[cur_map->num].map_i = root->map_num;
+			cur_map->values[cur_map->num].map_i = root->map_num - 1;
 			cur_map->value_types[cur_map->num] = NVF_MAP;
-			++root->map_num;
-		} else if (data[r.data_i] == '}') {
-			IF_RET_DATA(map_i == 0, r, NVF_UNMATCHED_BRACE);
-			// Skip over the brace so the next function doesn't detect it.
-			++r.data_i;
-			r.err = NVF_OK;
-			return r;
 		} else {
 			r.err = NVF_BAD_VALUE_TYPE;	
 			return r;

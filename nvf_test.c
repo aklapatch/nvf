@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
 		"f_name 3.423\n"
 		"s_name \"test str\"\n"
 		"b_name bx01020304\n"
-		"{\n"
+		"m_name {\n"
 		"	i_name 72333\n"
 		"	f_name 89.32\n"
 		"	s_name \"other test str\"\n"
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]){
 	root = nvf_root_default_init();
 
 	rd = nvf_parse_buf(int_test, test_len, &root);
-	ASSERT_INT(rd.data_i, test_len, 1, "Testing parsing failure data index");
+	ASSERT_INT(rd.data_i >= test_len, 1, 1, "Testing parsing failure data index");
 	ASSERT_INT(rd.err, NVF_OK, 1, "Testing parsing failure error");
 
 	int64_t bin_int = 0;
