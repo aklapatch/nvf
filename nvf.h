@@ -120,6 +120,8 @@ typedef struct nvf_root {
 } nvf_root;
 
 // A return type used to figure out where the called function stopped while parsing.
+// TODO: Maybe make data_i a u32. That should match the alignment and size of nvf_err better.
+// TODO: typedef nvf_err to a u32 and make the error codes into a different enum (like nvf_err_e).
 typedef struct {
 	uintptr_t data_i;
 	nvf_err err;

@@ -21,23 +21,26 @@ int main(int argc, char *argv[]){
 		"i_name 32343\n"
 		"f_name 3.423\n"
 		"s_name \"test str\"\n"
-		"b_name bx01020304\n";
+		"b_name bx01020304\n"
+		"{\n"
+		"	i_name 72333\n"
+		"	f_name 89.32\n"
+		"	s_name \"other test str\"\n"
+		"	b_name bx05060708090a0b0c0d\n"
+		"}";
+	uintptr_t test_len = strlen(int_test);
 
-	nvf_err_data_i rd = nvf_parse_buf(int_test, strlen(int_test), &root);
-	nvf_err_data_i exp_rd = {
-		.data_i = 0,
-		.err = NVF_NOT_INIT,
-	};
-	ASSERT_INT(memcmp(&exp_rd, &rd, sizeof(exp_rd)), 0, 1, "Testing init failure");
+	nvf_err_data_i rd = nvf_parse_buf(int_test, test_len, &root);
+	// I tried using memcmp(), but it compares uninitialized bytes and fails because of that.
+	// Compare the variables directly to avoid this.
+	ASSERT_INT(rd.data_i , 0, 1, "Testing init failure data index");
+	ASSERT_INT(rd.err  , NVF_NOT_INIT, 1, "Testing init failure error");
 
 	root = nvf_root_default_init();
 
-	rd = nvf_parse_buf(int_test, strlen(int_test), &root);
-	nvf_err_data_i exp_suc_rd = {
-		.data_i = strlen(int_test),
-		.err = NVF_OK,
-	};
-	ASSERT_INT(memcmp(&exp_suc_rd, &rd, sizeof(rd)), 0, 1, "Parsing data");
+	rd = nvf_parse_buf(int_test, test_len, &root);
+	ASSERT_INT(rd.data_i, test_len, 1, "Testing parsing failure data index");
+	ASSERT_INT(rd.err, NVF_OK, 1, "Testing parsing failure error");
 
 	int64_t bin_int = 0;
 	const char *names[] = {"i_name"};
