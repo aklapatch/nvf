@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
 	ASSERT_INT(rd.data_i >= test_len, 1, 1, "Testing parsing failure data index");
 
 	int64_t bin_int = 0;
-	const char *names[] = {"i_name", "i_name"};
+	const char *names[] = {"i_name"};
 	nvf_err rc = nvf_get_int(&root, names, 1, &bin_int);
 	ASSERT_INT(rc, NVF_OK, 1, "Getting an int");
 

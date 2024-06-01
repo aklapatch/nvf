@@ -16,8 +16,6 @@
    str_ex "whee"
    multiline_str_ex "line one"
                     "line two"
-   other_str_ex |line one again
-                |line two again
    BLOB_ex bx010203040506070809
    array_ex [ 1 2 "elem" ]
    map_ex {
@@ -340,7 +338,7 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 				npt = NVF_FLOAT;
 			} else {
 				char *end = (char*)value; 
-				npv.v_int = strtoll(value, &end, 10);
+				npv.v_int = strtoll(value, &end, 0);
 				IF_RET_DATA(npv.v_int == LLONG_MAX || npv.v_int == LLONG_MIN, r, NVF_NUM_OVF);
 				// The integer didn't parse.
 				IF_RET_DATA(value == end, r, NVF_BAD_VALUE_FMT);
