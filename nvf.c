@@ -270,6 +270,31 @@ scan_till_bracket:
 	return d_i;
 }
 
+nvf_err nvf_ensure_cap(nvf_root *root, nvf_num map_i) {
+	IF_RET(root == NULL, NVF_BAD_ARG);
+	nvf_map *cur_map = root->maps + map_i;
+
+	if (cur_map->num + 1 > cur_map->cap) {
+		nvf_num next_cap = cur_map->cap * 2 + 4;
+		char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+		IF_RET(new_names == NULL, NVF_BAD_ALLOC);
+		// Zero the new allocated pointers.
+		bzero(new_names + cur_map->num, sizeof(*new_names)*(next_cap - cur_map->num));
+		cur_map->names = new_names;
+
+		uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
+		IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+		cur_map->value_types = new_types;
+
+		void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
+		IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+		cur_map->values = new_values;
+		bzero(cur_map->values + cur_map->num, sizeof(*cur_map->values) * (next_cap - cur_map->num));
+		cur_map->cap = next_cap;
+	}
+	return NVF_OK;
+}
+
 nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root *root, nvf_num map_i) {
 	nvf_err_data_i r = {
 		.data_i = 0,
@@ -346,21 +371,9 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			}
 
 			// Grow the current map if we need to.
-			if (cur_map->num + 1 > cur_map->cap) {
-				nvf_num next_cap = cur_map->cap*2 + 8;
-				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
-				cur_map->names = new_names;
+			r.err = nvf_ensure_cap(root, map_i);
+			IF_RET_DATA(r.err != NVF_OK, r, r.err);
 
-				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
-				cur_map->value_types = new_types;
-
-				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
-				cur_map->values = new_values;
-				cur_map->cap = next_cap;
-			}
 			// Now that we have enough memory, add the integer value to the map.
 			cur_map->values[cur_map->num].p_val = npv;
 			cur_map->value_types[cur_map->num] = npt;
@@ -381,24 +394,8 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			uintptr_t str_len = r.data_i - str_start;
 
 			// Grow the current map if we need to.
-			if (cur_map->num + 1 > cur_map->cap) {
-				nvf_num next_cap = cur_map->cap*2 + 8;
-				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
-				// Zero the new allocated pointers.
-				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
-				cur_map->names = new_names;
-
-				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
-				cur_map->value_types = new_types;
-
-				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
-				cur_map->values = new_values;
-				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
-				cur_map->cap = next_cap;
-			}
+			r.err = nvf_ensure_cap(root, map_i);
+			IF_RET_DATA(r.err != NVF_OK, r, r.err);
 
 			char *d_str = root->realloc_inst(cur_map->values[cur_map->num].p_val.v_string, str_len + 1);
 			IF_RET_DATA(d_str == NULL, r, NVF_BAD_ALLOC);
@@ -422,25 +419,8 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			IF_RET_DATA(blob_len == 0, r, NVF_BAD_VALUE_FMT);
 
 			// Grow the current map if we need to.
-			if (cur_map->num + 1 > cur_map->cap) {
-				nvf_num next_cap = cur_map->cap*2 + 8;
-				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
-				// Zero the new allocated pointers.
-				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
-				cur_map->names = new_names;
-
-				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
-				cur_map->value_types = new_types;
-
-				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
-				cur_map->values = new_values;
-				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
-				cur_map->cap = next_cap;
-			}
-
+			r.err = nvf_ensure_cap(root, map_i);
+			IF_RET_DATA(r.err != NVF_OK, r, r.err);
 
 			nvf_blob **map_blob = &cur_map->values[cur_map->num].p_val.v_blob;
 			uintptr_t bin_blob_len = (blob_len + 1) / 2;
@@ -480,24 +460,9 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			cur_map = root->maps + map_i;
 
 			// Grow the current map if we need to.
-			if (cur_map->num + 1 > cur_map->cap) {
-				nvf_num next_cap = cur_map->cap*2 + 8;
-				char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
-				IF_RET_DATA(new_names == NULL, r, NVF_BAD_ALLOC);
-				// Zero the new allocated pointers.
-				bzero(&new_names[cur_map->num], sizeof(*new_names)*(next_cap - cur_map->num));
-				cur_map->names = new_names;
+			r.err = nvf_ensure_cap(root, map_i);
+			IF_RET_DATA(r.err != NVF_OK, r, r.err);
 
-				uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-				IF_RET_DATA(new_types == NULL, r, NVF_BAD_ALLOC);
-				cur_map->value_types = new_types;
-
-				void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-				IF_RET_DATA(new_values == NULL, r, NVF_BAD_ALLOC);
-				cur_map->values = new_values;
-				bzero(&cur_map->values[cur_map->num], sizeof(*cur_map->values) * (next_cap - cur_map->num));
-				cur_map->cap = next_cap;
-			}
 
 			// TODO: See if we should increment map_num before or after this function.
 			++root->map_num;
@@ -547,5 +512,7 @@ nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out
 		out_root->map_num = 1;
 		out_root->map_cap = 1;
 	}
-	return nvf_parse_buf_map(data, data_len, out_root, 0);
+	// Use map_num - 1 so we can try parsing again, or parse multiple buffers with
+	// multiple function calls.
+	return nvf_parse_buf_map(data, data_len, out_root, out_root->map_num - 1);
 }
