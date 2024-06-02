@@ -51,7 +51,14 @@ nvf_err nvf_deinit_array(nvf_root *n_r, nvf_array *a) {
 	free_fn f_fn = n_r->free_inst;
 	IF_RET(f_fn == NULL, NVF_BAD_ARG);
 
-	f_fn(a->value_types);
+	for (nvf_num i = 0; i < a->num; ++i) {
+		if (a->types[i] == NVF_STRING) {
+			f_fn(a->values[i].v_string);
+		} else if (a->types[i] == NVF_BLOB) {
+			f_fn(a->values[i].v_blob);
+		}
+	}
+	f_fn(a->types);
 	f_fn(a->values);
 	
 	bzero(a, sizeof(*a));
@@ -62,12 +69,13 @@ nvf_err nvf_deinit_map(nvf_root *n_r, nvf_map *m) {
 	free_fn f_fn = n_r->free_inst;
 	IF_RET(f_fn == NULL, NVF_BAD_ARG);
 
-	f_fn(m->value_types);
-	f_fn(m->values);
-
-	for (nvf_num i = 0; i < m->num; ++i) {
+	// We need end because we zero the 'values' array. Make a copy to keep
+	// it from changing.
+	for (nvf_num i = 0, end = m->arr.num; i < end; ++i) {
 		f_fn(m->names[i]);
 	}
+	nvf_err r = nvf_deinit_array(n_r, &m->arr);
+	IF_RET(r != NVF_OK, r);
 	f_fn(m->names);
 
 	bzero(m, sizeof(*m));
@@ -89,6 +97,7 @@ nvf_err nvf_deinit(nvf_root *n_r) {
 		nvf_err	r = nvf_deinit_map(n_r, &n_r->maps[m_i]);
 		IF_RET(r != NVF_OK, r);
 	}
+	f_fn(n_r->maps);
 	
 	// This zeros out the init_value member too, which we absolutely want.
 	// That prevents this struct from being passed into another function.
@@ -103,10 +112,10 @@ nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, n
 	nvf_num n_i = 0;
 	for (; n_i < name_depth; ++n_i) {
 		nvf_num m_i = 0;
-		for (; m_i < cur_map->num; ++m_i) {
+		for (; m_i < cur_map->arr.num; ++m_i) {
 			if (strcmp(m_names[n_i], cur_map->names[m_i]) == 0) {
-				if (cur_map->value_types[m_i] == NVF_MAP) {
-					nvf_num new_map_i = cur_map->values[m_i].map_i;
+				if (cur_map->arr.types[m_i] == NVF_MAP) {
+					nvf_num new_map_i = cur_map->arr.values[m_i].map_i;
 					cur_map = &root->maps[new_map_i];
 					goto search_next;
 				} else {
@@ -116,7 +125,7 @@ nvf_err nvf_get_map(nvf_root * root, const char **m_names, nvf_num name_depth, n
 		}
 		// If we didn't find a name after going through the whole list, it's not here.
 		// That's an error.
-		IF_RET(m_i >= cur_map->num, NVF_NOT_FOUND);
+		IF_RET(m_i >= cur_map->arr.num, NVF_NOT_FOUND);
 search_next:;
 	}
 	if (n_i == name_depth) {
@@ -128,20 +137,55 @@ search_next:;
 }
 
 // TODO: Consolidate the get_primitive() functions.
-nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, double *out) {
-	IF_RET(root == NULL || names == NULL || out == NULL, NVF_BAD_ARG);
+
+nvf_err nvf_get_value(
+	nvf_root *root,
+	const char **names,
+	nvf_num name_depth,
+	void *out,
+	uintptr_t *out_len,
+	nvf_data_type dt) {
+
+	IF_RET(root == NULL || names == NULL || out == NULL || name_depth == 0 || out_len == NULL, NVF_BAD_ARG);
 
 	// We assume this array of names is null terminated.
 	nvf_map parent_map;
+	// NOTE: this can overflow if name_depth == 0
 	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
 	IF_RET(e != NVF_OK, e);
 
 	nvf_num n_i = 0;
 	const char *name = names[name_depth - 1];
-	for (; n_i < parent_map.num; ++n_i) {
+	for (; n_i < parent_map.arr.num; ++n_i) {
 		if (strcmp(name, parent_map.names[n_i]) == 0) {
-			if (parent_map.value_types[n_i] == NVF_FLOAT) {
-				*out = parent_map.values[n_i].p_val.v_float;
+			if (parent_map.arr.types[n_i] == dt) {
+				if (dt == NVF_BLOB) {
+					uintptr_t stored_len = parent_map.arr.values[n_i].v_blob->len;
+					if (stored_len > *out_len) {
+						*out_len = stored_len;
+						return NVF_BUF_OVF;
+					}
+					*out_len = stored_len;
+					memcpy(out, parent_map.arr.values[n_i].v_blob->data, stored_len);
+				} else if (dt == NVF_STRING) {
+					uintptr_t stored_len = strlen(parent_map.arr.values[n_i].v_string) + 1;
+					if (stored_len > *out_len) {
+						*out_len = stored_len;
+						return NVF_BUF_OVF;
+					}
+					*out_len = stored_len;
+					memcpy(out, parent_map.arr.values[n_i].v_string, stored_len);
+				} else if (dt == NVF_INT) {
+					int64_t *i_out = out;
+					*i_out = parent_map.arr.values[n_i].v_int;
+					*out_len = sizeof(*i_out);
+				} else if (dt == NVF_FLOAT) {
+					double *f_out = out;
+					*f_out = parent_map.arr.values[n_i].v_float;
+					*out_len = sizeof(*f_out);
+				} else {
+					return NVF_BAD_VALUE_TYPE;
+				}
 				return NVF_OK;
 			} else {
 				return NVF_BAD_VALUE_TYPE;
@@ -153,94 +197,23 @@ nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, do
 	return NVF_NOT_FOUND;
 }
 
+nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, double *out) {
+	uintptr_t out_len = sizeof(*out);
+	return nvf_get_value(root, names, name_depth, out, &out_len, NVF_FLOAT);
+}
+
 nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth, uint8_t *bin_out, uintptr_t *bin_out_len) {
-	IF_RET(root == NULL || names == NULL || bin_out == NULL || name_depth == 0 || bin_out_len == NULL, NVF_BAD_ARG);
-
-	// We assume this array of names is null terminated.
-	nvf_map parent_map;
-	// NOTE: this can overflow if name_depth == 0
-	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
-	IF_RET(e != NVF_OK, e);
-
-	nvf_num n_i = 0;
-	const char *name = names[name_depth - 1];
-	for (; n_i < parent_map.num; ++n_i) {
-		if (strcmp(name, parent_map.names[n_i]) == 0) {
-			if (parent_map.value_types[n_i] == NVF_BLOB) {
-				uintptr_t stored_len = parent_map.values[n_i].p_val.v_blob->len;
-				if (stored_len > *bin_out_len) {
-					*bin_out_len = stored_len;
-					return NVF_BUF_OVF;
-				}
-				*bin_out_len = stored_len;
-				memcpy(bin_out, parent_map.values[n_i].p_val.v_blob->data, stored_len);
-				return NVF_OK;
-			} else {
-				return NVF_BAD_VALUE_TYPE;
-			}
-		}
-
-	}
-
-	return NVF_NOT_FOUND;
+	return nvf_get_value(root, names, name_depth, bin_out, bin_out_len, NVF_BLOB);
 }
 
 // str_out_len should include the null terminator.
 nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth, char *str_out, uintptr_t *str_out_len) {
-	IF_RET(root == NULL || names == NULL || str_out == NULL || name_depth == 0 || str_out_len == NULL, NVF_BAD_ARG);
-
-	// We assume this array of names is null terminated.
-	nvf_map parent_map;
-	// NOTE: this can overflow if name_depth == 0
-	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
-	IF_RET(e != NVF_OK, e);
-
-	nvf_num n_i = 0;
-	const char *name = names[name_depth - 1];
-	for (; n_i < parent_map.num; ++n_i) {
-		if (strcmp(name, parent_map.names[n_i]) == 0) {
-			if (parent_map.value_types[n_i] == NVF_STRING) {
-				uintptr_t stored_len = strlen(parent_map.values[n_i].p_val.v_string) + 1;
-				if (stored_len > *str_out_len) {
-					*str_out_len = stored_len;
-					return NVF_BUF_OVF;
-				}
-				*str_out_len = stored_len;
-				memcpy(str_out, parent_map.values[n_i].p_val.v_string, stored_len);
-				return NVF_OK;
-			} else {
-				return NVF_BAD_VALUE_TYPE;
-			}
-		}
-
-	}
-
-	return NVF_NOT_FOUND;
+	return nvf_get_value(root, names, name_depth, str_out, str_out_len, NVF_STRING);
 }
 
 nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth, int64_t *out) {
-	IF_RET(root == NULL || names == NULL || out == NULL, NVF_BAD_ARG);
-
-	// We assume this array of names is null terminated.
-	nvf_map parent_map;
-	nvf_err e = nvf_get_map(root, names, name_depth - 1, &parent_map);
-	IF_RET(e != NVF_OK, e);
-
-	nvf_num n_i = 0;
-	const char *name = names[name_depth - 1];
-	for (; n_i < parent_map.num; ++n_i) {
-		if (strcmp(name, parent_map.names[n_i]) == 0) {
-			if (parent_map.value_types[n_i] == NVF_INT) {
-				*out = parent_map.values[n_i].p_val.v_int;
-				return NVF_OK;
-			} else {
-				return NVF_BAD_VALUE_TYPE;
-			}
-		}
-
-	}
-
-	return NVF_NOT_FOUND;
+	uintptr_t out_len = sizeof(*out);
+	return nvf_get_value(root, names, name_depth, out, &out_len, NVF_INT);
 }
 
 uintptr_t nvf_next_token_i(const char *data, uintptr_t data_len) {
@@ -270,28 +243,44 @@ scan_till_bracket:
 	return d_i;
 }
 
+nvf_err nvf_ensure_array_cap(nvf_root *root, nvf_array *arr) {
+	IF_RET(root == NULL || arr == NULL, NVF_BAD_ARG);
+
+	if (arr->num + 1 > arr->cap) {
+		nvf_num next_cap = arr->cap * 2 + 4;
+		uint8_t *new_types = root->realloc_inst(arr->types, next_cap * sizeof(*new_types));
+		IF_RET(new_types == NULL, NVF_BAD_ALLOC);
+		bzero(new_types + arr->num, sizeof(*arr->types) * (next_cap - arr->num));
+		arr->types = new_types;
+
+		nvf_value* new_values = root->realloc_inst(arr->values, next_cap * sizeof(*arr->values));
+		IF_RET(new_values == NULL, NVF_BAD_ALLOC);
+		bzero(new_values + arr->num, sizeof(*arr->values) * (next_cap - arr->num));
+		arr->values = new_values;
+		arr->cap = next_cap;
+	}
+	return NVF_OK;
+}
+
 nvf_err nvf_ensure_cap(nvf_root *root, nvf_num map_i) {
 	IF_RET(root == NULL, NVF_BAD_ARG);
 	nvf_map *cur_map = root->maps + map_i;
 
-	if (cur_map->num + 1 > cur_map->cap) {
-		nvf_num next_cap = cur_map->cap * 2 + 4;
+	nvf_num old_cap = cur_map->arr.cap;
+	nvf_err e = nvf_ensure_array_cap(root, &cur_map->arr);
+	IF_RET(e != NVF_OK, e);
+
+	// Only resize if we need to (when the internal array resized).
+	nvf_num next_cap = cur_map->arr.cap;
+	if (old_cap != next_cap) {
+		nvf_num next_cap = cur_map->arr.cap;
 		char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
 		IF_RET(new_names == NULL, NVF_BAD_ALLOC);
 		// Zero the new allocated pointers.
-		bzero(new_names + cur_map->num, sizeof(*new_names)*(next_cap - cur_map->num));
+		bzero(new_names + cur_map->arr.num, sizeof(*new_names)*(next_cap - cur_map->arr.num));
 		cur_map->names = new_names;
-
-		uint8_t *new_types = root->realloc_inst(cur_map->value_types, next_cap * sizeof(*new_types));
-		IF_RET(new_types == NULL, NVF_BAD_ALLOC);
-		cur_map->value_types = new_types;
-
-		void* new_values = root->realloc_inst(cur_map->values, next_cap * sizeof(*cur_map->values));
-		IF_RET(new_values == NULL, NVF_BAD_ALLOC);
-		cur_map->values = new_values;
-		bzero(cur_map->values + cur_map->num, sizeof(*cur_map->values) * (next_cap - cur_map->num));
-		cur_map->cap = next_cap;
 	}
+
 	return NVF_OK;
 }
 
@@ -305,7 +294,8 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 
 	// TODO: make a better error code for this.
 	IF_RET_DATA(map_i >= root->map_num, r, NVF_BUF_OVF);
-	nvf_map *cur_map = &root->maps[map_i];
+	nvf_map *cur_map = root->maps + map_i;
+	nvf_array *cur_arr = &cur_map->arr;
 	for (; r.data_i < data_len; ++r.data_i) {
 		r.data_i += nvf_next_token_i(data + r.data_i, data_len - r.data_i);
 		IF_RET_DATA(r.data_i >= data_len, r, NVF_OK);
@@ -326,7 +316,7 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 		uintptr_t name_len = (data + r.data_i) - name;
 		// Make sure the name doesn't collide with anything we already have.
 		nvf_num n_i = 0;
-		for (; n_i < cur_map->num; ++n_i) {
+		for (; n_i < cur_arr->num; ++n_i) {
 			// The name we inferred isn't null terminated.
 			// That means we can't use strcmp.
 			// Do it more manually instead.
@@ -351,7 +341,7 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 					is_float = true;
 				}
 			}
-			nvf_primitive_value npv = {0};
+			nvf_value npv = {0};
 			uintptr_t value_len = (data + r.data_i) - value;
 			nvf_data_type npt = NVF_NUM_TYPES;
 			if (is_float) {
@@ -373,10 +363,13 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			// Grow the current map if we need to.
 			r.err = nvf_ensure_cap(root, map_i);
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
+			// The array's arrays could have been reallocated.
+			// Update the pointers so they point to the right location.
+			cur_arr = &root->maps[map_i].arr;
 
 			// Now that we have enough memory, add the integer value to the map.
-			cur_map->values[cur_map->num].p_val = npv;
-			cur_map->value_types[cur_map->num] = npt;
+			cur_arr->values[cur_arr->num] = npv;
+			cur_arr->types[cur_arr->num] = npt;
 
 		} else if (data[r.data_i] == '"') {
 			++r.data_i;
@@ -396,14 +389,17 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			// Grow the current map if we need to.
 			r.err = nvf_ensure_cap(root, map_i);
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
+			// The array's arrays could have been reallocated.
+			// Update the pointers so they point to the right location.
+			cur_arr = &root->maps[map_i].arr;
 
-			char *d_str = root->realloc_inst(cur_map->values[cur_map->num].p_val.v_string, str_len + 1);
+			char *d_str = root->realloc_inst(cur_arr->values[cur_arr->num].v_string, str_len + 1);
 			IF_RET_DATA(d_str == NULL, r, NVF_BAD_ALLOC);
 			d_str[str_len] = '\0';
 			memcpy(d_str, &data[str_start], str_len);
 			// Now that we have enough memory, add the string to the map.
-			cur_map->values[cur_map->num].p_val.v_string = d_str;
-			cur_map->value_types[cur_map->num] = NVF_STRING;
+			cur_arr->values[cur_arr->num].v_string = d_str;
+			cur_arr->types[cur_arr->num] = NVF_STRING;
 		} else if (data[r.data_i] == 'b') {
 			// This case could be a blob.
 			// Make sure there's space for 'x' and one nibble of data.
@@ -421,8 +417,11 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			// Grow the current map if we need to.
 			r.err = nvf_ensure_cap(root, map_i);
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
+			// The array's arrays could have been reallocated.
+			// Update the pointers so they point to the right location.
+			cur_arr = &root->maps[map_i].arr;
 
-			nvf_blob **map_blob = &cur_map->values[cur_map->num].p_val.v_blob;
+			nvf_blob **map_blob = &cur_arr->values[cur_arr->num].v_blob;
 			uintptr_t bin_blob_len = (blob_len + 1) / 2;
 			nvf_blob *blob = root->realloc_inst(*map_blob, sizeof(*blob) + bin_blob_len);
 			IF_RET_DATA(blob == NULL, r, NVF_BAD_ALLOC);
@@ -444,7 +443,7 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 				}
 			}
 			*map_blob = blob;
-			cur_map->value_types[cur_map->num] = NVF_BLOB;
+			cur_arr->types[cur_arr->num] = NVF_BLOB;
 		} else if (data[r.data_i] == '{') {
 			++r.data_i;
 			// Allocate a new map, then parse the data in the new map.
@@ -462,7 +461,9 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			// Grow the current map if we need to.
 			r.err = nvf_ensure_cap(root, map_i);
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
-
+			// The array's arrays could have been reallocated.
+			// Update the pointers so they point to the right location.
+			cur_arr = &root->maps[map_i].arr;
 
 			// TODO: See if we should increment map_num before or after this function.
 			++root->map_num;
@@ -472,19 +473,19 @@ nvf_err_data_i nvf_parse_buf_map(const char *data, uintptr_t data_len, nvf_root 
 			// The pointer to the map array may have moved, udpate it.
 			IF_RET(r.err != NVF_OK, r);
 
-			cur_map->values[cur_map->num].map_i = root->map_num - 1;
-			cur_map->value_types[cur_map->num] = NVF_MAP;
+			cur_arr->values[cur_arr->num].map_i = root->map_num - 1;
+			cur_arr->types[cur_arr->num] = NVF_MAP;
 		} else {
 			r.err = NVF_BAD_VALUE_TYPE;	
 			return r;
 		}
-		char *name_mem = root->realloc_inst(cur_map->names[cur_map->num], name_len + 1);
+		char *name_mem = root->realloc_inst(cur_map->names[cur_arr->num], name_len + 1);
 		IF_RET_DATA(name_mem == NULL, r, NVF_BAD_ALLOC);
 		// Make sure we have a null terminator like all good C strings do.
 		name_mem[name_len] = '\0';
 		memcpy(name_mem, name, name_len);
-		cur_map->names[cur_map->num]= name_mem;
-		cur_map->num++;
+		cur_map->names[cur_arr->num]= name_mem;
+		cur_arr->num++;
 	}
 
 	return r;

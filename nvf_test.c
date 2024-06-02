@@ -8,7 +8,7 @@
 		int _tmp_r = (r);\
 		int _tmp_exp = (exp);\
 		if (_tmp_r != _tmp_exp) {\
-			printf("%s failed. Expected %d (%s), got %d (%s)!\n", label, _tmp_exp, #exp, _tmp_r, #r);\
+			printf("%s:%u. %s failed. Expected %d (%s), got %d (%s)!\n", __FILE__, __LINE__, label, _tmp_exp, #exp, _tmp_r, #r);\
 			return ret_val;\
 		}\
 	} while (0)

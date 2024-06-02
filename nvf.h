@@ -19,7 +19,14 @@ typedef enum {
 } nvf_err;
 
 typedef enum {
-	NVF_FLOAT = 0,
+	NVF_PARSE_ARRAY = 0,
+	NVF_PARSE_MAP,
+	NVF_PARSE_NUM,
+} nvf_parse_type;
+
+typedef enum {
+	NVF_NONE = 0,
+	NVF_FLOAT,
 	NVF_INT,
 	NVF_BLOB,
 	NVF_STRING,
@@ -38,36 +45,27 @@ typedef struct nvf_blob {
 	uint8_t data[];
 } nvf_blob;
 
-typedef union nvf_primitive_value {
-	int64_t v_int;
-	double v_float;
-	char *v_string;
-	nvf_blob *v_blob;
-} nvf_primitive_value;
-
+typedef union nvf_value {
+		nvf_num map_i;
+		nvf_num array_i;
+		int64_t v_int;
+		double v_float;
+		char *v_string;
+		nvf_blob *v_blob;
+} nvf_value;
 
 // Arrays can't contain maps. I think that's fine for now.
 typedef struct nvf_array {
-	nvf_num   num, 
-		  cap;
-	uint8_t *value_types;
-	union {
-		nvf_num array_i;
-		nvf_primitive_value p_val;
-	} *values;
+	uint8_t *types;
+	nvf_value *values;
+	nvf_num num,
+		cap;
 } nvf_array;
 
 // TODO: Try to find a more efficient memory layout. I'm fairly sure we could make this better.
 typedef struct nvf_map {
-	nvf_num num,
-		cap;
 	char **names;
-	uint8_t *value_types;
-	union {
-		nvf_num map_i;
-		nvf_num array_i;
-		nvf_primitive_value p_val;
-	} *values;
+	nvf_array arr;
 } nvf_map;
 
 typedef void* (*realloc_fn)(void *, size_t);
