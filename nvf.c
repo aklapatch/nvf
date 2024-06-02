@@ -262,23 +262,22 @@ nvf_err nvf_ensure_array_cap(nvf_root *root, nvf_array *arr) {
 	return NVF_OK;
 }
 
-nvf_err nvf_ensure_cap(nvf_root *root, nvf_num map_i) {
+nvf_err nvf_ensure_map_cap(nvf_root *root, nvf_map *m) {
 	IF_RET(root == NULL, NVF_BAD_ARG);
-	nvf_map *cur_map = root->maps + map_i;
 
-	nvf_num old_cap = cur_map->arr.cap;
-	nvf_err e = nvf_ensure_array_cap(root, &cur_map->arr);
+	nvf_num old_cap = m->arr.cap;
+	nvf_err e = nvf_ensure_array_cap(root, &m->arr);
 	IF_RET(e != NVF_OK, e);
 
 	// Only resize if we need to (when the internal array resized).
-	nvf_num next_cap = cur_map->arr.cap;
+	nvf_num next_cap = m->arr.cap;
 	if (old_cap != next_cap) {
-		nvf_num next_cap = cur_map->arr.cap;
-		char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*cur_map->names));
+		nvf_num next_cap = m->arr.cap;
+		char **new_names = root->realloc_inst(m->names, next_cap * sizeof(*m->names));
 		IF_RET(new_names == NULL, NVF_BAD_ALLOC);
 		// Zero the new allocated pointers.
-		bzero(new_names + cur_map->arr.num, sizeof(*new_names)*(next_cap - cur_map->arr.num));
-		cur_map->names = new_names;
+		bzero(new_names + m->arr.num, sizeof(*new_names)*(next_cap - m->arr.num));
+		m->names = new_names;
 	}
 
 	return NVF_OK;
@@ -290,17 +289,21 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 		.err = NVF_OK,
 	};
 	IF_RET_DATA(root == NULL, r, NVF_BAD_ARG);
+	IF_RET_DATA(p_type != NVF_PARSE_MAP && p_type != NVF_PARSE_ARRAY, r, NVF_BAD_ARG);
 	IF_RET_DATA(root->init_val != NVF_INIT_VAL, r, NVF_NOT_INIT);
 
 	// TODO: make a better error code for this.
-	IF_RET_DATA(map_arr_i >= root->map_num, r, NVF_BUF_OVF);
+	bool ovf_cond = p_type == NVF_PARSE_MAP ? map_arr_i >= root->map_num : map_arr_i >= root->array_num;
+	IF_RET_DATA(ovf_cond, r, NVF_BUF_OVF);
 	nvf_map *cur_map = p_type == NVF_PARSE_MAP ? root->maps + map_arr_i : NULL;
-	nvf_array *cur_arr = p_type == NVF_PARSE_ARRAY ? root->arrays + map_arr_i : &cur_map->arr;
+	nvf_array *cur_arr = cur_map == NULL ? root->arrays + map_arr_i : &cur_map->arr;
 	for (; r.data_i < data_len; ++r.data_i) {
 		r.data_i += nvf_next_token_i(data + r.data_i, data_len - r.data_i);
 		IF_RET_DATA(r.data_i >= data_len, r, NVF_OK);
-		if (data[r.data_i] == '}') {
-			IF_RET_DATA(map_arr_i == 0, r, NVF_UNMATCHED_BRACE);
+		if (data[r.data_i] == '}' || data[r.data_i] == ']') {
+			// When parsing an array, encountering a brace might be valid since
+			// We don't put values in an array by defult.
+			IF_RET_DATA(data[r.data_i] == '}' && map_arr_i == 0, r, NVF_UNMATCHED_BRACE);
 			// Skip over the brace so the calling function doesn't detect it.
 			++r.data_i;
 			r.err = NVF_OK;
@@ -308,21 +311,26 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 		}
 		// TODO: Add multiline comment scanning between the names and values.
 
-		const char *name = &data[r.data_i];
-		while (r.data_i < data_len && !isspace(data[r.data_i])) {
-			r.data_i++;
-		}
-		IF_RET_DATA(data_len <= r.data_i, r, NVF_BUF_OVF);
-		uintptr_t name_len = (data + r.data_i) - name;
-		// Make sure the name doesn't collide with anything we already have.
-		nvf_num n_i = 0;
-		for (; n_i < cur_arr->num; ++n_i) {
-			// The name we inferred isn't null terminated.
-			// That means we can't use strcmp.
-			// Do it more manually instead.
-			// TODO: Add a test for this.
-			size_t m_name_len = strlen(cur_map->names[n_i]);
-			IF_RET_DATA(m_name_len == name_len && memcmp(cur_map->names[n_i], name, m_name_len) == 0, r, NVF_BUF_OVF);
+		const char *name = NULL;
+		uintptr_t name_len = 0;
+		// Skip checking names if we're not storing them anyway.
+		if (cur_map != NULL) {
+			name = &data[r.data_i];
+			while (r.data_i < data_len && !isspace(data[r.data_i])) {
+				r.data_i++;
+			}
+			IF_RET_DATA(data_len <= r.data_i, r, NVF_BUF_OVF);
+			name_len = (data + r.data_i) - name;
+			// Make sure the name doesn't collide with anything we already have.
+			nvf_num n_i = 0;
+			for (; n_i < cur_arr->num; ++n_i) {
+				// The name we inferred isn't null terminated.
+				// That means we can't use strcmp.
+				// Do it more manually instead.
+				// TODO: Add a test for this.
+				size_t m_name_len = strlen(cur_map->names[n_i]);
+				IF_RET_DATA(m_name_len == name_len && memcmp(cur_map->names[n_i], name, m_name_len) == 0, r, NVF_BUF_OVF);
+			}
 		}
 
 		r.data_i += nvf_next_token_i(data + r.data_i, data_len - r.data_i);
@@ -361,11 +369,15 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			}
 
 			// Grow the current map if we need to.
-			r.err = nvf_ensure_cap(root, map_arr_i);
+			if (cur_map == NULL) {
+				r.err = nvf_ensure_array_cap(root, cur_arr);
+			} else {
+				r.err = nvf_ensure_map_cap(root, cur_map);
+			}
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
 			// The array's arrays could have been reallocated.
 			// Update the pointers so they point to the right location.
-			cur_arr = &root->maps[map_arr_i].arr;
+			//cur_arr = &root->maps[map_arr_i].arr;
 
 			// Now that we have enough memory, add the integer value to the map.
 			cur_arr->values[cur_arr->num] = npv;
@@ -386,11 +398,12 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			uintptr_t str_len = r.data_i - str_start;
 
 			// Grow the current map if we need to.
-			r.err = nvf_ensure_cap(root, map_arr_i);
+			if (cur_map == NULL) {
+				r.err = nvf_ensure_array_cap(root, cur_arr);
+			} else {
+				r.err = nvf_ensure_map_cap(root, cur_map);
+			}
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
-			// The array's arrays could have been reallocated.
-			// Update the pointers so they point to the right location.
-			cur_arr = &root->maps[map_arr_i].arr;
 
 			char *d_str = root->realloc_inst(cur_arr->values[cur_arr->num].v_string, str_len + 1);
 			IF_RET_DATA(d_str == NULL, r, NVF_BAD_ALLOC);
@@ -408,17 +421,17 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			++r.data_i;
 			uintptr_t blob_start = r.data_i;
 			// Find the length of the BLOB before allocating memory.
-			for (; r.data_i < data_len && isxdigit(data[r.data_i]); ++r.data_i) {
-			}
+			for (; r.data_i < data_len && isxdigit(data[r.data_i]); ++r.data_i) {}
 			uintptr_t blob_len = r.data_i - blob_start;
 			IF_RET_DATA(blob_len == 0, r, NVF_BAD_VALUE_FMT);
 
 			// Grow the current map if we need to.
-			r.err = nvf_ensure_cap(root, map_arr_i);
+			if (cur_map == NULL) {
+				r.err = nvf_ensure_array_cap(root, cur_arr);
+			} else {
+				r.err = nvf_ensure_map_cap(root, cur_map);
+			}
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
-			// The array's arrays could have been reallocated.
-			// Update the pointers so they point to the right location.
-			cur_arr = &root->maps[map_arr_i].arr;
 
 			nvf_blob **map_blob = &cur_arr->values[cur_arr->num].v_blob;
 			uintptr_t bin_blob_len = (blob_len + 1) / 2;
@@ -444,11 +457,13 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			*map_blob = blob;
 			cur_arr->types[cur_arr->num] = NVF_BLOB;
 		} else if (data[r.data_i] == '{') {
+			// Don't allow maps to be nested in arrays.
+			IF_RET_DATA(p_type == NVF_PARSE_ARRAY || cur_map == NULL, r, NVF_ERROR);
 			++r.data_i;
 			// Allocate a new map, then parse the data in the new map.
 			if (root->map_num + 1 > root->map_cap) {
 				// TODO: Make a macro for the 8 constant.
-				nvf_num new_cap = root->map_cap * 2 + 8;
+				nvf_num new_cap = root->map_cap * 2 + 4;
 				nvf_map *new_map = root->realloc_inst(root->maps, new_cap * sizeof(*new_map));
 				IF_RET_DATA(new_map == NULL, r, NVF_BAD_ALLOC);
 				bzero(new_map + root->map_num, (new_cap - root->map_num) * sizeof(*new_map));
@@ -456,23 +471,33 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 				root->map_cap = new_cap;
 			}
 			cur_map = root->maps + map_arr_i;
+			cur_arr = &root->maps[map_arr_i].arr;
 
 			// Grow the current map if we need to.
-			r.err = nvf_ensure_cap(root, map_arr_i);
+			if (cur_map == NULL) {
+				r.err = nvf_ensure_array_cap(root, cur_arr);
+			} else {
+				r.err = nvf_ensure_map_cap(root, cur_map);
+			}
 			IF_RET_DATA(r.err != NVF_OK, r, r.err);
-			// The array's arrays could have been reallocated.
-			// Update the pointers so they point to the right location.
-			cur_arr = &root->maps[map_arr_i].arr;
 
 			// TODO: See if we should increment map_num before or after this function.
 			++root->map_num;
-			nvf_err_data_i r2 = nvf_parse_buf_map_arr(data + r.data_i, data_len - r.data_i, root, root->map_num - 1, NVF_PARSE_MAP);
+			nvf_num new_map_num = root->map_num;
+			nvf_err_data_i r2 = nvf_parse_buf_map_arr(data + r.data_i, data_len - r.data_i, root, new_map_num - 1, NVF_PARSE_MAP);
 			r.data_i += r2.data_i;
 			r.err = r2.err;
-			// The pointer to the map array may have moved, udpate it.
 			IF_RET(r.err != NVF_OK, r);
 
-			cur_arr->values[cur_arr->num].map_i = root->map_num - 1;
+			// The pointer to the map array may have moved, udpate it.
+			if (cur_map == NULL) {
+				cur_arr = root->arrays + map_arr_i;
+			} else {
+				cur_map = root->maps + map_arr_i;
+				cur_arr = &cur_map->arr;
+			}
+
+			cur_arr->values[cur_arr->num].map_i = new_map_num - 1;
 			cur_arr->types[cur_arr->num] = NVF_MAP;
 		} else if (data[r.data_i] == '[') {
 			++r.data_i;
@@ -492,24 +517,36 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			cur_arr = cur_map == NULL ? root->arrays + map_arr_i : cur_arr;
 
 			++root->array_num;
-			nvf_err_data_i r2 = nvf_parse_buf_map_arr(data + r.data_i, data_len - r.data_i, root, root->array_num - 1, NVF_PARSE_ARRAY);
+			// The array number may change if there's nested arrays. Save it just in case.
+			nvf_num new_arr_num = root->array_num;
+
+			nvf_err_data_i r2 = nvf_parse_buf_map_arr(data + r.data_i, data_len - r.data_i, root, new_arr_num - 1, NVF_PARSE_ARRAY);
 			r.data_i += r2.data_i;
 			r.err = r2.err;
-			// The pointer to the map array may have moved, udpate it.
 			IF_RET(r.err != NVF_OK, r);
 
-			cur_arr->values[cur_arr->num].array_i = root->array_num - 1;
+			// The pointer to the map array may have moved, udpate it.
+			if (cur_map == NULL) {
+				cur_arr = root->arrays + map_arr_i;
+			} else {
+				cur_map = root->maps + map_arr_i;
+				cur_arr = &cur_map->arr;
+			}
+
+			cur_arr->values[cur_arr->num].array_i = new_arr_num - 1;
 			cur_arr->types[cur_arr->num] = NVF_ARRAY;
 		} else {
 			r.err = NVF_BAD_VALUE_TYPE;	
 			return r;
 		}
-		char *name_mem = root->realloc_inst(cur_map->names[cur_arr->num], name_len + 1);
-		IF_RET_DATA(name_mem == NULL, r, NVF_BAD_ALLOC);
-		// Make sure we have a null terminator like all good C strings do.
-		name_mem[name_len] = '\0';
-		memcpy(name_mem, name, name_len);
-		cur_map->names[cur_arr->num]= name_mem;
+		if (cur_map != NULL) {
+			char *name_mem = root->realloc_inst(cur_map->names[cur_arr->num], name_len + 1);
+			IF_RET_DATA(name_mem == NULL, r, NVF_BAD_ALLOC);
+			// Make sure we have a null terminator like all good C strings do.
+			name_mem[name_len] = '\0';
+			memcpy(name_mem, name, name_len);
+			cur_map->names[cur_arr->num]= name_mem;
+		}
 		cur_arr->num++;
 	}
 

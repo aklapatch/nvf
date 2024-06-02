@@ -22,11 +22,13 @@ int main(int argc, char *argv[]){
 		"f_name 3.423\n"
 		"s_name \"test str\"\n"
 		"b_name bx01020304\n"
+		"a_name [ 32 1.32 \"str\" bx0708 ]\n"
 		"m_name {\n"
 		"	i_name 72333\n"
 		"	f_name 89.32\n"
 		"	s_name \"other test str\"\n"
 		"	b_name bx05060708090a0b0c0d\n"
+		"	a_name [ 32 1.32 \"str\" bx0708 ]\n"
 		"}";
 	uintptr_t test_len = strlen(int_test);
 
@@ -39,8 +41,8 @@ int main(int argc, char *argv[]){
 	root = nvf_root_default_init();
 
 	rd = nvf_parse_buf(int_test, test_len, &root);
-	ASSERT_INT(rd.err, NVF_OK, 1, "Testing parsing failure error");
-	ASSERT_INT(rd.data_i >= test_len, 1, 1, "Testing parsing failure data index");
+	ASSERT_INT(rd.err, NVF_OK, 1, "Testing parsing");
+	ASSERT_INT(rd.data_i >= test_len, 1, 1, "Testing parsing data index");
 
 	int64_t bin_int = 0;
 	const char *names[] = {"i_name"};
