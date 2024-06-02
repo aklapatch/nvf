@@ -474,6 +474,32 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 
 			cur_arr->values[cur_arr->num].map_i = root->map_num - 1;
 			cur_arr->types[cur_arr->num] = NVF_MAP;
+		} else if (data[r.data_i] == '[') {
+			++r.data_i;
+			// Allocate a new map, then parse the data in the new map.
+			if (root->array_num + 1 > root->array_cap) {
+				// TODO: Make a macro for the 8 constant.
+				nvf_num new_cap = root->array_cap * 2 + 4;
+				nvf_array *new_arr = root->realloc_inst(root->arrays, new_cap * sizeof(*new_arr));
+				IF_RET_DATA(new_arr == NULL, r, NVF_BAD_ALLOC);
+				bzero(new_arr + root->array_num, (new_cap - root->array_num) * sizeof(*new_arr));
+				root->arrays = new_arr;
+				root->array_cap = new_cap;
+			}
+			// The pointer value will be different depending on if we're parsing an array or a map.
+			// Make sure we account for that here.
+			// If we're parsing a map, our current array won't be changed.
+			cur_arr = cur_map == NULL ? root->arrays + map_arr_i : cur_arr;
+
+			++root->array_num;
+			nvf_err_data_i r2 = nvf_parse_buf_map_arr(data + r.data_i, data_len - r.data_i, root, root->array_num - 1, NVF_PARSE_ARRAY);
+			r.data_i += r2.data_i;
+			r.err = r2.err;
+			// The pointer to the map array may have moved, udpate it.
+			IF_RET(r.err != NVF_OK, r);
+
+			cur_arr->values[cur_arr->num].array_i = root->array_num - 1;
+			cur_arr->types[cur_arr->num] = NVF_ARRAY;
 		} else {
 			r.err = NVF_BAD_VALUE_TYPE;	
 			return r;
