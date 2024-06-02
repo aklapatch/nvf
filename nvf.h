@@ -21,7 +21,7 @@ typedef enum {
 typedef enum {
 	NVF_PARSE_ARRAY = 0,
 	NVF_PARSE_MAP,
-	NVF_PARSE_NUM,
+	NVF_PARSE_END,
 } nvf_parse_type;
 
 typedef enum {
