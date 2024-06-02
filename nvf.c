@@ -248,7 +248,7 @@ nvf_err nvf_ensure_array_cap(nvf_root *root, nvf_array *arr) {
 
 	if (arr->num + 1 > arr->cap) {
 		nvf_num next_cap = arr->cap * 2 + 4;
-		uint8_t *new_types = root->realloc_inst(arr->types, next_cap * sizeof(*new_types));
+		uint8_t *new_types = root->realloc_inst(arr->types, next_cap * sizeof(*arr->types));
 		IF_RET(new_types == NULL, NVF_BAD_ALLOC);
 		bzero(new_types + arr->num, sizeof(*arr->types) * (next_cap - arr->num));
 		arr->types = new_types;
@@ -274,7 +274,7 @@ nvf_err nvf_ensure_cap(nvf_root *root, nvf_num map_i) {
 	nvf_num next_cap = cur_map->arr.cap;
 	if (old_cap != next_cap) {
 		nvf_num next_cap = cur_map->arr.cap;
-		char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*new_names));
+		char **new_names = root->realloc_inst(cur_map->names, next_cap * sizeof(*cur_map->names));
 		IF_RET(new_names == NULL, NVF_BAD_ALLOC);
 		// Zero the new allocated pointers.
 		bzero(new_names + cur_map->arr.num, sizeof(*new_names)*(next_cap - cur_map->arr.num));
