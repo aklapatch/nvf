@@ -6,8 +6,11 @@ all: $(BUILD_DIR)nvf_test $(BUILD_DIR)libnvf.a
 debug: $(BUILD_DIR)nvf_test
 	gdb $(BUILD_DIR)nvf_test
 
+valgrind: $(BUILD_DIR)nvf_test
+	valgrind --leak-check=full $<
+
 test: $(BUILD_DIR)nvf_test
-	$(BUILD_DIR)nvf_test
+	$<
 
 $(BUILD_DIR)nvf_test: nvf_test.c $(BUILD_DIR)libnvf_debug.a
 	$(CC) -g3 $^ -o $@

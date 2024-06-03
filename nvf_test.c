@@ -3,6 +3,16 @@
 #include <string.h>
 #include <stdio.h>
 
+#define ASSERT_FLOAT(r, exp, ret_val, label)\
+	do {\
+		double _tmp_r = (r);\
+		double _tmp_exp = (exp);\
+		if (_tmp_r != _tmp_exp) {\
+			printf("%s:%u. %s failed. Expected %lf (%s), got %lf (%s)!\n", __FILE__, __LINE__, label, _tmp_exp, #exp, _tmp_r, #r);\
+			return ret_val;\
+		}\
+	} while (0)
+
 #define ASSERT_INT(r, exp, ret_val, label)\
 	do {\
 		int _tmp_r = (r);\
@@ -19,16 +29,16 @@ int main(int argc, char *argv[]){
 	// TODO: Add tests where all values are at the end of the string..
 	const char int_test[] = 
 		"i_name 32343\n"
-		"f_name 3.423\n"
+		"f_name 2.0\n"
 		"s_name \"test str\"\n"
 		"b_name bx01020304\n"
-		"a_name [ 32 1.32 \"str\" bx0708 ]\n"
+		"a_name [ 32 2.0 \"str\" bx0708 ]\n"
 		"m_name {\n"
 		"	i_name 72333\n"
 		"	f_name 89.32\n"
 		"	s_name \"other test str\"\n"
 		"	b_name bx05060708090a0b0c0d\n"
-		"	a_name [ 32 1.32 \"str\" bx0708 ]\n"
+		"	a_name [ 32 4.0 \"str\" bx0708 ]\n"
 		"}";
 	uintptr_t test_len = strlen(int_test);
 
@@ -62,6 +72,7 @@ int main(int argc, char *argv[]){
 	const char *f_names[] = {"f_name"};
 	rc = nvf_get_float(&root, f_names, 1, &bin_f);
 	ASSERT_INT(rc, NVF_OK, 1, "Getting a float");
+	ASSERT_FLOAT(bin_f, 2.0, 1, "Checking the float's value");
 
 	char str_out[32] = {0};
 	uintptr_t out_len = sizeof(str_out); 
@@ -93,7 +104,7 @@ int main(int argc, char *argv[]){
 
 	nvf_tag_value tv_f = nvf_get_next(&a_i);
 	ASSERT_INT(tv_f.type, NVF_FLOAT, 1, "Getting float type from array");
-	ASSERT_INT(tv_f.val.v_float == 1.32, 1, 1, "Getting float value from array");
+	ASSERT_FLOAT(tv_f.val.v_float, 2.0, 1, "Getting float value from array");
 
 	nvf_tag_value tv_s = nvf_get_next(&a_i);
 	ASSERT_INT(tv_s.type, NVF_STRING, 1, "Getting string type from array");
