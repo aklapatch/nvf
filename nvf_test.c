@@ -80,6 +80,34 @@ int main(int argc, char *argv[]){
 	ASSERT_INT(bin_out_len, sizeof(bin_exp), 1, "Checking BLOB size");
 	ASSERT_INT(memcmp(bin_exp, bin_out, bin_out_len), 0, 1, "Checking BLOB results");
 
+	nvf_array arr = {0};
+	const char *a_names = "a_name";
+	rc = nvf_get_array(&root, &a_names, 1, &arr);
+	ASSERT_INT(rc, NVF_OK, 1, "Getting an array");
+
+	nvf_array_iter a_i = nvf_iter_init(&arr);
+
+	nvf_tag_value tv = nvf_get_next(&a_i);
+	ASSERT_INT(tv.type, NVF_INT, 1, "Getting int type from array");
+	ASSERT_INT(tv.val.v_int, 32, 1, "Getting int value from array");
+
+	nvf_tag_value tv_f = nvf_get_next(&a_i);
+	ASSERT_INT(tv_f.type, NVF_FLOAT, 1, "Getting float type from array");
+	ASSERT_INT(tv_f.val.v_float == 1.32, 1, 1, "Getting float value from array");
+
+	nvf_tag_value tv_s = nvf_get_next(&a_i);
+	ASSERT_INT(tv_s.type, NVF_STRING, 1, "Getting string type from array");
+	ASSERT_INT(strcmp(tv_s.val.v_string, "str"), 0, 1, "Getting string value from array");
+
+	nvf_tag_value tv_b = nvf_get_next(&a_i);
+	ASSERT_INT(tv_b.type, NVF_BLOB, 1, "Getting blob type from array");
+	ASSERT_INT(tv_b.val.v_blob->len, 2, 1, "Getting blob length from array");
+	uint8_t b_exp_val[] = {7, 8};
+	ASSERT_INT(memcmp(tv_b.val.v_blob->data, b_exp_val, sizeof(b_exp_val)), 0, 1, "Getting blob value from array");
+
+	nvf_tag_value tv_n = nvf_get_next(&a_i);
+	ASSERT_INT(tv_n.type, NVF_NONE, 1, "Getting none value from an iterator");
+
 	rc = nvf_deinit(&root);
 	ASSERT_INT(rc, NVF_OK, 1, "Deiniting the root");
 

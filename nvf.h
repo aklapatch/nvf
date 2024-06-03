@@ -153,3 +153,7 @@ nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth, char
 nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth, uint8_t *bin_out, uintptr_t *bin_out_len);
 
 nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth, nvf_array *out);
+
+nvf_array_iter nvf_iter_init(const nvf_array *arr);
+
+nvf_tag_value nvf_get_next(nvf_array_iter *iter);

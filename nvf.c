@@ -212,17 +212,18 @@ nvf_array_iter nvf_iter_init(const nvf_array *arr) {
 }
 
 nvf_tag_value nvf_get_next(nvf_array_iter *iter) {
-	nvf_tag_value r = {
-		.val = {0},
-		.type = NVF_NONE,
-	};
 	if (iter->arr_i < iter->arr->num) {
 		nvf_tag_value r2 = {
 			.val = iter->arr->values[iter->arr_i],
 			.type = iter->arr->types[iter->arr_i],
 		};
+		++iter->arr_i;
 		return r2;
 	}
+	nvf_tag_value r = {
+		.val = {0},
+		.type = NVF_NONE,
+	};
 	return r;
 }
 
