@@ -516,6 +516,12 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			// If we're parsing a map, our current array won't be changed.
 			cur_arr = cur_map == NULL ? root->arrays + map_arr_i : cur_arr;
 
+			if (cur_map == NULL) {
+				r.err = nvf_ensure_array_cap(root, cur_arr);
+			} else {
+				r.err = nvf_ensure_map_cap(root, cur_map);
+			}
+
 			++root->array_num;
 			// The array number may change if there's nested arrays. Save it just in case.
 			nvf_num new_arr_num = root->array_num;
