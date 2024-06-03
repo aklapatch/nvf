@@ -183,6 +183,11 @@ nvf_err nvf_get_value(
 					double *f_out = out;
 					*f_out = parent_map.arr.values[n_i].v_float;
 					*out_len = sizeof(*f_out);
+				} else if (dt == NVF_ARRAY) {
+					nvf_array *a_out = out;
+					nvf_num arr_out_i = parent_map.arr.values[n_i].array_i;
+					*a_out = root->arrays[arr_out_i];
+					*out_len = sizeof(*a_out);
 				} else {
 					return NVF_BAD_VALUE_TYPE;
 				}
@@ -195,6 +200,35 @@ nvf_err nvf_get_value(
 	}
 
 	return NVF_NOT_FOUND;
+}
+
+nvf_array_iter nvf_iter_init(const nvf_array *arr) {
+	// NOTE: We don't check pointer validity.
+	nvf_array_iter a_i = {
+		.arr = arr,
+		.arr_i = 0,
+	};
+	return a_i;
+}
+
+nvf_tag_value nvf_get_next(nvf_array_iter *iter) {
+	nvf_tag_value r = {
+		.val = {0},
+		.type = NVF_NONE,
+	};
+	if (iter->arr_i < iter->arr->num) {
+		nvf_tag_value r2 = {
+			.val = iter->arr->values[iter->arr_i],
+			.type = iter->arr->types[iter->arr_i],
+		};
+		return r2;
+	}
+	return r;
+}
+
+nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth, nvf_array *out) {
+	uintptr_t out_len = sizeof(*out);
+	return nvf_get_value(root, names, name_depth, out, &out_len, NVF_ARRAY);
 }
 
 nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, double *out) {

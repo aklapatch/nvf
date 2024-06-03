@@ -124,6 +124,16 @@ typedef struct {
 	nvf_err err;
 } nvf_err_data_i;
 
+typedef struct {
+	const nvf_array *arr;
+	nvf_num arr_i;
+} nvf_array_iter;
+
+typedef struct {
+	const nvf_value val;
+	const nvf_data_type type;
+} nvf_tag_value;
+
 nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
 
 nvf_root nvf_root_default_init(void);
@@ -141,3 +151,5 @@ nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth, do
 nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth, char *str_out, uintptr_t *str_out_len);
 
 nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth, uint8_t *bin_out, uintptr_t *bin_out_len);
+
+nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth, nvf_array *out);
