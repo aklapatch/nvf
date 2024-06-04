@@ -210,7 +210,7 @@ nvf_err nvf_get_value_alloc(
 	nvf_data_type dt) {
 
 	IF_RET(dt != NVF_BLOB && NVF_STRING != dt, NVF_BAD_ARG);
-	// Call the get_value function once to get the item length before allocating
+	// Call the get_value function once to get the item length before allocating.
 	uint8_t tmp_out[1] = {0};
 	uintptr_t tmp_out_len = sizeof(tmp_out);
 	nvf_err r = nvf_get_value(root, names, name_depth, tmp_out, &tmp_out_len, dt);
@@ -221,7 +221,7 @@ nvf_err nvf_get_value_alloc(
 	uint8_t *out_alloc = root->realloc_inst(NULL, tmp_out_len);
 	IF_RET(out_alloc == NULL, NVF_BAD_ALLOC);
 	*out = (void*)out_alloc;
-	if (tmp_out_len == 1) {
+	if (tmp_out_len == sizeof(tmp_out)) {
 		*out_alloc = *tmp_out;
 	} else {
 		r = nvf_get_value(root, names, name_depth, *out, out_len, dt);	

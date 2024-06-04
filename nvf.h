@@ -157,3 +157,10 @@ nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth, nv
 nvf_array_iter nvf_iter_init(const nvf_array *arr);
 
 nvf_tag_value nvf_get_next(nvf_array_iter *iter);
+
+nvf_err nvf_get_blob_alloc(
+	nvf_root *root,
+	const char **names,
+	nvf_num name_depth,
+	uint8_t **out,
+	uintptr_t *out_len);
