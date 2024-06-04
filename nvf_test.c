@@ -8,7 +8,7 @@
 		double _tmp_r = (r);\
 		double _tmp_exp = (exp);\
 		if (_tmp_r != _tmp_exp) {\
-			printf("%s:%u. %s failed. Expected %lf (%s), got %lf (%s)!\n", __FILE__, __LINE__, label, _tmp_exp, #exp, _tmp_r, #r);\
+			printf("%s:%u. %s failed. Expected %f (%s), got %f (%s)!\n", __FILE__, __LINE__, label, _tmp_exp, #exp, _tmp_r, #r);\
 			return ret_val;\
 		}\
 	} while (0)
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
 		"a_name [ 32 2.0 \"str\" bx0708 ]\n"
 		"m_name {\n"
 		"	i_name 72333\n"
-		"	f_name 0.08\n"
+		"	f_name 0.8\n"
 		"	s_name \"other test str\"\n"
 		"	b_name bx05060708090a0b0c0d\n"
 		"	a_name [ 128 0.4 \"str2\" bx090a0b ]\n"
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
 	const char *m_f_names[] = {"m_name", "f_name"};
 	rc = nvf_get_float(&root, m_f_names, 2, &bin_f);
 	ASSERT_INT(rc, NVF_OK, 1, "Getting a float");
-	ASSERT_FLOAT(bin_f, 0.08, 1, "Checking the float's value");
+	ASSERT_FLOAT(bin_f, 0.8, 1, "Checking the float's value");
 
 	{
 		char str_out[32] = {0};
