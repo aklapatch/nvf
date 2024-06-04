@@ -238,6 +238,7 @@ nvf_err nvf_get_blob_alloc(
 	uintptr_t *out_len) {
 	return nvf_get_value_alloc(root, names, name_depth, (void**)out, out_len, NVF_BLOB);
 }
+
 nvf_err nvf_get_str_alloc(
 	nvf_root *root,
 	const char **names,
@@ -270,6 +271,12 @@ nvf_tag_value nvf_get_next(nvf_array_iter *iter) {
 		.type = NVF_NONE,
 	};
 	return r;
+}
+
+nvf_err nvf_get_array_from_i(nvf_root *root, nvf_num arr_i, nvf_array *out) {
+	IF_RET(arr_i >= root->array_num, NVF_BUF_OVF);
+	*out = root->arrays[arr_i];
+	return NVF_OK;
 }
 
 nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth, nvf_array *out) {

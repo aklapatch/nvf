@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 		"f_name 2.0\n"
 		"s_name \"test str\"\n"
 		"b_name bx01020304\n"
-		"a_name [ 32 2.0 \"str\" bx0708 ]\n"
+		"a_name [ 32 2.0 \"str\" bx0708 [ 67 ] ]\n"
 		"m_name {\n"
 		"	i_name 72333\n"
 		"	f_name 0.8\n"
@@ -142,6 +142,21 @@ int main(int argc, char *argv[]){
 	ASSERT_INT(tv_b.val.v_blob->len, 2, 1, "Getting blob length from array");
 	uint8_t b_exp_val[] = {7, 8};
 	ASSERT_INT(memcmp(tv_b.val.v_blob->data, b_exp_val, sizeof(b_exp_val)), 0, 1, "Getting blob value from array");
+
+	nvf_tag_value tv_a = nvf_get_next(&a_i);
+	ASSERT_INT(tv_a.type, NVF_ARRAY, 1, "Getting array value from an iterator");
+
+	{
+		nvf_array t_arr = {0};
+		rc = nvf_get_array_from_i(&root, tv_a.val.array_i, &t_arr);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting array index from array");
+
+		nvf_array_iter n_a_i = nvf_iter_init(&t_arr);
+
+		nvf_tag_value n_tv_i = nvf_get_next(&n_a_i);
+		ASSERT_INT(n_tv_i.type, NVF_INT, 1, "Checking nested array type");
+		ASSERT_INT(n_tv_i.val.v_int, 67, 1, "Checking nested array value");
+	}
 
 	nvf_tag_value tv_n = nvf_get_next(&a_i);
 	ASSERT_INT(tv_n.type, NVF_NONE, 1, "Getting none value from an iterator");
