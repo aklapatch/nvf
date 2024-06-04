@@ -404,6 +404,12 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 		if (cur_map != NULL) {
 			name = &data[r.data_i];
 			while (r.data_i < data_len && !isspace(data[r.data_i])) {
+				char ch = data[r.data_i];
+				if (ch == '{' || ch == '[') {
+					// Account for the extra step we took to see the brace/bracket
+					--r.data_i;
+					break;
+				}
 				r.data_i++;
 			}
 			IF_RET_DATA(data_len <= r.data_i, r, NVF_BUF_OVF);
@@ -429,7 +435,7 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			
 			// It's a number.
 			bool is_float = false;
-			for (; r.data_i < data_len && (isdigit(data[r.data_i]) || data[r.data_i] == '.'); ++r.data_i) {
+			for (; r.data_i < data_len && (isxdigit(data[r.data_i]) || data[r.data_i] == '.'); ++r.data_i) {
 				if (data[r.data_i] == '.') {
 					// That's a badly formatted floating point number..
 					IF_RET_DATA(is_float, r, NVF_BAD_VALUE_FMT);
@@ -438,6 +444,7 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			}
 			nvf_value npv = {0};
 			uintptr_t value_len = (data + r.data_i) - value;
+			--r.data_i;
 			nvf_data_type npt = NVF_NUM_TYPES;
 			if (is_float) {
 				char *end = (char*)value; 
@@ -511,6 +518,8 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			for (; r.data_i < data_len && isxdigit(data[r.data_i]); ++r.data_i) {}
 			uintptr_t blob_len = r.data_i - blob_start;
 			IF_RET_DATA(blob_len == 0, r, NVF_BAD_VALUE_FMT);
+			// The for loop will increment this later. decrement it to account for that.
+			--r.data_i;
 
 			// Grow the current map if we need to.
 			if (cur_map == NULL) {

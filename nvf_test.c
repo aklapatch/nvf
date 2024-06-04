@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 		"f_name 2.0\n"
 		"s_name \"test str\"\n"
 		"b_name bx01020304\n"
-		"a_name [ 32 2.0 \"str\" bx0708 [ 67 ] ]\n"
+		"a_name [ 32 2.0 \"str\" bx0708 [ 67] ]\n"
 		"m_name {\n"
 		"	i_name 72333\n"
 		"	f_name 0.8\n"
