@@ -97,14 +97,26 @@ int main(int argc, char *argv[]){
 	}
 
 
-	char bin_out[32] = {0};
-	uintptr_t bin_out_len = sizeof(bin_out); 
-	const char *b_names[] = {"b_name"};
-	rc = nvf_get_blob(&root, b_names, 1, bin_out, &bin_out_len);
-	ASSERT_INT(rc, NVF_OK, 1, "Getting a BLOB");
-	uint8_t bin_exp[] = { 1, 2, 3, 4};
-	ASSERT_INT(bin_out_len, sizeof(bin_exp), 1, "Checking BLOB size");
-	ASSERT_INT(memcmp(bin_exp, bin_out, bin_out_len), 0, 1, "Checking BLOB results");
+	{
+		char bin_out[32] = {0};
+		uintptr_t bin_out_len = sizeof(bin_out); 
+		const char *b_names[] = {"b_name"};
+		rc = nvf_get_blob(&root, b_names, 1, bin_out, &bin_out_len);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting a BLOB");
+		uint8_t bin_exp[] = { 1, 2, 3, 4};
+		ASSERT_INT(bin_out_len, sizeof(bin_exp), 1, "Checking BLOB size");
+		ASSERT_INT(memcmp(bin_exp, bin_out, bin_out_len), 0, 1, "Checking BLOB results");
+	}
+	{
+		char bin_out[32] = {0};
+		uintptr_t bin_out_len = sizeof(bin_out); 
+		const char *b_names[] = {"m_name", "b_name"};
+		rc = nvf_get_blob(&root, b_names, 2, bin_out, &bin_out_len);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting a BLOB");
+		uint8_t bin_exp[] = { 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd};
+		ASSERT_INT(bin_out_len, sizeof(bin_exp), 1, "Checking BLOB size");
+		ASSERT_INT(memcmp(bin_exp, bin_out, bin_out_len), 0, 1, "Checking BLOB results");
+	}
 
 	nvf_array arr = {0};
 	const char *a_names = "a_name";
