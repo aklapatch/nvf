@@ -164,3 +164,10 @@ nvf_err nvf_get_blob_alloc(
 	nvf_num name_depth,
 	uint8_t **out,
 	uintptr_t *out_len);
+
+nvf_err nvf_get_str_alloc(
+	nvf_root *root,
+	const char **names,
+	nvf_num name_depth,
+	char **out,
+	uintptr_t *out_len);

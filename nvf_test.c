@@ -182,9 +182,23 @@ int main(int argc, char *argv[]){
 		uint8_t bin_exp[] = { 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd};
 		rc = nvf_get_blob_alloc(&root, b_names, 2, &bin_out, &bin_out_len);
 		ASSERT_INT(rc, NVF_OK, 1, "Getting an allocated BLOB");
+		ASSERT_INT(bin_out_len, sizeof(bin_exp), 1, "Checking BLOB size");
 		ASSERT_INT(memcmp(bin_exp, bin_out, bin_out_len), 0, 1, "Checking the blob value");
 
 		root.free_inst(bin_out);
+	}
+
+	{
+		const char *s_names[] = {"m_name", "s_name"};
+		char *str_out = NULL;
+		uintptr_t str_out_len;
+		uint8_t str_exp[] = "other test str";
+		rc = nvf_get_str_alloc(&root, s_names, 2, &str_out, &str_out_len);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting an allocated string");
+		ASSERT_INT(str_out_len, sizeof(str_exp), 1, "Checking string length");
+		ASSERT_INT(memcmp(str_exp, str_out, str_out_len), 0, 1, "Checking the string value");
+
+		root.free_inst(str_out);
 	}
 
 	rc = nvf_deinit(&root);
