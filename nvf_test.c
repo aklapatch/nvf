@@ -78,13 +78,24 @@ int main(int argc, char *argv[]){
 	ASSERT_INT(rc, NVF_OK, 1, "Getting a float");
 	ASSERT_FLOAT(bin_f, 0.08, 1, "Checking the float's value");
 
-	char str_out[32] = {0};
-	uintptr_t out_len = sizeof(str_out); 
-	const char *s_names[] = {"s_name"};
-	rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
-	ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
+	{
+		char str_out[32] = {0};
+		uintptr_t out_len = sizeof(str_out); 
+		const char *s_names[] = {"s_name"};
+		rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
+		ASSERT_INT(strcmp("test str", str_out), 0, 1, "Comparing string results");
+	}
 
-	ASSERT_INT(strcmp("test str", str_out), 0, 1, "Comparing string results");
+	{
+		char str_out[32] = {0};
+		uintptr_t out_len = sizeof(str_out); 
+		const char *s_names[] = {"m_name", "s_name"};
+		rc = nvf_get_str(&root, s_names, 2, str_out, &out_len);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
+		ASSERT_INT(strcmp("other test str", str_out), 0, 1, "Comparing string results");
+	}
+
 
 	char bin_out[32] = {0};
 	uintptr_t bin_out_len = sizeof(bin_out); 
