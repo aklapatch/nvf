@@ -32,13 +32,13 @@ int main(int argc, char *argv[]){
 		"f_name 2.0\n"
 		"s_name \"test str\"\n"
 		"b_name bx01020304\n"
-		"a_name [ 32 2.0 \"str\" bx0708 [ 67] ]\n"
+		"a_name [32 2.0 \"str\" bx0708 [67]]\n"
 		"m_name {\n"
 		"	i_name 72333\n"
 		"	f_name 0.8\n"
 		"	s_name \"other test str\"\n"
 		"	b_name bx05060708090a0b0c0d\n"
-		"	a_name [ 128 0.4 \"str2\" bx090a0b ]\n"
+		"	a_name [128 0.4 \"str2\" bx090a0b]\n"
 		"}";
 	uintptr_t test_len = strlen(int_test);
 

@@ -582,6 +582,8 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			nvf_num new_map_num = root->map_num;
 			nvf_err_data_i r2 = nvf_parse_buf_map_arr(data + r.data_i, data_len - r.data_i, root, new_map_num - 1, NVF_PARSE_MAP);
 			r.data_i += r2.data_i;
+			// The for loop will increment this. Decrement it to account for that.
+			--r.data_i;
 			r.err = r2.err;
 			IF_RET(r.err != NVF_OK, r);
 
@@ -624,6 +626,8 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 
 			nvf_err_data_i r2 = nvf_parse_buf_map_arr(data + r.data_i, data_len - r.data_i, root, new_arr_num - 1, NVF_PARSE_ARRAY);
 			r.data_i += r2.data_i;
+			// The for loop will increment this. Decrement it to account for that.
+			--r.data_i;
 			r.err = r2.err;
 			IF_RET(r.err != NVF_OK, r);
 
