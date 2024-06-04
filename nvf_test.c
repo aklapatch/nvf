@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
 		"	f_name 89.32\n"
 		"	s_name \"other test str\"\n"
 		"	b_name bx05060708090a0b0c0d\n"
-		"	a_name [ 32 4.0 \"str\" bx0708 ]\n"
+		"	a_name [ 128 0.4 \"str2\" bx090a0b ]\n"
 		"}";
 	uintptr_t test_len = strlen(int_test);
 
@@ -118,6 +118,35 @@ int main(int argc, char *argv[]){
 
 	nvf_tag_value tv_n = nvf_get_next(&a_i);
 	ASSERT_INT(tv_n.type, NVF_NONE, 1, "Getting none value from an iterator");
+
+	{
+		const char *am_names[] = {"m_name", "a_name"};
+		rc = nvf_get_array(&root, am_names, 2, &arr);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting a nested array");
+
+		a_i = nvf_iter_init(&arr);
+
+		nvf_tag_value m_tv = nvf_get_next(&a_i);
+		ASSERT_INT(m_tv.type, NVF_INT, 1, "Getting int type from array");
+		ASSERT_INT(m_tv.val.v_int, 128, 1, "Getting int value from array");
+
+		nvf_tag_value m_tv_f = nvf_get_next(&a_i);
+		ASSERT_INT(m_tv_f.type, NVF_FLOAT, 1, "Getting float type from array");
+		ASSERT_FLOAT(m_tv_f.val.v_float, 0.4, 1, "Getting float value from array");
+
+		nvf_tag_value m_tv_s = nvf_get_next(&a_i);
+		ASSERT_INT(m_tv_s.type, NVF_STRING, 1, "Getting string type from array");
+		ASSERT_INT(strcmp(m_tv_s.val.v_string, "str2"), 0, 1, "Getting string value from array");
+
+		nvf_tag_value m_tv_b = nvf_get_next(&a_i);
+		ASSERT_INT(m_tv_b.type, NVF_BLOB, 1, "Getting blob type from array");
+		ASSERT_INT(m_tv_b.val.v_blob->len, 3, 1, "Getting blob length from array");
+		uint8_t m_b_exp_val[] = {9, 0xa, 0xb};
+		ASSERT_INT(memcmp(m_tv_b.val.v_blob->data, m_b_exp_val, sizeof(m_b_exp_val)), 0, 1, "Getting blob value from array");
+
+		nvf_tag_value m_tv_n = nvf_get_next(&a_i);
+		ASSERT_INT(m_tv_n.type, NVF_NONE, 1, "Getting none value from an iterator");
+	}
 
 	rc = nvf_deinit(&root);
 	ASSERT_INT(rc, NVF_OK, 1, "Deiniting the root");
