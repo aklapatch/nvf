@@ -685,3 +685,76 @@ nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out
 	// multiple function calls.
 	return nvf_parse_buf_map_arr(data, data_len, out_root, out_root->map_num - 1, NVF_PARSE_MAP);
 }
+
+nvf_err nvf_array_to_str(nvf_root *root, char **out, uintptr_t *out_len, nvf_num array_i) {
+
+
+	return NVF_OK;
+}
+nvf_err nvf_map_to_str(nvf_root *root, char **out, uintptr_t *out_len, nvf_num map_i) {
+	nvf_map *iter = root->maps + map_i;
+	for (nvf_num m_i = 0; m_i < iter->arr.num; ++m_i) {
+		len = 0;
+		nvf_data_type dt = iter->arr.types[m_i];
+		char *name = iter->names[m_i];
+		nvf_value nv = iter->arr.values[m_i];
+		nvf_err r = NVF_OK;
+		if (dt == NVF_INT) {
+			len = snprintf(NULL, 0, "%s %ld\n", name, nv.v_int);
+		} else if (dt == NVF_FLOAT) {
+			len = snprintf(NULL, 0, "%s %f\n", name, nv.v_float);
+		} else if (dt == NVF_STRING) {
+			len = snprintf(NULL, 0, "%s %s\n", name, nv.v_string);
+		} else if (dt == NVF_BLOB) {
+			len = snprintf(NULL, 0, "%s bx\n", name);
+			if (len < 0) {
+				root->free_inst(*out);
+				return NVF_ERROR;
+			}
+			len += 2*nv.v_blob->len;
+		} else if (dt == NVF_ARRAY) {
+			// TODO: Call  the array parsing function
+			len = snprint(NULL, 0, "%s []\n", name);
+		} else if (dt == NVF_MAP) {
+			r = nvf_map_to_str(root, out, out_len, nv.map_i);
+			if (r != NVF_OK) {
+				root->free_inst(*out);
+				return r;
+			}
+		} else {
+			// We're assuming free is null safe here.
+			root->free_inst(*out);
+			return NVF_BAD_VALUE_TYPE;
+		}
+		if (len < 0) {
+			root->free_inst(*out);
+			return NVF_ERROR;
+		}
+
+		uintptr_t old_len = *out_len;
+		uintptr_t new_len = old_len + len;
+		char *new_out = root->realloc_inst(*out, new_len);
+		if (new_out == NULL) {
+			root->free_inst(*out);
+			return NVF_BAD_ALLOC;
+		}
+	}
+
+	return NVF_OK;
+}
+
+nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len) {
+	IF_RET(root == NULL || out == NULL || out_len == NULL, NVF_BAD_ARG);
+	// Iterate through the structure and append it to the string.
+	// Use the allocator to allocate the string.
+
+	IF_RET(root->map_num == 0, NVF_OK);
+	nvf_map *iter = root->maps;	
+	// Allocate one byte for the NULL terminator.
+	*out = root->realloc_inst(NULL, 1);
+	IF_RET(*out == NULL, NVF_BAD_ALLOC);
+	*out[0] = '\0';
+	*out_len = 1;
+
+	return nvf_map_to_str(root, out, out_len, 0);
+}
