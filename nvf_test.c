@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
 	const char int_test[] = 
 		"i_name 32343\n"
 		"f_name 2.0\n"
-		"s_name \"test str\"\n"
+		"s_name \"test\\nstr\"\n"
 		"b_name bx01020304\n"
 		"a_name [32 2.0 \"str\" bx0708 [67]]\n"
 		"m_name {\n"
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
 		const char *s_names[] = {"s_name"};
 		rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
 		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
-		ASSERT_INT(strcmp("test str", str_out), 0, 1, "Comparing string results");
+		ASSERT_INT(strcmp("test\nstr", str_out), 0, 1, "Comparing string results");
 	}
 
 	{
