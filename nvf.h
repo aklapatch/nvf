@@ -9,6 +9,7 @@ typedef enum {
 	NVF_BUF_OVF,
 	NVF_BAD_VALUE_FMT,
 	NVF_BAD_ARG,
+	NVF_BAD_DATA,
 	NVF_BAD_VALUE_TYPE,
 	NVF_NOT_INIT,
 	NVF_NOT_FOUND,
@@ -69,6 +70,7 @@ typedef struct nvf_map {
 
 typedef void* (*realloc_fn)(void *, size_t);
 typedef void (*free_fn)(void *);
+typedef int (*str_fmt_fn)( char * s, size_t n, const char * format, ... );
 
 #define NVF_INIT_VAL (0x72)
 

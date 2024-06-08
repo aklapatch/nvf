@@ -5,7 +5,7 @@
 #include <string.h>
 #include <limits.h>
 #include <math.h>
-
+#include <stdio.h>
 
 /* Format example:
    # This is a comment
@@ -502,7 +502,35 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			char *d_str = root->realloc_inst(cur_arr->values[cur_arr->num].v_string, str_len + 1);
 			IF_RET_DATA(d_str == NULL, r, NVF_BAD_ALLOC);
 			d_str[str_len] = '\0';
-			memcpy(d_str, &data[str_start], str_len);
+			const char *d_str_start = data + str_start;
+			bool esc_char = false;
+			nvf_num d_i = 0;
+			for (nvf_num s_i = 0; s_i < str_len; ++s_i) {
+				if (d_str_start[s_i] == '\\') {
+					esc_char = true;
+				} else if (esc_char) {
+					esc_char = false;
+					char ec = data[s_i];
+					bool assigned = false;
+#define MATCH_ASSIGN(i_char, e_char, dest, src, assigned)\
+	do { \
+		if (i_char == src) {\
+			dest = e_char;\
+			assigned = true;\
+		}\
+	} while (0)
+					MATCH_ASSIGN('n', '\n', d_str[d_i], d_str_start[s_i], assigned);
+					MATCH_ASSIGN('t', '\t', d_str[d_i], d_str_start[s_i], assigned);
+					MATCH_ASSIGN('r', '\r', d_str[d_i], d_str_start[s_i], assigned);
+					MATCH_ASSIGN('"', '"', d_str[d_i], d_str_start[s_i], assigned);
+					MATCH_ASSIGN('\\', '\\', d_str[d_i], d_str_start[s_i], assigned);
+					IF_RET_DATA(assigned == false, r, NVF_BAD_DATA);
+					++d_i;
+				} else {
+					d_str[d_i] = d_str_start[s_i];
+					++d_i;
+				}
+			}
 			// Now that we have enough memory, add the string to the map.
 			cur_arr->values[cur_arr->num].v_string = d_str;
 			cur_arr->types[cur_arr->num] = NVF_STRING;
@@ -686,37 +714,53 @@ nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len, nvf_root *out
 	return nvf_parse_buf_map_arr(data, data_len, out_root, out_root->map_num - 1, NVF_PARSE_MAP);
 }
 
-nvf_err nvf_array_to_str(nvf_root *root, char **out, uintptr_t *out_len, nvf_num array_i) {
-
-
-	return NVF_OK;
+char nvf_bin_to_char(uint8_t byte) {
+	IF_RET(byte >= 16, '\0');
+	IF_RET(byte >= 10, byte - 10 + 'a');
+	return byte + '0';
 }
-nvf_err nvf_map_to_str(nvf_root *root, char **out, uintptr_t *out_len, nvf_num map_i) {
-	nvf_map *iter = root->maps + map_i;
+
+nvf_err nvf_map_arr_to_str(
+	nvf_root *root,
+	char **out,
+	uintptr_t *out_len,
+	nvf_num map_arr_i,
+	str_fmt_fn fmt_fn,
+	nvf_parse_type pt) {
+
+	nvf_map *iter = NULL;
+	nvf_array *arr = NULL;
+	if (pt == NVF_PARSE_MAP) {
+		iter = root->maps + map_arr_i;
+		arr = &iter->arr;
+	} else if (pt == NVF_PARSE_ARRAY) {
+		arr = root->arrays + map_arr_i;
+	} else {
+		return NVF_BAD_ARG;
+	}
 	for (nvf_num m_i = 0; m_i < iter->arr.num; ++m_i) {
-		len = 0;
-		nvf_data_type dt = iter->arr.types[m_i];
-		char *name = iter->names[m_i];
-		nvf_value nv = iter->arr.values[m_i];
+		int len = 0;
+		nvf_data_type dt = arr->types[m_i];
+		char *name = iter == NULL ? "" : iter->names[m_i];
+		nvf_value nv = arr->values[m_i];
 		nvf_err r = NVF_OK;
 		if (dt == NVF_INT) {
-			len = snprintf(NULL, 0, "%s %ld\n", name, nv.v_int);
+			len = fmt_fn(NULL, 0, "%s %ld\n", name, nv.v_int);
 		} else if (dt == NVF_FLOAT) {
-			len = snprintf(NULL, 0, "%s %f\n", name, nv.v_float);
+			len = fmt_fn(NULL, 0, "%s %f\n", name, nv.v_float);
 		} else if (dt == NVF_STRING) {
-			len = snprintf(NULL, 0, "%s %s\n", name, nv.v_string);
+			len = fmt_fn(NULL, 0, "%s \"%s\"\n", name, nv.v_string);
 		} else if (dt == NVF_BLOB) {
-			len = snprintf(NULL, 0, "%s bx\n", name);
+			len = fmt_fn(NULL, 0, "%s bx\n", name);
 			if (len < 0) {
 				root->free_inst(*out);
 				return NVF_ERROR;
 			}
 			len += 2*nv.v_blob->len;
-		} else if (dt == NVF_ARRAY) {
-			// TODO: Call  the array parsing function
-			len = snprint(NULL, 0, "%s []\n", name);
-		} else if (dt == NVF_MAP) {
-			r = nvf_map_to_str(root, out, out_len, nv.map_i);
+		} else if (dt == NVF_MAP || dt == NVF_ARRAY) {
+			nvf_parse_type new_pt = dt == NVF_MAP ? NVF_PARSE_MAP : NVF_PARSE_ARRAY;
+			nvf_num next_i = dt == NVF_MAP ? nv.map_i : nv.array_i;
+			r = nvf_map_arr_to_str(root, out, out_len, next_i, fmt_fn, new_pt);
 			if (r != NVF_OK) {
 				root->free_inst(*out);
 				return r;
@@ -731,19 +775,62 @@ nvf_err nvf_map_to_str(nvf_root *root, char **out, uintptr_t *out_len, nvf_num m
 			return NVF_ERROR;
 		}
 
-		uintptr_t old_len = *out_len;
-		uintptr_t new_len = old_len + len;
-		char *new_out = root->realloc_inst(*out, new_len);
-		if (new_out == NULL) {
-			root->free_inst(*out);
-			return NVF_BAD_ALLOC;
+		if (len > 0) {
+			uintptr_t new_len = *out_len + len;
+			char *new_out = root->realloc_inst(*out, new_len);
+			if (new_out == NULL) {
+				root->free_inst(*out);
+				return NVF_BAD_ALLOC;
+			}
+			*out = new_out;
 		}
+
+		// Subtract one to account for the NULL terminator.
+		char *out_end = *out + *out_len - 1;
+		int fmt_r = 0;
+		if (dt == NVF_INT) {
+			fmt_r = fmt_fn(out_end, len, "%s %ld\n", name, nv.v_int);
+		} else if (dt == NVF_FLOAT) {
+			fmt_r = fmt_fn(out_end, len, "%s %f\n", name, nv.v_float);
+		} else if (dt == NVF_STRING) {
+			fmt_r = fmt_fn(out_end, len, "%s \"%s\"\n", name, nv.v_string);
+		} else if (dt == NVF_BLOB) {
+			fmt_r = fmt_fn(out_end, len, "%s bx", name);
+			if (fmt_r < 0) {
+				root->free_inst(*out);
+				return NVF_ERROR;
+			}
+			uint8_t *bin_data = nv.v_blob->data;
+			uintptr_t bin_len = nv.v_blob->len;
+			char *hex_start = out_end + fmt_r;
+			for (uintptr_t bin_i = 0; bin_i < bin_len; ++bin_i) {
+				char tmp = nvf_bin_to_char(bin_data[bin_i] >> 4);
+				if (tmp == '\0') {
+					root->free_inst(*out);
+					return NVF_BAD_DATA;
+				}
+				hex_start[2*bin_i] =  tmp;
+
+				tmp = nvf_bin_to_char(bin_data[bin_i]  & 0xf);
+				if (tmp == '\0') {
+					root->free_inst(*out);
+					return NVF_BAD_DATA;
+				}
+				hex_start[2*bin_i + 1] =  tmp;
+			}
+			hex_start[2*bin_len] = '\n';
+		}
+		if (fmt_r < 0) {
+			root->free_inst(*out);
+			return NVF_ERROR;
+		}
+		*out_len += len;
 	}
 
 	return NVF_OK;
 }
 
-nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len) {
+nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len, str_fmt_fn fmt_fn) {
 	IF_RET(root == NULL || out == NULL || out_len == NULL, NVF_BAD_ARG);
 	// Iterate through the structure and append it to the string.
 	// Use the allocator to allocate the string.
@@ -756,5 +843,9 @@ nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len) {
 	*out[0] = '\0';
 	*out_len = 1;
 
-	return nvf_map_to_str(root, out, out_len, 0);
+	return nvf_map_arr_to_str(root, out, out_len, 0, fmt_fn, NVF_PARSE_MAP);
+}
+
+nvf_err nvf_default_root_to_str(nvf_root *root, char **out, uintptr_t *out_len) {
+	return nvf_root_to_str(root, out, out_len, snprintf);
 }

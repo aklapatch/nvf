@@ -3,6 +3,9 @@ BUILD_DIR := ./build/
 
 all: $(BUILD_DIR)nvf_test $(BUILD_DIR)libnvf.a
 
+doc: nvf.h
+	
+
 debug: $(BUILD_DIR)nvf_test
 	gdb $(BUILD_DIR)nvf_test
 
