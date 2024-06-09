@@ -760,7 +760,8 @@ nvf_err nvf_map_arr_to_str(
 			len += 2*nv.v_blob->len;
 		} else if (dt == NVF_MAP || dt == NVF_ARRAY) {
 			char start_c = dt == NVF_MAP ? '{' : '[';
-			len = fmt_fn(NULL, 0, "%s %c\n", name, start_c);
+			len = strlen(name) > 0 ? fmt_fn(NULL, 0, "%s %c\n", name, start_c) : 
+						 fmt_fn(NULL, 0, "%c\n", start_c);
 			if (len < 0) {
 				root->free_inst(*out);
 				return NVF_ERROR;
@@ -778,7 +779,8 @@ nvf_err nvf_map_arr_to_str(
 			memset(out_start, '\t', indent_i);
 			out_start += indent_i;
 			
-			int fmt_r = fmt_fn(out_start, len, "%s %c\n", name, start_c);
+			int fmt_r = strlen(name) > 0 ? fmt_fn(out_start, len, "%s %c\n", name, start_c) :
+						       fmt_fn(out_start, len, "%c\n", start_c);
 			if (fmt_r < 0) {
 				root->free_inst(*out);
 				return NVF_BAD_ALLOC;
