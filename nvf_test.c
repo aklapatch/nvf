@@ -225,6 +225,8 @@ int main(int argc, char *argv[]){
 		ASSERT_INT(rc, NVF_OK, 1, "Converting the map to a str");
 		printf("Rendered map: (\n%s\n)\n", str_out);
 		ASSERT_INT(str_len, strlen(str_out) + 1, 1, "Checking the output string length");
+
+		root.free_inst(str_out);
 	}
 
 	rc = nvf_deinit(&root);
