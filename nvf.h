@@ -175,3 +175,7 @@ nvf_err nvf_get_str_alloc(
 	uintptr_t *out_len);
 
 nvf_err nvf_get_array_from_i(nvf_root *root, nvf_num arr_i, nvf_array *out);
+
+nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len, str_fmt_fn fmt_fn);
+
+nvf_err nvf_default_root_to_str(nvf_root *root, char **out, uintptr_t *out_len);

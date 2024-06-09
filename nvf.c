@@ -726,7 +726,8 @@ nvf_err nvf_map_arr_to_str(
 	uintptr_t *out_len,
 	nvf_num map_arr_i,
 	str_fmt_fn fmt_fn,
-	nvf_parse_type pt) {
+	nvf_parse_type pt,
+	nvf_num indent_i) {
 
 	nvf_map *iter = NULL;
 	nvf_array *arr = NULL;
@@ -738,7 +739,7 @@ nvf_err nvf_map_arr_to_str(
 	} else {
 		return NVF_BAD_ARG;
 	}
-	for (nvf_num m_i = 0; m_i < iter->arr.num; ++m_i) {
+	for (nvf_num m_i = 0; m_i < arr->num; ++m_i) {
 		int len = 0;
 		nvf_data_type dt = arr->types[m_i];
 		char *name = iter == NULL ? "" : iter->names[m_i];
@@ -758,13 +759,41 @@ nvf_err nvf_map_arr_to_str(
 			}
 			len += 2*nv.v_blob->len;
 		} else if (dt == NVF_MAP || dt == NVF_ARRAY) {
+			char start_c = dt == NVF_MAP ? '{' : '[';
+			len = fmt_fn(NULL, 0, "%s %c\n", name, start_c);
+			if (len < 0) {
+				root->free_inst(*out);
+				return NVF_ERROR;
+			}
+			len += 1;
+			uintptr_t new_len = *out_len + len;
+			char *new_out = root->realloc_inst(*out, new_len);
+			if (new_out == NULL) {
+				root->free_inst(*out);
+				return NVF_BAD_ALLOC;
+			}
+			*out = new_out;
+
+			char *out_start = *out + *out_len - 1;
+			memset(out_start, '\t', indent_i);
+			out_start += indent_i;
+			
+			int fmt_r = fmt_fn(out_start, len, "%s %c\n", name, start_c);
+			if (fmt_r < 0) {
+				root->free_inst(*out);
+				return NVF_BAD_ALLOC;
+			}
+			*out_len += len + indent_i - 1;
+
 			nvf_parse_type new_pt = dt == NVF_MAP ? NVF_PARSE_MAP : NVF_PARSE_ARRAY;
 			nvf_num next_i = dt == NVF_MAP ? nv.map_i : nv.array_i;
-			r = nvf_map_arr_to_str(root, out, out_len, next_i, fmt_fn, new_pt);
+			r = nvf_map_arr_to_str(root, out, out_len, next_i, fmt_fn, new_pt, indent_i + 1);
 			if (r != NVF_OK) {
 				root->free_inst(*out);
 				return r;
 			}
+			// Account for the closing brace/bracket and a \n
+			len = 2;
 		} else {
 			// We're assuming free is null safe here.
 			root->free_inst(*out);
@@ -774,9 +803,11 @@ nvf_err nvf_map_arr_to_str(
 			root->free_inst(*out);
 			return NVF_ERROR;
 		}
+		// Add one to the length to account for the NULL terminator.
+		len += 1;
 
 		if (len > 0) {
-			uintptr_t new_len = *out_len + len;
+			uintptr_t new_len = *out_len + len + indent_i;
 			char *new_out = root->realloc_inst(*out, new_len);
 			if (new_out == NULL) {
 				root->free_inst(*out);
@@ -788,6 +819,9 @@ nvf_err nvf_map_arr_to_str(
 		// Subtract one to account for the NULL terminator.
 		char *out_end = *out + *out_len - 1;
 		int fmt_r = 0;
+		// Add the indent level we need
+		memset(out_end, '\t', indent_i);
+		out_end += indent_i;
 		if (dt == NVF_INT) {
 			fmt_r = fmt_fn(out_end, len, "%s %ld\n", name, nv.v_int);
 		} else if (dt == NVF_FLOAT) {
@@ -819,12 +853,17 @@ nvf_err nvf_map_arr_to_str(
 				hex_start[2*bin_i + 1] =  tmp;
 			}
 			hex_start[2*bin_len] = '\n';
+		} else if (dt == NVF_MAP || dt == NVF_ARRAY) {
+			char start_c = dt == NVF_MAP ? '}' : ']';
+			fmt_r = fmt_fn(out_end, len, "%c\n", start_c);
 		}
 		if (fmt_r < 0) {
 			root->free_inst(*out);
 			return NVF_ERROR;
 		}
-		*out_len += len;
+		// NOTE: This function probably has a buffer overflow somehwere.
+		// Doing this kind of stuff with C strings is hard for me.
+		*out_len += len + indent_i - 1;
 	}
 
 	return NVF_OK;
@@ -843,7 +882,7 @@ nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len, str_fmt_
 	*out[0] = '\0';
 	*out_len = 1;
 
-	return nvf_map_arr_to_str(root, out, out_len, 0, fmt_fn, NVF_PARSE_MAP);
+	return nvf_map_arr_to_str(root, out, out_len, 0, fmt_fn, NVF_PARSE_MAP, 0);
 }
 
 nvf_err nvf_default_root_to_str(nvf_root *root, char **out, uintptr_t *out_len) {

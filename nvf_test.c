@@ -215,6 +215,17 @@ int main(int argc, char *argv[]){
 
 		root.free_inst(str_out);
 	}
+	{
+		char *str_out = NULL;
+		uintptr_t str_len = 0;
+		rc = nvf_default_root_to_str(
+				&root,
+				&str_out,
+				&str_len);
+		ASSERT_INT(rc, NVF_OK, 1, "Converting the map to a str");
+		printf("Rendered map: (\n%s\n)\n", str_out);
+		ASSERT_INT(str_len, strlen(str_out) + 1, 1, "Checking the output string length");
+	}
 
 	rc = nvf_deinit(&root);
 	ASSERT_INT(rc, NVF_OK, 1, "Deiniting the root");
