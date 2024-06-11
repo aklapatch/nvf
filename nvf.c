@@ -432,35 +432,30 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 		// We've found value. Parse it depending on what it is.
 		const char *value = &data[r.data_i];
 		if (data[r.data_i] == '-' || isdigit(data[r.data_i])){
+
 			
-			// It's a number.
-			bool is_float = false;
-			for (; r.data_i < data_len && (isxdigit(data[r.data_i]) || data[r.data_i] == '.'); ++r.data_i) {
-				if (data[r.data_i] == '.') {
-					// That's a badly formatted floating point number..
-					IF_RET_DATA(is_float, r, NVF_BAD_VALUE_FMT);
-					is_float = true;
-				}
-			}
+			// Int parsing has to be first because ints are valid floats.
 			nvf_value npv = {0};
-			uintptr_t value_len = (data + r.data_i) - value;
-			--r.data_i;
-			nvf_data_type npt = NVF_NUM_TYPES;
-			if (is_float) {
-				char *end = (char*)value; 
+			nvf_data_type npt = NVF_INT;
+			char *end = (char*)value;
+			npv.v_int = strtoll(value, &end, 0);
+			IF_RET_DATA(npv.v_int == LLONG_MAX || npv.v_int == LLONG_MIN, r, NVF_NUM_OVF);
+			IF_RET_DATA(end == value, r, NVF_BAD_VALUE_FMT);
+			char end_c = *end;
+			bool int_parse_failed = !(isspace(end_c) || end_c == '[' || end_c == ']');
+			if (int_parse_failed) {
+				// Try parsing as an int first, if it doesn't work, try a float	.
+				npt = NVF_FLOAT;
 				npv.v_float = strtod(value, &end);
 				IF_RET_DATA(npv.v_float == HUGE_VAL || npv.v_float == HUGE_VALF || npv.v_float == HUGE_VALL, r, NVF_NUM_OVF);
-				// The float didn't parse.
-				IF_RET_DATA(value == end, r, NVF_BAD_VALUE_FMT);
-				npt = NVF_FLOAT;
-			} else {
-				char *end = (char*)value; 
-				npv.v_int = strtoll(value, &end, 0);
-				IF_RET_DATA(npv.v_int == LLONG_MAX || npv.v_int == LLONG_MIN, r, NVF_NUM_OVF);
-				// The integer didn't parse.
-				IF_RET_DATA(value == end, r, NVF_BAD_VALUE_FMT);
-				npt = NVF_INT;
+				IF_RET_DATA(end == value, r, NVF_BAD_VALUE_FMT);
+
+				end_c = *end;
+				bool float_parse_failed = !(isspace(end_c) || end_c == '[' || end_c == ']');
+				IF_RET_DATA(float_parse_failed, r, NVF_BAD_VALUE_FMT);
 			}
+			// Subtract one because the for loop will increment it anyway.
+			r.data_i = end - data - 1;
 
 			// Grow the current map if we need to.
 			if (cur_map == NULL) {
