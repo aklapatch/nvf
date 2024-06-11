@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#define IF_GOTO_PRINT(cond, label, rc, goto_dest)                                  \
+#define IF_GOTO_PRINT(cond, label, rc, goto_dest)                         \
     do {                                                                  \
         if (cond) {                                                       \
             printf("%s failed with error %s!\n", label, nvf_err_str(rc)); \
-            goto goto_dest;                                                     \
+            goto goto_dest;                                               \
         }                                                                 \
     } while (0)
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
         printf("* Getting an int\n");
         rc = nvf_get_int(&root, names, 1, &bin_int);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting an int", rc, deinit);
-	printf("* The int is %lu\n", bin_int);
+        printf("* The int is %lu\n", bin_int);
     }
     {
         int64_t bin_int = 0;
@@ -57,15 +57,33 @@ int main(int argc, char* argv[])
         printf("* Getting a nested int\n");
         rc = nvf_get_int(&root, names, 2, &bin_int);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested int", rc, deinit);
-	printf("* The nested int is %lu\n", bin_int);
+        printf("* The nested int is %lu\n", bin_int);
+    }
+
+    {
+        double bin_f = 0;
+        const char* f_names[] = { "float" };
+        printf("* Getting a float int\n");
+        rc = nvf_get_float(&root, f_names, 1, &bin_f);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting a float", rc, deinit);
+        printf("* The float is %f\n", bin_f);
+    }
+    {
+        double bin_f = 0;
+        const char* f_names[] = { "map", "float" };
+        printf("* Getting a nested float\n");
+        rc = nvf_get_float(&root, f_names, 2, &bin_f);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested float", rc, deinit);
+        printf("* The nested float is %f\n", bin_f);
     }
 
 deinit:
     rc = nvf_deinit(&root);
     if (rc != NVF_OK) {
-    	printf("Got error %s from deiniting the root\n", nvf_err_str(rc));
+        printf("Got error %s from deiniting the root\n", nvf_err_str(rc));
     }
 
     printf("Done\n");
-    return rc == NVF_OK ? 0 : 1;;
+    return rc == NVF_OK ? 0 : 1;
+    ;
 }
