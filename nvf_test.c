@@ -87,6 +87,7 @@ int main(int argc, char *argv[]){
 		rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
 		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
 		ASSERT_INT(strcmp("test\nstr", str_out), 0, 1, "Comparing string results");
+		ASSERT_INT(strlen("test\nstr") + 1, out_len, 1, "Comparing string lengths");
 	}
 	{
 		char str_out[32] = {0};
@@ -95,6 +96,7 @@ int main(int argc, char *argv[]){
 		rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
 		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
 		ASSERT_INT(strcmp("multilinestr", str_out), 0, 1, "Comparing string results");
+		ASSERT_INT(strlen("multilinestr") + 1, out_len, 1, "Comparing string lengths");
 	}
 	{
 		char str_out[32] = {0};
