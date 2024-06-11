@@ -481,7 +481,6 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			r.err = cur_map == NULL ? 
 				nvf_ensure_array_cap(root, cur_arr) : 
 				nvf_ensure_map_cap(root, cur_map);
-			++r.data_i;
 			uintptr_t tot_str_len = 0;
 			// Allow multiline strings kind of like C does
 			// The final result will be a concatenation of the lines.
@@ -490,6 +489,9 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			// 'string_name' will be "line 1line2".
 			char *d_str = cur_arr->values[cur_arr->num].v_string;
 			while (true) {
+				// r.data_i should be the quote's index. Add one to get the first
+				// character of the string.
+				++r.data_i;
 				uintptr_t str_start = r.data_i;
 				// Find the end of the string.
 				for (; r.data_i < data_len && data[r.data_i] != '"'; ++r.data_i) {

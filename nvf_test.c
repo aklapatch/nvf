@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
 		"i_name 32343\n"
 		"f_name 2.0\n"
 		"s_name \"test\\nstr\"\n"
-		"ms_name \"multiline\n"
+		"ms_name \"multiline\"\n"
 		" 	 \"str\"\n"
 		"b_name bx01020304\n"
 		"a_name [32 2.0 \"str\" bx0708 [67]]\n"
@@ -87,6 +87,14 @@ int main(int argc, char *argv[]){
 		rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
 		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
 		ASSERT_INT(strcmp("test\nstr", str_out), 0, 1, "Comparing string results");
+	}
+	{
+		char str_out[32] = {0};
+		uintptr_t out_len = sizeof(str_out); 
+		const char *s_names[] = {"ms_name"};
+		rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
+		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
+		ASSERT_INT(strcmp("multilinestr", str_out), 0, 1, "Comparing string results");
 	}
 	{
 		char str_out[32] = {0};
