@@ -14,11 +14,17 @@ debug: $(BUILD_DIR)nvf_test
 valgrind: $(BUILD_DIR)nvf_test
 	valgrind --leak-check=full $<
 
+example: $(BUILD_DIR)nvf_example
+	$< 
+
 test: $(BUILD_DIR)nvf_test
 	$<
 
-$(BUILD_DIR)nvf_test: nvf_test.c $(BUILD_DIR)libnvf_debug.a
+$(BUILD_DIR)nvf_test: nvf_test.c $(BUILD_DIR)libnvf_debug.a 
 	$(CC) -g3 $^ -o $@
+
+$(BUILD_DIR)nvf_example: nvf_example.c $(BUILD_DIR)libnvf.a
+	$(CC) $(CFLAGS) $^ -o $@
 
 $(BUILD_DIR)libnvf.a: $(BUILD_DIR)nvf.o
 	$(AR) rcs $@ $<

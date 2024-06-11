@@ -43,8 +43,8 @@ int main(int argc, char* argv[])
     nvf_root root = { 0 };
 
     // TODO: Add tests where all values are at the end of the string..
-    const char int_test[] = "i_name 32343\n"
-                            "ix_name 0x32343\n"
+    const char int_test[] = "i_name 32343 # A comment\n"
+                            "ix_name #[ another comment ]# 0x32343\n"
                             "io_name 032343\n"
                             "f_name 2.0\n"
                             "fx_name 0x2.0\n"
