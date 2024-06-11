@@ -31,6 +31,8 @@ int main(int argc, char *argv[]){
 		"i_name 32343\n"
 		"f_name 2.0\n"
 		"s_name \"test\\nstr\"\n"
+		"ms_name \"multiline\n"
+		" 	 \"str\"\n"
 		"b_name bx01020304\n"
 		"a_name [32 2.0 \"str\" bx0708 [67]]\n"
 		"m_name {\n"
@@ -86,7 +88,6 @@ int main(int argc, char *argv[]){
 		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
 		ASSERT_INT(strcmp("test\nstr", str_out), 0, 1, "Comparing string results");
 	}
-
 	{
 		char str_out[32] = {0};
 		uintptr_t out_len = sizeof(str_out); 
@@ -95,8 +96,6 @@ int main(int argc, char *argv[]){
 		ASSERT_INT(rc, NVF_OK, 1, "Getting a str");
 		ASSERT_INT(strcmp("other test str", str_out), 0, 1, "Comparing string results");
 	}
-
-
 	{
 		char bin_out[32] = {0};
 		uintptr_t bin_out_len = sizeof(bin_out); 
@@ -189,7 +188,6 @@ int main(int argc, char *argv[]){
 		nvf_tag_value m_tv_n = nvf_get_next(&a_i);
 		ASSERT_INT(m_tv_n.type, NVF_NONE, 1, "Getting none value from an iterator");
 	}
-
 	{
 		const char *b_names[] = {"m_name", "b_name"};
 		uint8_t *bin_out = NULL;
@@ -202,7 +200,6 @@ int main(int argc, char *argv[]){
 
 		root.free_inst(bin_out);
 	}
-
 	{
 		const char *s_names[] = {"m_name", "s_name"};
 		char *str_out = NULL;

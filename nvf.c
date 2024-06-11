@@ -477,41 +477,46 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			cur_arr->values[cur_arr->num] = npv;
 			cur_arr->types[cur_arr->num] = npt;
 		} else if (data[r.data_i] == '"') {
-			++r.data_i;
-			uintptr_t str_start = r.data_i;
-			// Find the end of the string.
-			for (; r.data_i < data_len && data[r.data_i] != '"'; ++r.data_i) {
-				// Skip escape sequences.
-				// TODO: Convert escape sequences to their binary values.
-				if (data[r.data_i] == '\\') {
-					r.data_i++;
-				}
-			}
-			IF_RET_DATA(r.data_i >= data_len, r, NVF_BUF_OVF);
-			// Don't include the end quote.
-			uintptr_t str_len = r.data_i - str_start;
-
 			// Grow the current map if we need to.
-			if (cur_map == NULL) {
-				r.err = nvf_ensure_array_cap(root, cur_arr);
-			} else {
-				r.err = nvf_ensure_map_cap(root, cur_map);
-			}
-			IF_RET_DATA(r.err != NVF_OK, r, r.err);
+			r.err = cur_map == NULL ? 
+				nvf_ensure_array_cap(root, cur_arr) : 
+				nvf_ensure_map_cap(root, cur_map);
+			++r.data_i;
+			uintptr_t tot_str_len = 0;
+			// Allow multiline strings kind of like C does
+			// The final result will be a concatenation of the lines.
+			// string_name "line 1"
+			//             "line 2"
+			// 'string_name' will be "line 1line2".
+			char *d_str = cur_arr->values[cur_arr->num].v_string;
+			while (true) {
+				uintptr_t str_start = r.data_i;
+				// Find the end of the string.
+				for (; r.data_i < data_len && data[r.data_i] != '"'; ++r.data_i) {
+					// Skip escape sequences.
+					if (data[r.data_i] == '\\') {
+						r.data_i++;
+					}
+				}
+				IF_RET_DATA(r.data_i >= data_len, r, NVF_BUF_OVF);
+				// Don't include the end quote.
+				uintptr_t str_part_len = r.data_i - str_start;
 
-			char *d_str = root->realloc_inst(cur_arr->values[cur_arr->num].v_string, str_len + 1);
-			IF_RET_DATA(d_str == NULL, r, NVF_BAD_ALLOC);
-			d_str[str_len] = '\0';
-			const char *d_str_start = data + str_start;
-			bool esc_char = false;
-			nvf_num d_i = 0;
-			for (nvf_num s_i = 0; s_i < str_len; ++s_i) {
-				if (d_str_start[s_i] == '\\') {
-					esc_char = true;
-				} else if (esc_char) {
-					esc_char = false;
-					char ec = data[s_i];
-					bool assigned = false;
+				IF_RET_DATA(r.err != NVF_OK, r, r.err);
+
+				uintptr_t new_str_len = tot_str_len + str_part_len;
+				d_str = root->realloc_inst(d_str, new_str_len + 1);
+				IF_RET_DATA(d_str == NULL, r, NVF_BAD_ALLOC);
+				d_str[new_str_len] = '\0';
+				const char *d_str_start = data + str_start;
+				bool esc_char = false;
+				for (nvf_num s_i = 0; s_i < str_part_len; ++s_i) {
+					if (d_str_start[s_i] == '\\') {
+						esc_char = true;
+					} else if (esc_char) {
+						esc_char = false;
+						char ec = data[s_i];
+						bool assigned = false;
 #define MATCH_ASSIGN(i_char, e_char, dest, src, assigned)\
 	do { \
 		if (i_char == src) {\
@@ -519,16 +524,26 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len, nvf_r
 			assigned = true;\
 		}\
 	} while (0)
-					MATCH_ASSIGN('n', '\n', d_str[d_i], d_str_start[s_i], assigned);
-					MATCH_ASSIGN('t', '\t', d_str[d_i], d_str_start[s_i], assigned);
-					MATCH_ASSIGN('r', '\r', d_str[d_i], d_str_start[s_i], assigned);
-					MATCH_ASSIGN('"', '"', d_str[d_i], d_str_start[s_i], assigned);
-					MATCH_ASSIGN('\\', '\\', d_str[d_i], d_str_start[s_i], assigned);
-					IF_RET_DATA(assigned == false, r, NVF_BAD_DATA);
-					++d_i;
-				} else {
-					d_str[d_i] = d_str_start[s_i];
-					++d_i;
+						MATCH_ASSIGN('n', '\n', d_str[tot_str_len], d_str_start[s_i], assigned);
+						MATCH_ASSIGN('t', '\t', d_str[tot_str_len], d_str_start[s_i], assigned);
+						MATCH_ASSIGN('r', '\r', d_str[tot_str_len], d_str_start[s_i], assigned);
+						MATCH_ASSIGN('"', '"', d_str[tot_str_len], d_str_start[s_i], assigned);
+						MATCH_ASSIGN('\\', '\\', d_str[tot_str_len], d_str_start[s_i], assigned);
+						IF_RET_DATA(assigned == false, r, NVF_BAD_DATA);
+						++tot_str_len;
+					} else {
+						d_str[tot_str_len] = d_str_start[s_i];
+						++tot_str_len;
+					}
+				}
+				// We're sitting at the quote, get past it so getting the next token works.
+				++r.data_i;
+				r.data_i += nvf_next_token_i(r.data_i + data, data_len - r.data_i);
+				// If the next token isn't a string, then we're done parsing this string.
+				if (data[r.data_i] != '"') {
+					// Decrement because the for loop will increment again.
+					--r.data_i;
+					break;
 				}
 			}
 			// Now that we have enough memory, add the string to the map.
