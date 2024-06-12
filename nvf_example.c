@@ -11,6 +11,13 @@
         }                                                                 \
     } while (0)
 
+void hexdump(uint8_t *data, uintptr_t len) {
+	for (uintptr_t i = 0; i < len; ++i) {
+		printf("%c", nvf_bin_to_char(data[i] >> 4));
+		printf("%c", nvf_bin_to_char(data[i]  & 0xf));
+	}
+}
+
 int main(int argc, char* argv[])
 {
     const char example_buf[] = "# This is a line comment.\n"
@@ -101,6 +108,7 @@ int main(int argc, char* argv[])
         rc = nvf_get_blob(&root, b_names, 1, bin_out, &bin_out_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a BLOB", rc, deinit);
         printf("* The BLOB is 0x");
+	hexdump(bin_out, bin_out_len);
         printf("\n");
     }
 
