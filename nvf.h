@@ -5,15 +5,14 @@
 #define GEN_NUMS(x) x,
 #define GEN_STR(x) #x,
 
-#define GEN_ERRS(m)                                                                \
-    m(NVF_OK) m(NVF_ERROR) m(NVF_BAD_ALLOC) m(NVF_BUF_OVF) m(NVF_BAD_VALUE_FMT)    \
-        m(NVF_BAD_ARG) m(NVF_BAD_DATA) m(NVF_BAD_VALUE_TYPE) m(NVF_NOT_INIT)       \
-            m(NVF_NOT_FOUND) m(NVF_DUP_NAME) m(NVF_UNMATCHED_BRACE) m(NVF_NUM_OVF) \
-                m(NVF_ERR_END)
+#define GEN_ERRS(m)                                                            \
+    m(NVF_OK) m(NVF_ERROR) m(NVF_BAD_ALLOC) m(NVF_BUF_OVF)                     \
+        m(NVF_BAD_VALUE_FMT) m(NVF_BAD_ARG) m(NVF_BAD_DATA)                    \
+            m(NVF_BAD_VALUE_TYPE) m(NVF_NOT_INIT) m(NVF_NOT_FOUND)             \
+                m(NVF_DUP_NAME) m(NVF_UNMATCHED_BRACE) m(NVF_NUM_OVF)          \
+                    m(NVF_ERR_END)
 
-typedef enum {
-    GEN_ERRS(GEN_NUMS)
-} nvf_err;
+typedef enum { GEN_ERRS(GEN_NUMS) } nvf_err;
 
 typedef enum {
     NVF_PARSE_ARRAY = 0,
@@ -46,43 +45,43 @@ typedef union nvf_value {
     nvf_num array_i;
     int64_t v_int;
     double v_float;
-    char* v_string;
-    nvf_blob* v_blob;
+    char *v_string;
+    nvf_blob *v_blob;
 } nvf_value;
 
 // Arrays can't contain maps. I think that's fine for now.
 typedef struct nvf_array {
-    uint8_t* types;
-    nvf_value* values;
+    uint8_t *types;
+    nvf_value *values;
     nvf_num num, cap;
 } nvf_array;
 
 // TODO: Try to find a more efficient memory layout. I'm fairly sure we could
 // make this better.
 typedef struct nvf_map {
-    char** names;
+    char **names;
     nvf_array arr;
 } nvf_map;
 
-typedef void* (*realloc_fn)(void*, size_t);
-typedef void (*free_fn)(void*);
-typedef int (*str_fmt_fn)(char* s, size_t n, const char* format, ...);
+typedef void *(*realloc_fn)(void *, size_t);
+typedef void (*free_fn)(void *);
+typedef int (*str_fmt_fn)(char *s, size_t n, const char *format, ...);
 
 #define NVF_INIT_VAL (0x72)
 
-#define IF_RET(expr, rv) \
-    do {                 \
-        if ((expr)) {    \
-            return rv;   \
-        }                \
+#define IF_RET(expr, rv)                                                       \
+    do {                                                                       \
+        if ((expr)) {                                                          \
+            return rv;                                                         \
+        }                                                                      \
     } while (0)
 
-#define IF_RET_DATA(expr, rv, e) \
-    do {                         \
-        if ((expr)) {            \
-            rv.err = e;          \
-            return rv;           \
-        }                        \
+#define IF_RET_DATA(expr, rv, e)                                               \
+    do {                                                                       \
+        if ((expr)) {                                                          \
+            rv.err = e;                                                        \
+            return rv;                                                         \
+        }                                                                      \
     } while (0)
 
 // These are in one struct because the allocator and the memory used in the
@@ -110,10 +109,10 @@ typedef struct nvf_root {
     free_fn free_inst;
 
     nvf_num array_num, array_cap;
-    nvf_array* arrays;
+    nvf_array *arrays;
 
     nvf_num map_num, map_cap;
-    nvf_map* maps;
+    nvf_map *maps;
     uint8_t init_val;
 } nvf_root;
 
@@ -123,107 +122,66 @@ typedef struct nvf_root {
 // nvf_err better.
 // TODO: typedef nvf_err to a u32 and make the error codes into a different
 // enum (like nvf_err_e).
-typedef struct
-{
+typedef struct {
     uintptr_t data_i;
     nvf_err err;
 } nvf_err_data_i;
 
-typedef struct
-{
-    const nvf_array* arr;
+typedef struct {
+    const nvf_array *arr;
     nvf_num arr_i;
 } nvf_array_iter;
 
-typedef struct
-{
+typedef struct {
     const nvf_value val;
     const nvf_data_type type;
 } nvf_tag_value;
 
-nvf_root
-nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
+nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
 
-nvf_root
-nvf_root_default_init(void);
+nvf_root nvf_root_default_init(void);
 
-nvf_err_data_i
-nvf_parse_buf(const char* data, uintptr_t data_len, nvf_root* out_root);
+nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len,
+                             nvf_root *out_root);
 
-nvf_err
-nvf_get_int(nvf_root* root,
-    const char** names,
-    nvf_num name_depth,
-    int64_t* out);
+nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth,
+                    int64_t *out);
 
-nvf_err
-nvf_get_map(nvf_root* root,
-    const char** m_names,
-    nvf_num name_depth,
-    nvf_map* map_out);
+nvf_err nvf_get_map(nvf_root *root, const char **m_names, nvf_num name_depth,
+                    nvf_map *map_out);
 
-nvf_err
-nvf_deinit(nvf_root* n_r);
+nvf_err nvf_deinit(nvf_root *n_r);
 
-nvf_err
-nvf_get_float(nvf_root* root,
-    const char** names,
-    nvf_num name_depth,
-    double* out);
+nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth,
+                      double *out);
 
-nvf_err
-nvf_get_str(nvf_root* root,
-    const char** names,
-    nvf_num name_depth,
-    char* str_out,
-    uintptr_t* str_out_len);
+nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth,
+                    char *str_out, uintptr_t *str_out_len);
 
-nvf_err
-nvf_get_blob(nvf_root* root,
-    const char** names,
-    nvf_num name_depth,
-    uint8_t* bin_out,
-    uintptr_t* bin_out_len);
+nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth,
+                     uint8_t *bin_out, uintptr_t *bin_out_len);
 
-nvf_err
-nvf_get_array(nvf_root* root,
-    const char** names,
-    nvf_num name_depth,
-    nvf_array* out);
+nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth,
+                      nvf_array *out);
 
-nvf_array_iter
-nvf_iter_init(const nvf_array* arr);
+nvf_array_iter nvf_iter_init(const nvf_array *arr);
 
-nvf_tag_value
-nvf_get_next(nvf_array_iter* iter);
+nvf_tag_value nvf_get_next(nvf_array_iter *iter);
 
-nvf_err
-nvf_get_blob_alloc(nvf_root* root,
-    const char** names,
-    nvf_num name_depth,
-    uint8_t** out,
-    uintptr_t* out_len);
+nvf_err nvf_get_blob_alloc(nvf_root *root, const char **names,
+                           nvf_num name_depth, uint8_t **out,
+                           uintptr_t *out_len);
 
-nvf_err
-nvf_get_str_alloc(nvf_root* root,
-    const char** names,
-    nvf_num name_depth,
-    char** out,
-    uintptr_t* out_len);
+nvf_err nvf_get_str_alloc(nvf_root *root, const char **names,
+                          nvf_num name_depth, char **out, uintptr_t *out_len);
 
-nvf_err
-nvf_get_array_from_i(nvf_root* root, nvf_num arr_i, nvf_array* out);
+nvf_err nvf_get_array_from_i(nvf_root *root, nvf_num arr_i, nvf_array *out);
 
-nvf_err
-nvf_root_to_str(nvf_root* root,
-    char** out,
-    uintptr_t* out_len,
-    str_fmt_fn fmt_fn);
+nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len,
+                        str_fmt_fn fmt_fn);
 
-nvf_err
-nvf_default_root_to_str(nvf_root* root, char** out, uintptr_t* out_len);
+nvf_err nvf_default_root_to_str(nvf_root *root, char **out, uintptr_t *out_len);
 
-const char*
-nvf_err_str(nvf_err e);
+const char *nvf_err_str(nvf_err e);
 
 char nvf_bin_to_char(uint8_t byte);

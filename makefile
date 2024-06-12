@@ -6,7 +6,7 @@ all: $(BUILD_DIR)nvf_test $(BUILD_DIR)libnvf.a
 doc: nvf.h
 	
 fmt: $(wildcard *.c) $(wildcard *.h)
-	clang-format -i --style=WebKit *.c *.h
+	clang-format -i *.c *.h
 
 debug: $(BUILD_DIR)nvf_test
 	gdb $(BUILD_DIR)nvf_test

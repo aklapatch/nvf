@@ -3,24 +3,22 @@
 #include <stdio.h>
 #include <string.h>
 
-#define IF_GOTO_PRINT(cond, label, rc, goto_dest)                         \
-    do {                                                                  \
-        if (cond) {                                                       \
-            printf("%s failed with error %s!\n", label, nvf_err_str(rc)); \
-            goto goto_dest;                                               \
-        }                                                                 \
+#define IF_GOTO_PRINT(cond, label, rc, goto_dest)                              \
+    do {                                                                       \
+        if (cond) {                                                            \
+            printf("%s failed with error %s!\n", label, nvf_err_str(rc));      \
+            goto goto_dest;                                                    \
+        }                                                                      \
     } while (0)
 
-void hexdump(uint8_t* data, uintptr_t len)
-{
+void hexdump(uint8_t *data, uintptr_t len) {
     for (uintptr_t i = 0; i < len; ++i) {
         printf("%c", nvf_bin_to_char(data[i] >> 4));
         printf("%c", nvf_bin_to_char(data[i] & 0xf));
     }
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
     const char example_buf[] = "# This is a line comment.\n"
                                "#[ This is a multi-line \n"
                                " comment. ]#\n"
@@ -53,7 +51,7 @@ int main(int argc, char* argv[])
 
     {
         int64_t bin_int = 0;
-        const char* names[] = { "int" };
+        const char *names[] = {"int"};
         printf("* Getting an int\n");
         rc = nvf_get_int(&root, names, 1, &bin_int);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting an int", rc, deinit);
@@ -61,7 +59,7 @@ int main(int argc, char* argv[])
     }
     {
         int64_t bin_int = 0;
-        const char* names[] = { "map", "int" };
+        const char *names[] = {"map", "int"};
         printf("* Getting a nested int\n");
         rc = nvf_get_int(&root, names, 2, &bin_int);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested int", rc, deinit);
@@ -70,7 +68,7 @@ int main(int argc, char* argv[])
 
     {
         double bin_f = 0;
-        const char* f_names[] = { "float" };
+        const char *f_names[] = {"float"};
         printf("* Getting a float int\n");
         rc = nvf_get_float(&root, f_names, 1, &bin_f);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a float", rc, deinit);
@@ -78,25 +76,25 @@ int main(int argc, char* argv[])
     }
     {
         double bin_f = 0;
-        const char* f_names[] = { "map", "float" };
+        const char *f_names[] = {"map", "float"};
         printf("* Getting a nested float\n");
         rc = nvf_get_float(&root, f_names, 2, &bin_f);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested float", rc, deinit);
         printf("* The nested float is %f.\n", bin_f);
     }
     {
-        char str_out[32] = { 0 };
+        char str_out[32] = {0};
         uintptr_t out_len = sizeof(str_out);
-        const char* s_names[] = { "string" };
+        const char *s_names[] = {"string"};
         printf("* Getting a string\n");
         rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a string", rc, deinit);
         printf("* The string is \"%s\".\n", str_out);
     }
     {
-        char* str_out = NULL;
+        char *str_out = NULL;
         uintptr_t out_len = 0;
-        const char* s_names[] = { "string" };
+        const char *s_names[] = {"string"};
         printf("* Getting an allocated string\n");
         rc = nvf_get_str_alloc(&root, s_names, 1, &str_out, &out_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting an allocated string", rc, deinit);
@@ -104,18 +102,18 @@ int main(int argc, char* argv[])
         root.free_inst(str_out);
     }
     {
-        char str_out[32] = { 0 };
+        char str_out[32] = {0};
         uintptr_t out_len = sizeof(str_out);
-        const char* s_names[] = { "multiline_string" };
+        const char *s_names[] = {"multiline_string"};
         printf("* Getting a multiline string\n");
         rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a string", rc, deinit);
         printf("* The string is \"%s\".\n", str_out);
     }
     {
-        uint8_t bin_out[32] = { 0 };
+        uint8_t bin_out[32] = {0};
         uintptr_t bin_out_len = sizeof(bin_out);
-        const char* b_names[] = { "BLOB" };
+        const char *b_names[] = {"BLOB"};
         printf("* Getting a BLOB\n");
         rc = nvf_get_blob(&root, b_names, 1, bin_out, &bin_out_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a BLOB", rc, deinit);
@@ -124,9 +122,9 @@ int main(int argc, char* argv[])
         printf("\n");
     }
     {
-        uint8_t bin_out[32] = { 0 };
+        uint8_t bin_out[32] = {0};
         uintptr_t bin_out_len = sizeof(bin_out);
-        const char* b_names[] = { "map", "BLOB" };
+        const char *b_names[] = {"map", "BLOB"};
         printf("* Getting a nested BLOB\n");
         rc = nvf_get_blob(&root, b_names, 2, bin_out, &bin_out_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested BLOB", rc, deinit);
@@ -135,20 +133,21 @@ int main(int argc, char* argv[])
         printf("\n");
     }
     {
-        uint8_t* bin_out = NULL;
+        uint8_t *bin_out = NULL;
         uintptr_t bin_out_len = 0;
-        const char* b_names[] = { "map", "BLOB" };
+        const char *b_names[] = {"map", "BLOB"};
         printf("* Getting a nested, allocated BLOB\n");
         rc = nvf_get_blob_alloc(&root, b_names, 2, &bin_out, &bin_out_len);
-        IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested, allocated BLOB", rc, deinit);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested, allocated BLOB", rc,
+                      deinit);
         printf("* The nested, allocated BLOB is 0x");
         hexdump(bin_out, bin_out_len);
         printf("\n");
         root.free_inst(bin_out);
     }
     {
-        nvf_array arr = { 0 };
-        const char* a_names = "array";
+        nvf_array arr = {0};
+        const char *a_names = "array";
         printf("* Getting an nested array\n");
         rc = nvf_get_array(&root, &a_names, 1, &arr);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting an array", rc, deinit);
@@ -165,7 +164,8 @@ int main(int argc, char* argv[])
 
         printf("Getting an array's third value\n");
         nvf_tag_value tv_s = nvf_get_next(&a_i);
-        printf("The value has type %u and is %s\n", tv_s.type, tv_s.val.v_string);
+        printf("The value has type %u and is %s\n", tv_s.type,
+               tv_s.val.v_string);
 
         printf("Getting an array's third value\n");
         nvf_tag_value tv_b = nvf_get_next(&a_i);
@@ -178,14 +178,15 @@ int main(int argc, char* argv[])
         printf("The value's type is %u\n", tv_a.type);
 
         {
-            nvf_array t_arr = { 0 };
+            nvf_array t_arr = {0};
             rc = nvf_get_array_from_i(&root, tv_a.val.array_i, &t_arr);
             IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested array", rc, deinit);
 
             nvf_array_iter n_a_i = nvf_iter_init(&t_arr);
             printf("Getting a nested nested int\n");
             nvf_tag_value n_tv_i = nvf_get_next(&n_a_i);
-            printf("The data's type is %u and is %ld\n", n_tv_i.type, n_tv_i.val.v_int);
+            printf("The data's type is %u and is %ld\n", n_tv_i.type,
+                   n_tv_i.val.v_int);
 
             printf("Getting a NONE from the end of an array\n");
             nvf_tag_value tv_n = nvf_get_next(&a_i);
@@ -194,8 +195,8 @@ int main(int argc, char* argv[])
     }
 
     {
-        nvf_array arr = { 0 };
-        const char* a_names[] = { "map", "array"};
+        nvf_array arr = {0};
+        const char *a_names[] = {"map", "array"};
         printf("* Getting a nested array\n");
         rc = nvf_get_array(&root, a_names, 2, &arr);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting an array", rc, deinit);
@@ -208,11 +209,13 @@ int main(int argc, char* argv[])
 
         printf("Getting an array's second value\n");
         nvf_tag_value tv_f = nvf_get_next(&a_i);
-        printf("The value has type %u and is %f\n", tv_f.type, tv_f.val.v_float);
+        printf("The value has type %u and is %f\n", tv_f.type,
+               tv_f.val.v_float);
 
         printf("Getting an array's third value\n");
         nvf_tag_value tv_s = nvf_get_next(&a_i);
-        printf("The value has type %u and is %s\n", tv_s.type, tv_s.val.v_string);
+        printf("The value has type %u and is %s\n", tv_s.type,
+               tv_s.val.v_string);
 
         printf("Getting an array's fourth value\n");
         nvf_tag_value tv_b = nvf_get_next(&a_i);
@@ -220,9 +223,9 @@ int main(int argc, char* argv[])
         hexdump(tv_b.val.v_blob->data, tv_b.val.v_blob->len);
         printf("\n");
 
-	printf("Getting a NONE from the end of an array\n");
-	nvf_tag_value tv_n = nvf_get_next(&a_i);
-	printf("This data's type is %u\n", tv_n.type);
+        printf("Getting a NONE from the end of an array\n");
+        nvf_tag_value tv_n = nvf_get_next(&a_i);
+        printf("This data's type is %u\n", tv_n.type);
     }
 
 deinit:
