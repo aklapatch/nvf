@@ -94,6 +94,16 @@ int main(int argc, char* argv[])
         printf("* The string is \"%s\".\n", str_out);
     }
     {
+        char *str_out = NULL;
+        uintptr_t out_len = 0;
+        const char* s_names[] = { "string" };
+        printf("* Getting an allocated string\n");
+        rc = nvf_get_str_alloc(&root, s_names, 1, &str_out, &out_len);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting an allocated string", rc, deinit);
+        printf("* The allocatedstring is \"%s\".\n", str_out);
+	root.free_inst(str_out);
+    }
+    {
         char str_out[32] = { 0 };
         uintptr_t out_len = sizeof(str_out);
         const char* s_names[] = { "multiline_string" };
@@ -123,6 +133,18 @@ int main(int argc, char* argv[])
         printf("* The nested BLOB is 0x");
         hexdump(bin_out, bin_out_len);
         printf("\n");
+    }
+    {
+        uint8_t *bin_out = NULL;
+        uintptr_t bin_out_len = 0;
+        const char* b_names[] = { "map", "BLOB" };
+        printf("* Getting a nested, allocated BLOB\n");
+        rc = nvf_get_blob_alloc(&root, b_names, 2, &bin_out, &bin_out_len);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested, allocated BLOB", rc, deinit);
+        printf("* The nested, allocated BLOB is 0x");
+        hexdump(bin_out, bin_out_len);
+        printf("\n");
+	root.free_inst(bin_out);
     }
     {
         nvf_array arr = { 0 };
@@ -163,6 +185,10 @@ int main(int argc, char* argv[])
 	printf("Getting a nested nested int\n");
         nvf_tag_value n_tv_i = nvf_get_next(&n_a_i);
 	printf("The data's type is %u and is %ld\n", n_tv_i.type, n_tv_i.val.v_int);
+
+	printf("Getting a NONE from the end of an array\n");
+	nvf_tag_value tv_n = nvf_get_next(&a_i);
+	printf("This data's type is %u\n", tv_n.type);
     }
 
 deinit:
