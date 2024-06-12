@@ -225,3 +225,5 @@ nvf_default_root_to_str(nvf_root* root, char** out, uintptr_t* out_len);
 
 const char*
 nvf_err_str(nvf_err e);
+
+char nvf_bin_to_char(uint8_t byte);
