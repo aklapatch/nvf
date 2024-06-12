@@ -94,14 +94,14 @@ int main(int argc, char* argv[])
         printf("* The string is \"%s\".\n", str_out);
     }
     {
-        char *str_out = NULL;
+        char* str_out = NULL;
         uintptr_t out_len = 0;
         const char* s_names[] = { "string" };
         printf("* Getting an allocated string\n");
         rc = nvf_get_str_alloc(&root, s_names, 1, &str_out, &out_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting an allocated string", rc, deinit);
         printf("* The allocatedstring is \"%s\".\n", str_out);
-	root.free_inst(str_out);
+        root.free_inst(str_out);
     }
     {
         char str_out[32] = { 0 };
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
         printf("\n");
     }
     {
-        uint8_t *bin_out = NULL;
+        uint8_t* bin_out = NULL;
         uintptr_t bin_out_len = 0;
         const char* b_names[] = { "map", "BLOB" };
         printf("* Getting a nested, allocated BLOB\n");
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
         printf("* The nested, allocated BLOB is 0x");
         hexdump(bin_out, bin_out_len);
         printf("\n");
-	root.free_inst(bin_out);
+        root.free_inst(bin_out);
     }
     {
         nvf_array arr = { 0 };
@@ -160,31 +160,65 @@ int main(int argc, char* argv[])
         printf("The value has type %u and is %ld\n", tv.type, tv.val.v_int);
 
         printf("Getting an array's second value\n");
-	nvf_tag_value tv_f = nvf_get_next(&a_i);
+        nvf_tag_value tv_f = nvf_get_next(&a_i);
         printf("The value has type %u and is %ld\n", tv_f.type, tv_f.val.v_int);
 
         printf("Getting an array's third value\n");
-	nvf_tag_value tv_s = nvf_get_next(&a_i);
+        nvf_tag_value tv_s = nvf_get_next(&a_i);
         printf("The value has type %u and is %s\n", tv_s.type, tv_s.val.v_string);
 
         printf("Getting an array's third value\n");
-	nvf_tag_value tv_b = nvf_get_next(&a_i);
+        nvf_tag_value tv_b = nvf_get_next(&a_i);
         printf("The value has type %u and is 0x", tv_b.type);
-	hexdump(tv_b.val.v_blob->data, tv_b.val.v_blob->len);
+        hexdump(tv_b.val.v_blob->data, tv_b.val.v_blob->len);
         printf("\n");
 
         printf("Getting an array's fourth value\n");
-	nvf_tag_value tv_a = nvf_get_next(&a_i);
-	printf("The value's type is %u\n", tv_a.type);
+        nvf_tag_value tv_a = nvf_get_next(&a_i);
+        printf("The value's type is %u\n", tv_a.type);
 
-        nvf_array t_arr = { 0 };
-        rc = nvf_get_array_from_i(&root, tv_a.val.array_i, &t_arr);
-        IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested array", rc, deinit);
+        {
+            nvf_array t_arr = { 0 };
+            rc = nvf_get_array_from_i(&root, tv_a.val.array_i, &t_arr);
+            IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested array", rc, deinit);
 
-        nvf_array_iter n_a_i = nvf_iter_init(&t_arr);
-	printf("Getting a nested nested int\n");
-        nvf_tag_value n_tv_i = nvf_get_next(&n_a_i);
-	printf("The data's type is %u and is %ld\n", n_tv_i.type, n_tv_i.val.v_int);
+            nvf_array_iter n_a_i = nvf_iter_init(&t_arr);
+            printf("Getting a nested nested int\n");
+            nvf_tag_value n_tv_i = nvf_get_next(&n_a_i);
+            printf("The data's type is %u and is %ld\n", n_tv_i.type, n_tv_i.val.v_int);
+
+            printf("Getting a NONE from the end of an array\n");
+            nvf_tag_value tv_n = nvf_get_next(&a_i);
+            printf("This data's type is %u\n", tv_n.type);
+        }
+    }
+
+    {
+        nvf_array arr = { 0 };
+        const char* a_names[] = { "map", "array"};
+        printf("* Getting a nested array\n");
+        rc = nvf_get_array(&root, a_names, 2, &arr);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting an array", rc, deinit);
+
+        nvf_array_iter a_i = nvf_iter_init(&arr);
+
+        printf("Getting an array's value\n");
+        nvf_tag_value tv = nvf_get_next(&a_i);
+        printf("The value has type %u and is %ld\n", tv.type, tv.val.v_int);
+
+        printf("Getting an array's second value\n");
+        nvf_tag_value tv_f = nvf_get_next(&a_i);
+        printf("The value has type %u and is %f\n", tv_f.type, tv_f.val.v_float);
+
+        printf("Getting an array's third value\n");
+        nvf_tag_value tv_s = nvf_get_next(&a_i);
+        printf("The value has type %u and is %s\n", tv_s.type, tv_s.val.v_string);
+
+        printf("Getting an array's fourth value\n");
+        nvf_tag_value tv_b = nvf_get_next(&a_i);
+        printf("The value has type %u and is 0x", tv_b.type);
+        hexdump(tv_b.val.v_blob->data, tv_b.val.v_blob->len);
+        printf("\n");
 
 	printf("Getting a NONE from the end of an array\n");
 	nvf_tag_value tv_n = nvf_get_next(&a_i);
