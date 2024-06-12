@@ -74,7 +74,34 @@ int main(int argc, char* argv[])
         printf("* Getting a nested float\n");
         rc = nvf_get_float(&root, f_names, 2, &bin_f);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting a nested float", rc, deinit);
-        printf("* The nested float is %f\n", bin_f);
+        printf("* The nested float is %f.\n", bin_f);
+    }
+    {
+        char str_out[32] = { 0 };
+        uintptr_t out_len = sizeof(str_out);
+        const char* s_names[] = { "string" };
+        printf("* Getting a string\n");
+        rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting a string", rc, deinit);
+        printf("* The string is \"%s\".\n", str_out);
+    }
+    {
+        char str_out[32] = { 0 };
+        uintptr_t out_len = sizeof(str_out);
+        const char* s_names[] = { "multiline_string" };
+        printf("* Getting a multiline string\n");
+        rc = nvf_get_str(&root, s_names, 1, str_out, &out_len);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting a string", rc, deinit);
+        printf("* The string is \"%s\".\n", str_out);
+    }
+    {
+        uint8_t bin_out[32] = { 0 };
+        uintptr_t bin_out_len = sizeof(bin_out);
+        const char* b_names[] = { "BLOB" };
+        rc = nvf_get_blob(&root, b_names, 1, bin_out, &bin_out_len);
+        IF_GOTO_PRINT(rc != NVF_OK, "Getting a BLOB", rc, deinit);
+        printf("* The BLOB is 0x");
+        printf("\n");
     }
 
 deinit:
