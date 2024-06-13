@@ -44,4 +44,4 @@ $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
 
 clean:
-	rm -fr $(BUILD_DIR)
+	rm -fr $(BUILD_DIR) docs
