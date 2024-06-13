@@ -8,13 +8,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *nvf_err_str(nvf_err e) {
-    const char *strs[] = {GEN_ERRS(GEN_STR)};
-    if (e < sizeof(strs) / sizeof(*strs)) {
-        return strs[e];
-    }
+#define CASE_STR(str) case str: return #str
 
-    return NULL;
+const char *nvf_type_str(nvf_data_type dt) {
+    switch(dt) {
+        CASE_STR(NVF_NONE);
+        CASE_STR(NVF_FLOAT);
+        CASE_STR(NVF_INT);
+        CASE_STR(NVF_BLOB);
+        CASE_STR(NVF_STRING);
+        CASE_STR(NVF_MAP);
+        CASE_STR(NVF_ARRAY);
+        CASE_STR(NVF_TYPE_END);
+        default: return NULL;
+    }
+}
+
+const char *nvf_err_str(nvf_err e) {
+
+    switch(e) {
+        CASE_STR(NVF_OK);
+        CASE_STR(NVF_ERROR);
+        CASE_STR(NVF_BAD_ALLOC);
+        CASE_STR(NVF_BUF_OVF);
+        CASE_STR(NVF_BAD_VALUE_FMT);
+        CASE_STR(NVF_BAD_ARG);
+        CASE_STR(NVF_BAD_DATA);
+        CASE_STR(NVF_BAD_VALUE_TYPE);
+        CASE_STR(NVF_NOT_INIT);
+        CASE_STR(NVF_NOT_FOUND);
+        CASE_STR(NVF_DUP_NAME);
+        CASE_STR(NVF_UNMATCHED_BRACE);
+        CASE_STR(NVF_NUM_OVF);
+        CASE_STR(NVF_ERR_END);
+        default: return NULL;
+    }
 }
 
 // Return UINT8_MAX on error.
@@ -524,7 +552,6 @@ nvf_err_data_i nvf_parse_buf_map_arr(const char *data, uintptr_t data_len,
                         esc_char = true;
                     } else if (esc_char) {
                         esc_char = false;
-                        char ec = data[s_i];
                         bool assigned = false;
 #define MATCH_ASSIGN(i_char, e_char, dest, src, assigned)                      \
     do {                                                                       \
@@ -927,7 +954,6 @@ nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len,
     // Use the allocator to allocate the string.
 
     IF_RET(root->map_num == 0, NVF_OK);
-    nvf_map *iter = root->maps;
     // Allocate one byte for the NULL terminator.
     *out = root->realloc_inst(NULL, 1);
     IF_RET(*out == NULL, NVF_BAD_ALLOC);

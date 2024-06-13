@@ -2,17 +2,65 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define GEN_NUMS(x) x,
-#define GEN_STR(x) #x,
+/**
+    \file
+    The main NVF header.
+*/
+/**
+    \mainpage NVF (Name Value Format)
 
-#define GEN_ERRS(m)                                                            \
-    m(NVF_OK) m(NVF_ERROR) m(NVF_BAD_ALLOC) m(NVF_BUF_OVF)                     \
-        m(NVF_BAD_VALUE_FMT) m(NVF_BAD_ARG) m(NVF_BAD_DATA)                    \
-            m(NVF_BAD_VALUE_TYPE) m(NVF_NOT_INIT) m(NVF_NOT_FOUND)             \
-                m(NVF_DUP_NAME) m(NVF_UNMATCHED_BRACE) m(NVF_NUM_OVF)          \
-                    m(NVF_ERR_END)
+    \section ovr Overview
 
-typedef enum { GEN_ERRS(GEN_NUMS) } nvf_err;
+    This project is a simple configuration format that tries to solve a
+    first world problem. While JSON's wide adoption has been pretty helpful for
+    the industry, allowing wide parser and language interoperability through
+    plaintext, I think JSON is more complicated that it needs to be. This format
+    probably doesn't have JSON's feature set (I don't even know what the JSON
+    feature set is), but if all you need is a way to associate a name with a
+    value in a configuration file, this format will do.
+
+    Here's what the format looks like:
+    \code{.uparsed}
+            # This is a line comment.
+            #[ This is a longer,
+               multi-line comment. ]#
+            int 32343
+            hex_int 0x32343
+            octal_int 032343
+            float 2.0
+            hex_float 0x2.0
+            string "string"
+            multiline_string "multiline\n"
+                             " string"
+            BLOB bx010203040506070809
+            array [32 2.0 "string" bx0708 [67]]
+            map {
+                    int 72333
+                    float 0.8
+                    string "other string"
+                    BLOB bx05060708090a0b0c0d
+                    array [128 0.4 "a string" bx090a0b]
+            }
+    \endcode
+ */
+
+/// The NVF error/return codes.
+typedef enum {
+    NVF_OK = 0, ///< Success
+    NVF_ERROR,
+    NVF_BAD_ALLOC,
+    NVF_BUF_OVF,
+    NVF_BAD_VALUE_FMT,
+    NVF_BAD_ARG,
+    NVF_BAD_DATA,
+    NVF_BAD_VALUE_TYPE,
+    NVF_NOT_INIT,
+    NVF_NOT_FOUND,
+    NVF_DUP_NAME,
+    NVF_UNMATCHED_BRACE,
+    NVF_NUM_OVF,
+    NVF_ERR_END,
+} nvf_err;
 
 typedef enum {
     NVF_PARSE_ARRAY = 0,
@@ -27,12 +75,10 @@ typedef enum {
     NVF_STRING,
     NVF_MAP,
     NVF_ARRAY,
-    NVF_NUM_TYPES,
+    NVF_TYPE_END,
 } nvf_data_type;
 
-// This is an index into the array of names..
-typedef uint32_t nvf_name_i;
-// This is used to keep track of how many elements are in something
+/// This keeps track of how many elements are in something
 typedef uint32_t nvf_num;
 
 typedef struct nvf_blob {
@@ -185,3 +231,5 @@ nvf_err nvf_default_root_to_str(nvf_root *root, char **out, uintptr_t *out_len);
 const char *nvf_err_str(nvf_err e);
 
 char nvf_bin_to_char(uint8_t byte);
+
+const char *nvf_type_str(nvf_data_type dt);

@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
                    "Comparing string results");
     }
     {
-        char bin_out[32] = {0};
+        uint8_t bin_out[32] = {0};
         uintptr_t bin_out_len = sizeof(bin_out);
         const char *b_names[] = {"b_name"};
         rc = nvf_get_blob(&root, b_names, 1, bin_out, &bin_out_len);
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
                    "Checking BLOB results");
     }
     {
-        char bin_out[32] = {0};
+        uint8_t bin_out[32] = {0};
         uintptr_t bin_out_len = sizeof(bin_out);
         const char *b_names[] = {"m_name", "b_name"};
         rc = nvf_get_blob(&root, b_names, 2, bin_out, &bin_out_len);

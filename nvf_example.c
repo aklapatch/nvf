@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
+/**
+  \file nvf_example.c
+  Holds examples for the use of NVF functions.
+*/
+
 #define IF_GOTO_PRINT(cond, label, rc, goto_dest)                              \
     do {                                                                       \
         if (cond) {                                                            \
@@ -156,11 +161,12 @@ int main(int argc, char *argv[]) {
 
         printf("\tGetting an array's value\n");
         nvf_tag_value tv = nvf_get_next(&a_i);
-        printf("\tThe value has type %u and is %ld\n", tv.type, tv.val.v_int);
+        printf("\tThe value has type %s and is %ld\n", nvf_type_str(tv.type), tv.val.v_int);
 
         printf("\tGetting an array's second value\n");
         nvf_tag_value tv_f = nvf_get_next(&a_i);
-        printf("\tThe value has type %u and is %ld\n", tv_f.type, tv_f.val.v_int);
+        printf("\tThe value has type %u and is %ld\n", tv_f.type,
+               tv_f.val.v_int);
 
         printf("\tGetting an array's third value\n");
         nvf_tag_value tv_s = nvf_get_next(&a_i);
@@ -231,7 +237,7 @@ int main(int argc, char *argv[]) {
     {
         char *str_out = NULL;
         uintptr_t str_len = 0;
-	printf("* Getting map as a string\n");
+        printf("* Getting map as a string\n");
         rc = nvf_default_root_to_str(&root, &str_out, &str_len);
         IF_GOTO_PRINT(rc != NVF_OK, "Getting an array", rc, deinit);
         printf("Rendered map: (\n%s\n)\n", str_out);
