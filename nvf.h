@@ -48,9 +48,9 @@
     \section build Building
     The full build requires make, a C compiler (gcc is preferred), clang-format,
     and doxygen. After installing those, run make in the same folder as the make
-    file. 
-    \code{.unparsed} 
-    $ make 
+    file.
+    \code{.unparsed}
+    $ make
     \endcode
     That will build the docs, library, example and test executable.
     It runs the example and the tests too.
