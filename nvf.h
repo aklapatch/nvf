@@ -42,6 +42,38 @@
                     array [128 0.4 "a string" bx090a0b]
             }
     \endcode
+
+    See the source of \ref nvf_example.c for API usage examples.
+
+    \section build Building
+    The full build requires make, a C compiler (gcc is preferred), clang-format,
+    and doxygen. After installing those, run make in the same folder as the make
+    file. 
+    \code{.unparsed} 
+    $ make 
+    \endcode
+    That will build the docs, library, example and test executable.
+    It runs the example and the tests too.
+
+    Run the tests by building this target.
+    \code{.unparsed}
+    $ make test
+    \endcode
+
+    Run the examples by building this target.
+    \code{.unparsed}
+    $ make example
+    \endcode
+
+    Build the docs by building this target.
+    \code{.unparsed}
+    $ make doc
+    \endcode
+
+    Build this target to format the C code.
+    \code{.unparsed}
+    $ make fmt
+    \endcode
  */
 
 /// The NVF error/return codes.
