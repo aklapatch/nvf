@@ -13,6 +13,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="CustomDoxygen.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -101,8 +102,7 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:aef9755a081c2f5311bed246cd1038d24"><td class="memItemLeft" align="right" valign="top"><a id="aef9755a081c2f5311bed246cd1038d24" name="aef9755a081c2f5311bed246cd1038d24"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>NVF_INIT_VAL</b>&#160;&#160;&#160;(0x72)</td></tr>
+<tr class="memitem:aef9755a081c2f5311bed246cd1038d24"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aef9755a081c2f5311bed246cd1038d24">NVF_INIT_VAL</a>&#160;&#160;&#160;(0x72)</td></tr>
 <tr class="separator:aef9755a081c2f5311bed246cd1038d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad954443ef4d882fdeb0f6ed6e5a2bc82"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#ad954443ef4d882fdeb0f6ed6e5a2bc82">IF_RET</a>(expr,  rv)</td></tr>
 <tr class="separator:ad954443ef4d882fdeb0f6ed6e5a2bc82"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,9 +111,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a5c338d25cc77d4f4e76668712944a863"><td class="memItemLeft" align="right" valign="top"><a id="a5c338d25cc77d4f4e76668712944a863" name="a5c338d25cc77d4f4e76668712944a863"></a>
-typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_num</b></td></tr>
-<tr class="memdesc:a5c338d25cc77d4f4e76668712944a863"><td class="mdescLeft">&#160;</td><td class="mdescRight">This keeps track of how many elements are in something. <br /></td></tr>
+<tr class="memitem:a5c338d25cc77d4f4e76668712944a863"><td class="memItemLeft" align="right" valign="top">typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a></td></tr>
+<tr class="memdesc:a5c338d25cc77d4f4e76668712944a863"><td class="mdescLeft">&#160;</td><td class="mdescRight">This keeps track of how many elements are in something.  <a href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">More...</a><br /></td></tr>
 <tr class="separator:a5c338d25cc77d4f4e76668712944a863"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1000e7e2408581aeb54627bf7f8b1aa6"><td class="memItemLeft" align="right" valign="top"><a id="a1000e7e2408581aeb54627bf7f8b1aa6" name="a1000e7e2408581aeb54627bf7f8b1aa6"></a>
 typedef struct <a class="el" href="structnvf__blob.html">nvf_blob</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_blob</b></td></tr>
@@ -127,14 +126,11 @@ typedef struct <a class="el" href="structnvf__array.html">nvf_array</a>&#160;</t
 <tr class="memitem:a6e7d3cbd45c497940868a182f1c9b950"><td class="memItemLeft" align="right" valign="top"><a id="a6e7d3cbd45c497940868a182f1c9b950" name="a6e7d3cbd45c497940868a182f1c9b950"></a>
 typedef struct <a class="el" href="structnvf__map.html">nvf_map</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_map</b></td></tr>
 <tr class="separator:a6e7d3cbd45c497940868a182f1c9b950"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a76390bcd446ccd3bc5550460a50f77"><td class="memItemLeft" align="right" valign="top"><a id="a6a76390bcd446ccd3bc5550460a50f77" name="a6a76390bcd446ccd3bc5550460a50f77"></a>
-typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><b>realloc_fn</b>) (void *, size_t)</td></tr>
+<tr class="memitem:a6a76390bcd446ccd3bc5550460a50f77"><td class="memItemLeft" align="right" valign="top">typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a6a76390bcd446ccd3bc5550460a50f77">realloc_fn</a>) (void *, size_t)</td></tr>
 <tr class="separator:a6a76390bcd446ccd3bc5550460a50f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac728a1a879612a5ebb351581594841eb"><td class="memItemLeft" align="right" valign="top"><a id="ac728a1a879612a5ebb351581594841eb" name="ac728a1a879612a5ebb351581594841eb"></a>
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>free_fn</b>) (void *)</td></tr>
+<tr class="memitem:ac728a1a879612a5ebb351581594841eb"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#ac728a1a879612a5ebb351581594841eb">free_fn</a>) (void *)</td></tr>
 <tr class="separator:ac728a1a879612a5ebb351581594841eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ec8aed236546291940da64decf092c7"><td class="memItemLeft" align="right" valign="top"><a id="a6ec8aed236546291940da64decf092c7" name="a6ec8aed236546291940da64decf092c7"></a>
-typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><b>str_fmt_fn</b>) (char *s, size_t n, const char *format,...)</td></tr>
+<tr class="memitem:a6ec8aed236546291940da64decf092c7"><td class="memItemLeft" align="right" valign="top">typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a6ec8aed236546291940da64decf092c7">str_fmt_fn</a>) (char *s, size_t n, const char *format,...)</td></tr>
 <tr class="separator:a6ec8aed236546291940da64decf092c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a973471bb84facd90270d1467e7da7021"><td class="memItemLeft" align="right" valign="top"><a id="a973471bb84facd90270d1467e7da7021" name="a973471bb84facd90270d1467e7da7021"></a>
 typedef struct <a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root</b></td></tr>
@@ -164,11 +160,11 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a9356dc0e1ad84f4449aa5f9441a10e4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The NVF error/return codes.  <a href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">More...</a><br /></td></tr>
 <tr class="separator:a9356dc0e1ad84f4449aa5f9441a10e4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2de69031c380fe96f9f01727aa16bea0"><td class="memItemLeft" align="right" valign="top"><a id="a2de69031c380fe96f9f01727aa16bea0" name="a2de69031c380fe96f9f01727aa16bea0"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>nvf_parse_type</b> { <b>NVF_PARSE_ARRAY</b> = 0
+<tr class="memitem:a2de69031c380fe96f9f01727aa16bea0"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>nvf_parse_type</b> { <b>NVF_PARSE_ARRAY</b> = 0
 , <b>NVF_PARSE_MAP</b>
  }</td></tr>
 <tr class="separator:a2de69031c380fe96f9f01727aa16bea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a749491eb41acd4e1d9aea7c5ac40c9e1"><td class="memItemLeft" align="right" valign="top"><a id="a749491eb41acd4e1d9aea7c5ac40c9e1" name="a749491eb41acd4e1d9aea7c5ac40c9e1"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>nvf_data_type</b> { <br />
+<tr class="memitem:a749491eb41acd4e1d9aea7c5ac40c9e1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>nvf_data_type</b> { <br />
 &#160;&#160;<b>NVF_NONE</b> = 0
 , <b>NVF_FLOAT</b>
 , <b>NVF_INT</b>
@@ -247,6 +243,8 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >The main NVF header. </p>
+
+<p class="definition">Definition in file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ad954443ef4d882fdeb0f6ed6e5a2bc82" name="ad954443ef4d882fdeb0f6ed6e5a2bc82"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad954443ef4d882fdeb0f6ed6e5a2bc82">&#9670;&nbsp;</a></span>IF_RET</h2>
@@ -279,6 +277,8 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
 <div class="line">        }                                                                      \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
 </div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00118">118</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
 </div>
 </div>
 <a id="aada77bf31cdaadbdd9ca97dab451bd8f" name="aada77bf31cdaadbdd9ca97dab451bd8f"></a>
@@ -319,9 +319,110 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
 <div class="line">        }                                                                      \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
 </div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00125">125</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
+<a id="aef9755a081c2f5311bed246cd1038d24" name="aef9755a081c2f5311bed246cd1038d24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef9755a081c2f5311bed246cd1038d24">&#9670;&nbsp;</a></span>NVF_INIT_VAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define NVF_INIT_VAL&#160;&#160;&#160;(0x72)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00116">116</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ac728a1a879612a5ebb351581594841eb" name="ac728a1a879612a5ebb351581594841eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac728a1a879612a5ebb351581594841eb">&#9670;&nbsp;</a></span>free_fn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* free_fn) (void *)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00113">113</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
+<a id="a5c338d25cc77d4f4e76668712944a863" name="a5c338d25cc77d4f4e76668712944a863"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c338d25cc77d4f4e76668712944a863">&#9670;&nbsp;</a></span>nvf_num</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint32_t <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This keeps track of how many elements are in something. </p>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00082">82</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
+<a id="a6a76390bcd446ccd3bc5550460a50f77" name="a6a76390bcd446ccd3bc5550460a50f77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a76390bcd446ccd3bc5550460a50f77">&#9670;&nbsp;</a></span>realloc_fn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void *(* realloc_fn) (void *, size_t)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00112">112</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
+<a id="a6ec8aed236546291940da64decf092c7" name="a6ec8aed236546291940da64decf092c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ec8aed236546291940da64decf092c7">&#9670;&nbsp;</a></span>str_fmt_fn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int(* str_fmt_fn) (char *s, size_t n, const char *format,...)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00114">114</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a749491eb41acd4e1d9aea7c5ac40c9e1" name="a749491eb41acd4e1d9aea7c5ac40c9e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a749491eb41acd4e1d9aea7c5ac40c9e1">&#9670;&nbsp;</a></span>nvf_data_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum nvf_data_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00070">70</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
 <a id="a9356dc0e1ad84f4449aa5f9441a10e4a" name="a9356dc0e1ad84f4449aa5f9441a10e4a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9356dc0e1ad84f4449aa5f9441a10e4a">&#9670;&nbsp;</a></span>nvf_err</h2>
 
@@ -339,6 +440,24 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9356dc0e1ad84f4449aa5f9441a10e4aaecdbf205c6b66a597bbee90ea77ed21c" name="a9356dc0e1ad84f4449aa5f9441a10e4aaecdbf205c6b66a597bbee90ea77ed21c"></a>NVF_OK&#160;</td><td class="fielddoc"><p >Success. </p>
 </td></tr>
 </table>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00048">48</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
+<a id="a2de69031c380fe96f9f01727aa16bea0" name="a2de69031c380fe96f9f01727aa16bea0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2de69031c380fe96f9f01727aa16bea0">&#9670;&nbsp;</a></span>nvf_parse_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum nvf_parse_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00065">65</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 
 </div>
 </div>
