@@ -84,16 +84,22 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvf__blob.html">nvf_blob</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds large amounts of binary data.  <a href="structnvf__blob.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">union &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionnvf__value.html">nvf_value</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The possible values used in NVF.  <a href="unionnvf__value.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvf__array.html">nvf_array</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds values without names.  <a href="structnvf__array.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvf__map.html">nvf_map</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds values associated with names.  <a href="structnvf__map.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvf__root.html">nvf_root</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds all the maps and arrays from parsing an NVF file.  <a href="structnvf__root.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvf__err__data__i.html">nvf_err_data_i</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The return value from parsing NVF data.  <a href="structnvf__err__data__i.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvf__array__iter.html">nvf_array_iter</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,10 +109,13 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:aef9755a081c2f5311bed246cd1038d24"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aef9755a081c2f5311bed246cd1038d24">NVF_INIT_VAL</a>&#160;&#160;&#160;(0x72)</td></tr>
+<tr class="memdesc:aef9755a081c2f5311bed246cd1038d24"><td class="mdescLeft">&#160;</td><td class="mdescRight">A magic init value to see if the NVF root is setup before use.  <a href="nvf_8h.html#aef9755a081c2f5311bed246cd1038d24">More...</a><br /></td></tr>
 <tr class="separator:aef9755a081c2f5311bed246cd1038d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad954443ef4d882fdeb0f6ed6e5a2bc82"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#ad954443ef4d882fdeb0f6ed6e5a2bc82">IF_RET</a>(expr,  rv)</td></tr>
+<tr class="memdesc:ad954443ef4d882fdeb0f6ed6e5a2bc82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return <em>rv</em> if <em>expr</em> is true.  <a href="nvf_8h.html#ad954443ef4d882fdeb0f6ed6e5a2bc82">More...</a><br /></td></tr>
 <tr class="separator:ad954443ef4d882fdeb0f6ed6e5a2bc82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aada77bf31cdaadbdd9ca97dab451bd8f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aada77bf31cdaadbdd9ca97dab451bd8f">IF_RET_DATA</a>(expr,  rv,  e)</td></tr>
+<tr class="memdesc:aada77bf31cdaadbdd9ca97dab451bd8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set <em>rv.err</em> to e and return <em>rv</em> if <em>expr</em> is true.  <a href="nvf_8h.html#aada77bf31cdaadbdd9ca97dab451bd8f">More...</a><br /></td></tr>
 <tr class="separator:aada77bf31cdaadbdd9ca97dab451bd8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -116,24 +125,32 @@ Typedefs</h2></td></tr>
 <tr class="separator:a5c338d25cc77d4f4e76668712944a863"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1000e7e2408581aeb54627bf7f8b1aa6"><td class="memItemLeft" align="right" valign="top"><a id="a1000e7e2408581aeb54627bf7f8b1aa6" name="a1000e7e2408581aeb54627bf7f8b1aa6"></a>
 typedef struct <a class="el" href="structnvf__blob.html">nvf_blob</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_blob</b></td></tr>
+<tr class="memdesc:a1000e7e2408581aeb54627bf7f8b1aa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds large amounts of binary data. <br /></td></tr>
 <tr class="separator:a1000e7e2408581aeb54627bf7f8b1aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8832625cbdfd981da305de6266efd03"><td class="memItemLeft" align="right" valign="top"><a id="ab8832625cbdfd981da305de6266efd03" name="ab8832625cbdfd981da305de6266efd03"></a>
 typedef union <a class="el" href="unionnvf__value.html">nvf_value</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_value</b></td></tr>
+<tr class="memdesc:ab8832625cbdfd981da305de6266efd03"><td class="mdescLeft">&#160;</td><td class="mdescRight">The possible values used in NVF. <br /></td></tr>
 <tr class="separator:ab8832625cbdfd981da305de6266efd03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a711183bb3c5350b0cbe0af435536f237"><td class="memItemLeft" align="right" valign="top"><a id="a711183bb3c5350b0cbe0af435536f237" name="a711183bb3c5350b0cbe0af435536f237"></a>
 typedef struct <a class="el" href="structnvf__array.html">nvf_array</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_array</b></td></tr>
+<tr class="memdesc:a711183bb3c5350b0cbe0af435536f237"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds values without names. <br /></td></tr>
 <tr class="separator:a711183bb3c5350b0cbe0af435536f237"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e7d3cbd45c497940868a182f1c9b950"><td class="memItemLeft" align="right" valign="top"><a id="a6e7d3cbd45c497940868a182f1c9b950" name="a6e7d3cbd45c497940868a182f1c9b950"></a>
 typedef struct <a class="el" href="structnvf__map.html">nvf_map</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_map</b></td></tr>
+<tr class="memdesc:a6e7d3cbd45c497940868a182f1c9b950"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds values associated with names. <br /></td></tr>
 <tr class="separator:a6e7d3cbd45c497940868a182f1c9b950"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a76390bcd446ccd3bc5550460a50f77"><td class="memItemLeft" align="right" valign="top">typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a6a76390bcd446ccd3bc5550460a50f77">realloc_fn</a>) (void *, size_t)</td></tr>
+<tr class="memdesc:a6a76390bcd446ccd3bc5550460a50f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">The function signature for realloc()  <a href="nvf_8h.html#a6a76390bcd446ccd3bc5550460a50f77">More...</a><br /></td></tr>
 <tr class="separator:a6a76390bcd446ccd3bc5550460a50f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac728a1a879612a5ebb351581594841eb"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#ac728a1a879612a5ebb351581594841eb">free_fn</a>) (void *)</td></tr>
+<tr class="memdesc:ac728a1a879612a5ebb351581594841eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The function signature for free()  <a href="nvf_8h.html#ac728a1a879612a5ebb351581594841eb">More...</a><br /></td></tr>
 <tr class="separator:ac728a1a879612a5ebb351581594841eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ec8aed236546291940da64decf092c7"><td class="memItemLeft" align="right" valign="top">typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a6ec8aed236546291940da64decf092c7">str_fmt_fn</a>) (char *s, size_t n, const char *format,...)</td></tr>
+<tr class="memdesc:a6ec8aed236546291940da64decf092c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The function signature for snprintf()  <a href="nvf_8h.html#a6ec8aed236546291940da64decf092c7">More...</a><br /></td></tr>
 <tr class="separator:a6ec8aed236546291940da64decf092c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a973471bb84facd90270d1467e7da7021"><td class="memItemLeft" align="right" valign="top"><a id="a973471bb84facd90270d1467e7da7021" name="a973471bb84facd90270d1467e7da7021"></a>
 typedef struct <a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root</b></td></tr>
+<tr class="memdesc:a973471bb84facd90270d1467e7da7021"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds all the maps and arrays from parsing an NVF file. <br /></td></tr>
 <tr class="separator:a973471bb84facd90270d1467e7da7021"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -183,7 +200,7 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:afa6bad7892b17bd21885d4b24e03f33c"><td class="memItemLeft" align="right" valign="top"><a id="afa6bad7892b17bd21885d4b24e03f33c" name="afa6bad7892b17bd21885d4b24e03f33c"></a>
-<a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_init</b> (realloc_fn realloc_inst, free_fn free_inst)</td></tr>
+<a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_init</b> (<a class="el" href="nvf_8h.html#a6a76390bcd446ccd3bc5550460a50f77">realloc_fn</a> realloc_inst, <a class="el" href="nvf_8h.html#ac728a1a879612a5ebb351581594841eb">free_fn</a> free_inst)</td></tr>
 <tr class="separator:afa6bad7892b17bd21885d4b24e03f33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1b8798561d656b55ac5f726d2f542f6"><td class="memItemLeft" align="right" valign="top"><a id="ab1b8798561d656b55ac5f726d2f542f6" name="ab1b8798561d656b55ac5f726d2f542f6"></a>
 <a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_default_init</b> (void)</td></tr>
@@ -228,7 +245,7 @@ Functions</h2></td></tr>
 <a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_array_from_i</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> arr_i, <a class="el" href="structnvf__array.html">nvf_array</a> *out)</td></tr>
 <tr class="separator:a092166f4e6f2458952ae564489cab2f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c086e8adff730bea65fadf9c84523b1"><td class="memItemLeft" align="right" valign="top"><a id="a2c086e8adff730bea65fadf9c84523b1" name="a2c086e8adff730bea65fadf9c84523b1"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_to_str</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, char **out, uintptr_t *out_len, str_fmt_fn fmt_fn)</td></tr>
+<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_to_str</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, char **out, uintptr_t *out_len, <a class="el" href="nvf_8h.html#a6ec8aed236546291940da64decf092c7">str_fmt_fn</a> fmt_fn)</td></tr>
 <tr class="separator:a2c086e8adff730bea65fadf9c84523b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b6fe204d8794f124615505a9ce0dd87"><td class="memItemLeft" align="right" valign="top"><a id="a1b6fe204d8794f124615505a9ce0dd87" name="a1b6fe204d8794f124615505a9ce0dd87"></a>
 <a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_default_root_to_str</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, char **out, uintptr_t *out_len)</td></tr>
@@ -279,7 +296,9 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
 <div class="line">        }                                                                      \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00120">120</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+<p>Return <em>rv</em> if <em>expr</em> is true. </p>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00129">129</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 
 </div>
 </div>
@@ -321,7 +340,9 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
 <div class="line">        }                                                                      \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00127">127</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+<p>Set <em>rv.err</em> to e and return <em>rv</em> if <em>expr</em> is true. </p>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00137">137</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 
 </div>
 </div>
@@ -337,7 +358,9 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00118">118</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+<p>A magic init value to see if the NVF root is setup before use. </p>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00126">126</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 
 </div>
 </div>
@@ -354,7 +377,9 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00115">115</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+<p>The function signature for free() </p>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00120">120</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 
 </div>
 </div>
@@ -388,7 +413,9 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00114">114</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+<p>The function signature for realloc() </p>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00117">117</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 
 </div>
 </div>
@@ -404,7 +431,9 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00116">116</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+<p>The function signature for snprintf() </p>
+
+<p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00123">123</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
 
 </div>
 </div>

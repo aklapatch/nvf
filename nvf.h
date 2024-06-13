@@ -83,40 +83,49 @@ typedef enum {
 /// This keeps track of how many elements are in something
 typedef uint32_t nvf_num;
 
+/// Holds large amounts of binary data
 typedef struct nvf_blob {
-    nvf_num len;
-    uint8_t data[];
+    nvf_num len;    ///< The data length in bytes
+    uint8_t data[]; ///< The data itself
 } nvf_blob;
 
+/// The possible values used in NVF
 typedef union nvf_value {
-    nvf_num map_i;
-    nvf_num array_i;
-    int64_t v_int;
-    double v_float;
-    char *v_string;
-    nvf_blob *v_blob;
+    nvf_num map_i;    ///< Index into the maps array
+    nvf_num array_i;  ///< Index into the arrays array
+    int64_t v_int;    ///< Integer
+    double v_float;   ///< Floating point number
+    char *v_string;   ///< C string
+    nvf_blob *v_blob; ///< Binary data
 } nvf_value;
 
-// Arrays can't contain maps. I think that's fine for now.
+/// Holds values without names
 typedef struct nvf_array {
-    uint8_t *types;
-    nvf_value *values;
-    nvf_num num, cap;
+    uint8_t *types;    ///< The data type of each element
+    nvf_value *values; ///< The actual value of each element
+    nvf_num num,       ///< The number of elements in the array.
+        cap;           ///< The array's capacity
 } nvf_array;
 
-// TODO: Try to find a more efficient memory layout. I'm fairly sure we could
-// make this better.
+/// Holds values associated with names
 typedef struct nvf_map {
-    char **names;
-    nvf_array arr;
+    char **names;  ///< The names for each value
+    nvf_array arr; ///< where the values are stored
 } nvf_map;
 
+/// The function signature for realloc()
 typedef void *(*realloc_fn)(void *, size_t);
+
+/// The function signature for free()
 typedef void (*free_fn)(void *);
+
+/// The function signature for snprintf()
 typedef int (*str_fmt_fn)(char *s, size_t n, const char *format, ...);
 
+/// A magic init value to see if the NVF root is setup before use.
 #define NVF_INIT_VAL (0x72)
 
+/// Return \a rv if \a expr is true
 #define IF_RET(expr, rv)                                                       \
     do {                                                                       \
         if ((expr)) {                                                          \
@@ -124,6 +133,7 @@ typedef int (*str_fmt_fn)(char *s, size_t n, const char *format, ...);
         }                                                                      \
     } while (0)
 
+/// Set \a rv.err to e and return \a rv if \a expr is true
 #define IF_RET_DATA(expr, rv, e)                                               \
     do {                                                                       \
         if ((expr)) {                                                          \
@@ -152,16 +162,22 @@ typedef int (*str_fmt_fn)(char *s, size_t n, const char *format, ...);
 // because that could be an index into an array of maps. Same for arrays. There
 // will be pointers to those, but they could be indexes into an array of
 // arrays.
+
+/// Holds all the maps and arrays from parsing an NVF file
 typedef struct nvf_root {
-    realloc_fn realloc_inst;
-    free_fn free_inst;
+    realloc_fn
+        realloc_inst;  ///< The function that allocates memory for this root
+    free_fn free_inst; ///< A function that frees memory for this root
 
-    nvf_num array_num, array_cap;
-    nvf_array *arrays;
+    nvf_num array_num, ///< The number of arrays
+        array_cap;     ///< The array capacity
+    nvf_array *arrays; ///< Array storage
 
-    nvf_num map_num, map_cap;
-    nvf_map *maps;
-    uint8_t init_val;
+    nvf_num map_num, ///< The number of maps stored
+        map_cap;     ///< Map storage capacity
+    nvf_map *maps;   ///< Map storage
+    uint8_t
+        init_val; ///< Set to \ref NVF_INIT_VAL when this struct is initialized.
 } nvf_root;
 
 // A return type used to figure out where the called function stopped while
@@ -170,9 +186,10 @@ typedef struct nvf_root {
 // nvf_err better.
 // TODO: typedef nvf_err to a u32 and make the error codes into a different
 // enum (like nvf_err_e).
+/// The return value from parsing NVF data.
 typedef struct {
-    uintptr_t data_i;
-    nvf_err err;
+    uintptr_t data_i; ///< Last index touched before an error.
+    nvf_err err;      ///< A return code
 } nvf_err_data_i;
 
 typedef struct {

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nvf_5fnum_0',['nvf_num',['../nvf_8h.html#a5c338d25cc77d4f4e76668712944a863',1,'nvf.h']]]
+  ['free_5ffn_0',['free_fn',['../nvf_8h.html#ac728a1a879612a5ebb351581594841eb',1,'nvf.h']]]
 ];
