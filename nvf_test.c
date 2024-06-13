@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
         rc = nvf_get_array_from_i(&root, tv_a.val.array_i, &t_arr);
         ASSERT_INT(rc, NVF_OK, 1, "Getting array index from array");
 
-        nvf_tag_value n_tv_i = nvf_array_get_item(&t_arr, 5);
+        nvf_tag_value n_tv_i = nvf_array_get_item(&t_arr, 0);
         ASSERT_INT(n_tv_i.type, NVF_INT, 1, "Checking nested array type");
         ASSERT_INT(n_tv_i.val.v_int, 67, 1, "Checking nested array value");
     }
@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
             memcmp(m_tv_b.val.v_blob->data, m_b_exp_val, sizeof(m_b_exp_val)),
             0, 1, "Getting blob value from array");
 
-        nvf_tag_value m_tv_n = nvf_array_get_item(&arr, 3);
+        nvf_tag_value m_tv_n = nvf_array_get_item(&arr, 4);
         ASSERT_INT(m_tv_n.type, NVF_NONE, 1,
                    "Getting none value from an iterator");
     }
