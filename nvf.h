@@ -218,16 +218,12 @@ typedef struct nvf_root {
 // nvf_err better.
 // TODO: typedef nvf_err to a u32 and make the error codes into a different
 // enum (like nvf_err_e).
+
 /// The return value from parsing NVF data.
 typedef struct {
     uintptr_t data_i; ///< Last index touched before an error.
     nvf_err err;      ///< A return code
 } nvf_err_data_i;
-
-typedef struct {
-    const nvf_array *arr;
-    nvf_num arr_i;
-} nvf_array_iter;
 
 typedef struct {
     const nvf_value val;
@@ -261,9 +257,7 @@ nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth,
 nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth,
                       nvf_array *out);
 
-nvf_array_iter nvf_iter_init(const nvf_array *arr);
-
-nvf_tag_value nvf_get_next(nvf_array_iter *iter);
+nvf_tag_value nvf_array_get_item(const nvf_array *arr, nvf_num arr_i);
 
 nvf_err nvf_get_blob_alloc(nvf_root *root, const char **names,
                            nvf_num name_depth, uint8_t **out,

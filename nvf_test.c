@@ -144,29 +144,27 @@ int main(int argc, char *argv[]) {
     rc = nvf_get_array(&root, &a_names, 1, &arr);
     ASSERT_INT(rc, NVF_OK, 1, "Getting an array");
 
-    nvf_array_iter a_i = nvf_iter_init(&arr);
-
-    nvf_tag_value tv = nvf_get_next(&a_i);
+    nvf_tag_value tv = nvf_array_get_item(&arr, 0);
     ASSERT_INT(tv.type, NVF_INT, 1, "Getting int type from array");
     ASSERT_INT(tv.val.v_int, 32, 1, "Getting int value from array");
 
-    nvf_tag_value tv_f = nvf_get_next(&a_i);
+    nvf_tag_value tv_f = nvf_array_get_item(&arr, 1);
     ASSERT_INT(tv_f.type, NVF_FLOAT, 1, "Getting float type from array");
     ASSERT_FLOAT(tv_f.val.v_float, 2.0, 1, "Getting float value from array");
 
-    nvf_tag_value tv_s = nvf_get_next(&a_i);
+    nvf_tag_value tv_s = nvf_array_get_item(&arr, 2);
     ASSERT_INT(tv_s.type, NVF_STRING, 1, "Getting string type from array");
     ASSERT_INT(strcmp(tv_s.val.v_string, "str"), 0, 1,
                "Getting string value from array");
 
-    nvf_tag_value tv_b = nvf_get_next(&a_i);
+    nvf_tag_value tv_b = nvf_array_get_item(&arr, 3);
     ASSERT_INT(tv_b.type, NVF_BLOB, 1, "Getting blob type from array");
     ASSERT_INT(tv_b.val.v_blob->len, 2, 1, "Getting blob length from array");
     uint8_t b_exp_val[] = {7, 8};
     ASSERT_INT(memcmp(tv_b.val.v_blob->data, b_exp_val, sizeof(b_exp_val)), 0,
                1, "Getting blob value from array");
 
-    nvf_tag_value tv_a = nvf_get_next(&a_i);
+    nvf_tag_value tv_a = nvf_array_get_item(&arr, 4);
     ASSERT_INT(tv_a.type, NVF_ARRAY, 1, "Getting array value from an iterator");
 
     {
@@ -174,14 +172,12 @@ int main(int argc, char *argv[]) {
         rc = nvf_get_array_from_i(&root, tv_a.val.array_i, &t_arr);
         ASSERT_INT(rc, NVF_OK, 1, "Getting array index from array");
 
-        nvf_array_iter n_a_i = nvf_iter_init(&t_arr);
-
-        nvf_tag_value n_tv_i = nvf_get_next(&n_a_i);
+        nvf_tag_value n_tv_i = nvf_array_get_item(&t_arr, 5);
         ASSERT_INT(n_tv_i.type, NVF_INT, 1, "Checking nested array type");
         ASSERT_INT(n_tv_i.val.v_int, 67, 1, "Checking nested array value");
     }
 
-    nvf_tag_value tv_n = nvf_get_next(&a_i);
+    nvf_tag_value tv_n = nvf_array_get_item(&arr, 5);
     ASSERT_INT(tv_n.type, NVF_NONE, 1, "Getting none value from an iterator");
 
     {
@@ -189,24 +185,22 @@ int main(int argc, char *argv[]) {
         rc = nvf_get_array(&root, am_names, 2, &arr);
         ASSERT_INT(rc, NVF_OK, 1, "Getting a nested array");
 
-        a_i = nvf_iter_init(&arr);
-
-        nvf_tag_value m_tv = nvf_get_next(&a_i);
+        nvf_tag_value m_tv = nvf_array_get_item(&arr, 0);
         ASSERT_INT(m_tv.type, NVF_INT, 1, "Getting int type from array");
         ASSERT_INT(m_tv.val.v_int, 128, 1, "Getting int value from array");
 
-        nvf_tag_value m_tv_f = nvf_get_next(&a_i);
+        nvf_tag_value m_tv_f = nvf_array_get_item(&arr, 1);
         ASSERT_INT(m_tv_f.type, NVF_FLOAT, 1, "Getting float type from array");
         ASSERT_FLOAT(m_tv_f.val.v_float, 0.4, 1,
                      "Getting float value from array");
 
-        nvf_tag_value m_tv_s = nvf_get_next(&a_i);
+        nvf_tag_value m_tv_s = nvf_array_get_item(&arr, 2);
         ASSERT_INT(m_tv_s.type, NVF_STRING, 1,
                    "Getting string type from array");
         ASSERT_INT(strcmp(m_tv_s.val.v_string, "str2"), 0, 1,
                    "Getting string value from array");
 
-        nvf_tag_value m_tv_b = nvf_get_next(&a_i);
+        nvf_tag_value m_tv_b = nvf_array_get_item(&arr, 3);
         ASSERT_INT(m_tv_b.type, NVF_BLOB, 1, "Getting blob type from array");
         ASSERT_INT(m_tv_b.val.v_blob->len, 3, 1,
                    "Getting blob length from array");
@@ -215,7 +209,7 @@ int main(int argc, char *argv[]) {
             memcmp(m_tv_b.val.v_blob->data, m_b_exp_val, sizeof(m_b_exp_val)),
             0, 1, "Getting blob value from array");
 
-        nvf_tag_value m_tv_n = nvf_get_next(&a_i);
+        nvf_tag_value m_tv_n = nvf_array_get_item(&arr, 3);
         ASSERT_INT(m_tv_n.type, NVF_NONE, 1,
                    "Getting none value from an iterator");
     }

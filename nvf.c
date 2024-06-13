@@ -262,22 +262,12 @@ nvf_err nvf_get_str_alloc(nvf_root *root, const char **names,
                                NVF_STRING);
 }
 
-nvf_array_iter nvf_iter_init(const nvf_array *arr) {
-    // NOTE: We don't check pointer validity.
-    nvf_array_iter a_i = {
-        .arr = arr,
-        .arr_i = 0,
-    };
-    return a_i;
-}
-
-nvf_tag_value nvf_get_next(nvf_array_iter *iter) {
-    if (iter->arr_i < iter->arr->num) {
+nvf_tag_value nvf_array_get_item(const nvf_array *arr, nvf_num arr_i) {
+    if (arr_i < arr->num) {
         nvf_tag_value r2 = {
-            .val = iter->arr->values[iter->arr_i],
-            .type = iter->arr->types[iter->arr_i],
+            .val = arr->values[arr_i],
+            .type = arr->types[arr_i],
         };
-        ++iter->arr_i;
         return r2;
     }
     nvf_tag_value r = {
