@@ -8,10 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CASE_STR(str) case str: return #str
+#define CASE_STR(str)                                                          \
+    case str:                                                                  \
+        return #str
 
 const char *nvf_type_str(nvf_data_type dt) {
-    switch(dt) {
+    switch (dt) {
         CASE_STR(NVF_NONE);
         CASE_STR(NVF_FLOAT);
         CASE_STR(NVF_INT);
@@ -20,13 +22,14 @@ const char *nvf_type_str(nvf_data_type dt) {
         CASE_STR(NVF_MAP);
         CASE_STR(NVF_ARRAY);
         CASE_STR(NVF_TYPE_END);
-        default: return NULL;
+    default:
+        return NULL;
     }
 }
 
 const char *nvf_err_str(nvf_err e) {
 
-    switch(e) {
+    switch (e) {
         CASE_STR(NVF_OK);
         CASE_STR(NVF_ERROR);
         CASE_STR(NVF_BAD_ALLOC);
@@ -41,7 +44,8 @@ const char *nvf_err_str(nvf_err e) {
         CASE_STR(NVF_UNMATCHED_BRACE);
         CASE_STR(NVF_NUM_OVF);
         CASE_STR(NVF_ERR_END);
-        default: return NULL;
+    default:
+        return NULL;
     }
 }
 

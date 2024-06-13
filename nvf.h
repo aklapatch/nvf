@@ -46,36 +46,38 @@
 
 /// The NVF error/return codes.
 typedef enum {
-    NVF_OK = 0, ///< Success
-    NVF_ERROR,
-    NVF_BAD_ALLOC,
-    NVF_BUF_OVF,
-    NVF_BAD_VALUE_FMT,
-    NVF_BAD_ARG,
-    NVF_BAD_DATA,
-    NVF_BAD_VALUE_TYPE,
-    NVF_NOT_INIT,
-    NVF_NOT_FOUND,
-    NVF_DUP_NAME,
-    NVF_UNMATCHED_BRACE,
-    NVF_NUM_OVF,
-    NVF_ERR_END,
+    NVF_OK = 0,          ///< Success
+    NVF_ERROR,           ///< Generic error
+    NVF_BAD_ALLOC,       ///< Allocation failed
+    NVF_BUF_OVF,         ///< Buffer overflow
+    NVF_BAD_VALUE_FMT,   ///< Bad value format
+    NVF_BAD_ARG,         ///< Bad argument
+    NVF_BAD_DATA,        ///< Bad data
+    NVF_BAD_VALUE_TYPE,  ///< Unexpected value type
+    NVF_NOT_INIT,        ///< Struct wasn't initialized
+    NVF_NOT_FOUND,       ///< Name not found
+    NVF_DUP_NAME,        ///< Name already exists
+    NVF_UNMATCHED_BRACE, ///< Found brace or bracket without a match
+    NVF_NUM_OVF,         ///< Number is too big to be represented
+    NVF_ERR_END,         ///< An end sentinel
 } nvf_err;
 
+/// The type of parsing to do when parsing the NVF format.
 typedef enum {
-    NVF_PARSE_ARRAY = 0,
-    NVF_PARSE_MAP,
+    NVF_PARSE_ARRAY = 0, ///< Parse an array
+    NVF_PARSE_MAP,       ///< Parse a map
 } nvf_parse_type;
 
+/// The type of data in an element
 typedef enum {
-    NVF_NONE = 0,
-    NVF_FLOAT,
-    NVF_INT,
-    NVF_BLOB,
-    NVF_STRING,
-    NVF_MAP,
-    NVF_ARRAY,
-    NVF_TYPE_END,
+    NVF_NONE = 0, ///< No value
+    NVF_FLOAT,    ///< Floating point number
+    NVF_INT,      ///< Integer number
+    NVF_BLOB,     ///< Big-endian, binary data
+    NVF_STRING,   ///< A C string
+    NVF_MAP,      ///< A map (names associated with values)
+    NVF_ARRAY,    ///< An array (values without names)
+    NVF_TYPE_END, ///< An end sentinel
 } nvf_data_type;
 
 /// This keeps track of how many elements are in something

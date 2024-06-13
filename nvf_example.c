@@ -161,7 +161,8 @@ int main(int argc, char *argv[]) {
 
         printf("\tGetting an array's value\n");
         nvf_tag_value tv = nvf_get_next(&a_i);
-        printf("\tThe value has type %s and is %ld\n", nvf_type_str(tv.type), tv.val.v_int);
+        printf("\tThe value has type %s and is %ld\n", nvf_type_str(tv.type),
+               tv.val.v_int);
 
         printf("\tGetting an array's second value\n");
         nvf_tag_value tv_f = nvf_get_next(&a_i);

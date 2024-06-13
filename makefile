@@ -2,7 +2,7 @@ OPT_CFLAGS := -O2
 CFLAGS := -Wall -Werror
 BUILD_DIR := ./build/
 
-all: $(BUILD_DIR)nvf_test $(BUILD_DIR)libnvf.a
+all: fmt $(BUILD_DIR)nvf_test $(BUILD_DIR)libnvf.a example test doc
 
 doc: nvf.h nvf_example.c Doxyfile
 	doxygen
