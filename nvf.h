@@ -234,10 +234,12 @@ typedef struct {
 
 /** Initialize the root with a custom allocator.
     See \ref nvf_root_default_init() if you just want to use realloc() and
-   free().
-   \param realloc_inst A reallloc()-like function to allocate memory
-   \param free_inst A free()-like function to free memory.
-   \return The initialized root
+    free().
+    Any initialized root should be cleaned up with ::nvf_deinit().
+
+    \param realloc_inst A reallloc()-like function to allocate memory
+    \param free_inst A free()-like function to free memory.
+    \return The initialized root
 */
 nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
 
@@ -257,7 +259,7 @@ nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len,
 
 /** Get an integer from a data root.
     \param [in] root The root to query
-    \param names [in] names The path to the integer to get
+    \param [in] names The path to the integer to get
     \param name_depth The number of path segments in \a names
     \param [out] out The result of the query
     \return An error code indicating success or failure
@@ -267,7 +269,7 @@ nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth,
 
 /** Get a map from a root.
     \param [in] root The root to query
-    \param names [in] names The path to the map
+    \param [in] names The path to the map
     \param name_depth The number of path segments in \a names
     \param [out] map_out The result of the query
     \return An error code indicating success or failure
@@ -283,7 +285,7 @@ nvf_err nvf_deinit(nvf_root *n_r);
 
 /** Get a floating point number from a data root.
     \param [in] root The root to query
-    \param names [in] names The path to the integer to get
+    \param [in] names The path to the integer to get
     \param name_depth The number of path segments in \a names
     \param [out] out The result of the query
     \return An error code indicating success or failure
@@ -293,7 +295,7 @@ nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth,
 
 /** Get a C string from a data root.
     \param [in] root The root to query
-    \param names [in] names The path to the integer to get
+    \param [in] names The path to the integer to get
     \param name_depth The number of path segments in \a names
     \param [out] str_out The result of the query
     \param [in,out] str_out_len The length of \a str_out. Set to the length of the queried string on failure
@@ -304,7 +306,7 @@ nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth,
 
 /** Get a BLOB from a data root.
     \param [in] root The root to query
-    \param names [in] names The path to the integer to get
+    \param [in] names The path to the integer to get
     \param name_depth The number of path segments in \a names
     \param [out] bin_out The result of the query
     \param [in,out] bin_out_len The length of \a bin_out. Set to the length of the queried BLOB on failure
@@ -315,7 +317,7 @@ nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth,
 
 /** Get an array from a data root.
     \param [in] root The root to query
-    \param names [in] names The path to the integer to get
+    \param [in] names The path to the integer to get
     \param name_depth The number of path segments in \a names
     \param [out] out The result of the query
     \return An error code indicating success or failure
@@ -333,7 +335,7 @@ nvf_tag_value nvf_array_get_item(const nvf_array *arr, nvf_num arr_i);
 /** Get a BLOB from a data root. The returned BLOB uses memory from the root's 
     realloc_inst() function and should be freed with the root's free_inst() function.
     \param [in] root The root to query
-    \param names [in] names The path to the integer to get
+    \param [in] names The path to the integer to get
     \param name_depth The number of path segments in \a names
     \param [out] out The result of the query, allocated from \a root->realloc_inst()
     \param [out] out_len The length of \a bin_out
@@ -346,7 +348,7 @@ nvf_err nvf_get_blob_alloc(nvf_root *root, const char **names,
 /** Get a C string from a data root. The returned string uses memory from the root's 
     realloc_inst() function and should be freed with the root's free_inst() function.
     \param [in] root The root to query
-    \param names [in] names The path to the integer to get
+    \param [in] names The path to the integer to get
     \param name_depth The number of path segments in \a names
     \param [out] out The result of the query, allocated from \a root->realloc_inst()
     \param [out] out_len The length of \a bin_out

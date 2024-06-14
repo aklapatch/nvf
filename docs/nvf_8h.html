@@ -749,7 +749,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the integer to get </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query </td></tr>
   </table>
@@ -852,7 +852,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the integer to get </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">bin_out</td><td>The result of the query </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">bin_out_len</td><td>The length of <em>bin_out</em>. Set to the length of the queried BLOB on failure </td></tr>
@@ -911,7 +911,7 @@ Functions</h2></td></tr>
 <p >The returned BLOB uses memory from the root's realloc_inst() function and should be freed with the root's free_inst() function. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the integer to get </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query, allocated from <em>root-&gt;realloc_inst()</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out_len</td><td>The length of <em>bin_out</em> </td></tr>
@@ -964,7 +964,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the integer to get </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query </td></tr>
   </table>
@@ -1016,7 +1016,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the integer to get </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query </td></tr>
   </table>
@@ -1068,7 +1068,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the map </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the map </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">map_out</td><td>The result of the query </td></tr>
   </table>
@@ -1126,7 +1126,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the integer to get </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">str_out</td><td>The result of the query </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">str_out_len</td><td>The length of <em>str_out</em>. Set to the length of the queried string on failure </td></tr>
@@ -1185,7 +1185,7 @@ Functions</h2></td></tr>
 <p >The returned string uses memory from the root's realloc_inst() function and should be freed with the root's free_inst() function. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">names</td><td>The path to the integer to get </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query, allocated from <em>root-&gt;realloc_inst()</em> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out_len</td><td>The length of <em>bin_out</em> </td></tr>
@@ -1289,7 +1289,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initialize the root with a custom allocator. </p>
-<p >See <a class="el" href="nvf_8h.html#ab1b8798561d656b55ac5f726d2f542f6">nvf_root_default_init()</a> if you just want to use realloc() and free(). </p><dl class="params"><dt>Parameters</dt><dd>
+<p >See <a class="el" href="nvf_8h.html#ab1b8798561d656b55ac5f726d2f542f6">nvf_root_default_init()</a> if you just want to use realloc() and free(). Any initialized root should be cleaned up with <a class="el" href="nvf_8h.html#ad6b51c49595a0e4c670e14c0c2a1d039" title="Frees the memory associated with a root and zeros said root.">nvf_deinit()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">realloc_inst</td><td>A reallloc()-like function to allocate memory </td></tr>
     <tr><td class="paramname">free_inst</td><td>A free()-like function to free memory. </td></tr>
