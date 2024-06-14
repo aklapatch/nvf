@@ -102,6 +102,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The return value from parsing NVF data.  <a href="structnvf__err__data__i.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvf__tag__value.html">nvf_tag_value</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A NVF value's value and tag.  <a href="structnvf__tag__value.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -197,62 +198,62 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afa6bad7892b17bd21885d4b24e03f33c"><td class="memItemLeft" align="right" valign="top"><a id="afa6bad7892b17bd21885d4b24e03f33c" name="afa6bad7892b17bd21885d4b24e03f33c"></a>
-<a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_init</b> (<a class="el" href="nvf_8h.html#a6a76390bcd446ccd3bc5550460a50f77">realloc_fn</a> realloc_inst, <a class="el" href="nvf_8h.html#ac728a1a879612a5ebb351581594841eb">free_fn</a> free_inst)</td></tr>
+<tr class="memitem:afa6bad7892b17bd21885d4b24e03f33c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#afa6bad7892b17bd21885d4b24e03f33c">nvf_root_init</a> (<a class="el" href="nvf_8h.html#a6a76390bcd446ccd3bc5550460a50f77">realloc_fn</a> realloc_inst, <a class="el" href="nvf_8h.html#ac728a1a879612a5ebb351581594841eb">free_fn</a> free_inst)</td></tr>
+<tr class="memdesc:afa6bad7892b17bd21885d4b24e03f33c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the root with a custom allocator.  <a href="nvf_8h.html#afa6bad7892b17bd21885d4b24e03f33c">More...</a><br /></td></tr>
 <tr class="separator:afa6bad7892b17bd21885d4b24e03f33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1b8798561d656b55ac5f726d2f542f6"><td class="memItemLeft" align="right" valign="top"><a id="ab1b8798561d656b55ac5f726d2f542f6" name="ab1b8798561d656b55ac5f726d2f542f6"></a>
-<a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_default_init</b> (void)</td></tr>
+<tr class="memitem:ab1b8798561d656b55ac5f726d2f542f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnvf__root.html">nvf_root</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#ab1b8798561d656b55ac5f726d2f542f6">nvf_root_default_init</a> (void)</td></tr>
+<tr class="memdesc:ab1b8798561d656b55ac5f726d2f542f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the root with the stdlib allocators (realloc() and free()).  <a href="nvf_8h.html#ab1b8798561d656b55ac5f726d2f542f6">More...</a><br /></td></tr>
 <tr class="separator:ab1b8798561d656b55ac5f726d2f542f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa9ca38661b19edab178d802990f9c49"><td class="memItemLeft" align="right" valign="top"><a id="aaa9ca38661b19edab178d802990f9c49" name="aaa9ca38661b19edab178d802990f9c49"></a>
-<a class="el" href="structnvf__err__data__i.html">nvf_err_data_i</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_parse_buf</b> (const char *data, uintptr_t data_len, <a class="el" href="structnvf__root.html">nvf_root</a> *out_root)</td></tr>
+<tr class="memitem:aaa9ca38661b19edab178d802990f9c49"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnvf__err__data__i.html">nvf_err_data_i</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aaa9ca38661b19edab178d802990f9c49">nvf_parse_buf</a> (const char *data, uintptr_t data_len, <a class="el" href="structnvf__root.html">nvf_root</a> *out_root)</td></tr>
+<tr class="memdesc:aaa9ca38661b19edab178d802990f9c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse text data from <em>data</em> and put it into <em>out_root</em>.  <a href="nvf_8h.html#aaa9ca38661b19edab178d802990f9c49">More...</a><br /></td></tr>
 <tr class="separator:aaa9ca38661b19edab178d802990f9c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7e791874ec85c5cf8767afc02c0e9e0"><td class="memItemLeft" align="right" valign="top"><a id="ae7e791874ec85c5cf8767afc02c0e9e0" name="ae7e791874ec85c5cf8767afc02c0e9e0"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_int</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, int64_t *out)</td></tr>
+<tr class="memitem:ae7e791874ec85c5cf8767afc02c0e9e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#ae7e791874ec85c5cf8767afc02c0e9e0">nvf_get_int</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, int64_t *out)</td></tr>
+<tr class="memdesc:ae7e791874ec85c5cf8767afc02c0e9e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an integer from a data root.  <a href="nvf_8h.html#ae7e791874ec85c5cf8767afc02c0e9e0">More...</a><br /></td></tr>
 <tr class="separator:ae7e791874ec85c5cf8767afc02c0e9e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ad9d130079cbeb3f2328694e3eacaa9"><td class="memItemLeft" align="right" valign="top"><a id="a8ad9d130079cbeb3f2328694e3eacaa9" name="a8ad9d130079cbeb3f2328694e3eacaa9"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_map</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **m_names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, <a class="el" href="structnvf__map.html">nvf_map</a> *map_out)</td></tr>
+<tr class="memitem:a8ad9d130079cbeb3f2328694e3eacaa9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a8ad9d130079cbeb3f2328694e3eacaa9">nvf_get_map</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **m_names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, <a class="el" href="structnvf__map.html">nvf_map</a> *map_out)</td></tr>
+<tr class="memdesc:a8ad9d130079cbeb3f2328694e3eacaa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a map from a root.  <a href="nvf_8h.html#a8ad9d130079cbeb3f2328694e3eacaa9">More...</a><br /></td></tr>
 <tr class="separator:a8ad9d130079cbeb3f2328694e3eacaa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6b51c49595a0e4c670e14c0c2a1d039"><td class="memItemLeft" align="right" valign="top"><a id="ad6b51c49595a0e4c670e14c0c2a1d039" name="ad6b51c49595a0e4c670e14c0c2a1d039"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_deinit</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *n_r)</td></tr>
+<tr class="memitem:ad6b51c49595a0e4c670e14c0c2a1d039"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#ad6b51c49595a0e4c670e14c0c2a1d039">nvf_deinit</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *n_r)</td></tr>
+<tr class="memdesc:ad6b51c49595a0e4c670e14c0c2a1d039"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the memory associated with a root and zeros said root.  <a href="nvf_8h.html#ad6b51c49595a0e4c670e14c0c2a1d039">More...</a><br /></td></tr>
 <tr class="separator:ad6b51c49595a0e4c670e14c0c2a1d039"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a497187dea4651d350f2fa52ca35d71fb"><td class="memItemLeft" align="right" valign="top"><a id="a497187dea4651d350f2fa52ca35d71fb" name="a497187dea4651d350f2fa52ca35d71fb"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_float</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, double *out)</td></tr>
+<tr class="memitem:a497187dea4651d350f2fa52ca35d71fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a497187dea4651d350f2fa52ca35d71fb">nvf_get_float</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, double *out)</td></tr>
+<tr class="memdesc:a497187dea4651d350f2fa52ca35d71fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a floating point number from a data root.  <a href="nvf_8h.html#a497187dea4651d350f2fa52ca35d71fb">More...</a><br /></td></tr>
 <tr class="separator:a497187dea4651d350f2fa52ca35d71fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5029d87a312a288f87579e4e7ba86a74"><td class="memItemLeft" align="right" valign="top"><a id="a5029d87a312a288f87579e4e7ba86a74" name="a5029d87a312a288f87579e4e7ba86a74"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_str</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, char *str_out, uintptr_t *str_out_len)</td></tr>
+<tr class="memitem:a5029d87a312a288f87579e4e7ba86a74"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a5029d87a312a288f87579e4e7ba86a74">nvf_get_str</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, char *str_out, uintptr_t *str_out_len)</td></tr>
+<tr class="memdesc:a5029d87a312a288f87579e4e7ba86a74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a C string from a data root.  <a href="nvf_8h.html#a5029d87a312a288f87579e4e7ba86a74">More...</a><br /></td></tr>
 <tr class="separator:a5029d87a312a288f87579e4e7ba86a74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6b12da9124ecfd7e6dcf7da1ebc76ee"><td class="memItemLeft" align="right" valign="top"><a id="af6b12da9124ecfd7e6dcf7da1ebc76ee" name="af6b12da9124ecfd7e6dcf7da1ebc76ee"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_blob</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, uint8_t *bin_out, uintptr_t *bin_out_len)</td></tr>
+<tr class="memitem:af6b12da9124ecfd7e6dcf7da1ebc76ee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#af6b12da9124ecfd7e6dcf7da1ebc76ee">nvf_get_blob</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, uint8_t *bin_out, uintptr_t *bin_out_len)</td></tr>
+<tr class="memdesc:af6b12da9124ecfd7e6dcf7da1ebc76ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a BLOB from a data root.  <a href="nvf_8h.html#af6b12da9124ecfd7e6dcf7da1ebc76ee">More...</a><br /></td></tr>
 <tr class="separator:af6b12da9124ecfd7e6dcf7da1ebc76ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedf6a7662b33a46f17b9fb54e4d1611b"><td class="memItemLeft" align="right" valign="top"><a id="aedf6a7662b33a46f17b9fb54e4d1611b" name="aedf6a7662b33a46f17b9fb54e4d1611b"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_array</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, <a class="el" href="structnvf__array.html">nvf_array</a> *out)</td></tr>
+<tr class="memitem:aedf6a7662b33a46f17b9fb54e4d1611b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aedf6a7662b33a46f17b9fb54e4d1611b">nvf_get_array</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, <a class="el" href="structnvf__array.html">nvf_array</a> *out)</td></tr>
+<tr class="memdesc:aedf6a7662b33a46f17b9fb54e4d1611b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an array from a data root.  <a href="nvf_8h.html#aedf6a7662b33a46f17b9fb54e4d1611b">More...</a><br /></td></tr>
 <tr class="separator:aedf6a7662b33a46f17b9fb54e4d1611b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa84f6a814b90c150863a2b532bc560cf"><td class="memItemLeft" align="right" valign="top"><a id="aa84f6a814b90c150863a2b532bc560cf" name="aa84f6a814b90c150863a2b532bc560cf"></a>
-<a class="el" href="structnvf__tag__value.html">nvf_tag_value</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_array_get_item</b> (const <a class="el" href="structnvf__array.html">nvf_array</a> *arr, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> arr_i)</td></tr>
+<tr class="memitem:aa84f6a814b90c150863a2b532bc560cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnvf__tag__value.html">nvf_tag_value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aa84f6a814b90c150863a2b532bc560cf">nvf_array_get_item</a> (const <a class="el" href="structnvf__array.html">nvf_array</a> *arr, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> arr_i)</td></tr>
+<tr class="memdesc:aa84f6a814b90c150863a2b532bc560cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an item from an NVF array.  <a href="nvf_8h.html#aa84f6a814b90c150863a2b532bc560cf">More...</a><br /></td></tr>
 <tr class="separator:aa84f6a814b90c150863a2b532bc560cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a548c4cf3efc2dc85db2d4310909df987"><td class="memItemLeft" align="right" valign="top"><a id="a548c4cf3efc2dc85db2d4310909df987" name="a548c4cf3efc2dc85db2d4310909df987"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_blob_alloc</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, uint8_t **out, uintptr_t *out_len)</td></tr>
+<tr class="memitem:a548c4cf3efc2dc85db2d4310909df987"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a548c4cf3efc2dc85db2d4310909df987">nvf_get_blob_alloc</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, uint8_t **out, uintptr_t *out_len)</td></tr>
+<tr class="memdesc:a548c4cf3efc2dc85db2d4310909df987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a BLOB from a data root.  <a href="nvf_8h.html#a548c4cf3efc2dc85db2d4310909df987">More...</a><br /></td></tr>
 <tr class="separator:a548c4cf3efc2dc85db2d4310909df987"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20309c3e46e088511375894bb89c75da"><td class="memItemLeft" align="right" valign="top"><a id="a20309c3e46e088511375894bb89c75da" name="a20309c3e46e088511375894bb89c75da"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_str_alloc</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, char **out, uintptr_t *out_len)</td></tr>
+<tr class="memitem:a20309c3e46e088511375894bb89c75da"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a20309c3e46e088511375894bb89c75da">nvf_get_str_alloc</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, const char **names, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> name_depth, char **out, uintptr_t *out_len)</td></tr>
+<tr class="memdesc:a20309c3e46e088511375894bb89c75da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a C string from a data root.  <a href="nvf_8h.html#a20309c3e46e088511375894bb89c75da">More...</a><br /></td></tr>
 <tr class="separator:a20309c3e46e088511375894bb89c75da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a092166f4e6f2458952ae564489cab2f7"><td class="memItemLeft" align="right" valign="top"><a id="a092166f4e6f2458952ae564489cab2f7" name="a092166f4e6f2458952ae564489cab2f7"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_get_array_from_i</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> arr_i, <a class="el" href="structnvf__array.html">nvf_array</a> *out)</td></tr>
+<tr class="memitem:a092166f4e6f2458952ae564489cab2f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a092166f4e6f2458952ae564489cab2f7">nvf_get_array_from_i</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, <a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a> arr_i, <a class="el" href="structnvf__array.html">nvf_array</a> *out)</td></tr>
+<tr class="memdesc:a092166f4e6f2458952ae564489cab2f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an array from a data root using the array's index.  <a href="nvf_8h.html#a092166f4e6f2458952ae564489cab2f7">More...</a><br /></td></tr>
 <tr class="separator:a092166f4e6f2458952ae564489cab2f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c086e8adff730bea65fadf9c84523b1"><td class="memItemLeft" align="right" valign="top"><a id="a2c086e8adff730bea65fadf9c84523b1" name="a2c086e8adff730bea65fadf9c84523b1"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_root_to_str</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, char **out, uintptr_t *out_len, <a class="el" href="nvf_8h.html#a6ec8aed236546291940da64decf092c7">str_fmt_fn</a> fmt_fn)</td></tr>
+<tr class="memitem:a2c086e8adff730bea65fadf9c84523b1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a2c086e8adff730bea65fadf9c84523b1">nvf_root_to_str</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, char **out, uintptr_t *out_len, <a class="el" href="nvf_8h.html#a6ec8aed236546291940da64decf092c7">str_fmt_fn</a> fmt_fn)</td></tr>
+<tr class="memdesc:a2c086e8adff730bea65fadf9c84523b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a string representation of <em>root</em>.  <a href="nvf_8h.html#a2c086e8adff730bea65fadf9c84523b1">More...</a><br /></td></tr>
 <tr class="separator:a2c086e8adff730bea65fadf9c84523b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b6fe204d8794f124615505a9ce0dd87"><td class="memItemLeft" align="right" valign="top"><a id="a1b6fe204d8794f124615505a9ce0dd87" name="a1b6fe204d8794f124615505a9ce0dd87"></a>
-<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_default_root_to_str</b> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, char **out, uintptr_t *out_len)</td></tr>
+<tr class="memitem:a1b6fe204d8794f124615505a9ce0dd87"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#a1b6fe204d8794f124615505a9ce0dd87">nvf_default_root_to_str</a> (<a class="el" href="structnvf__root.html">nvf_root</a> *root, char **out, uintptr_t *out_len)</td></tr>
+<tr class="memdesc:a1b6fe204d8794f124615505a9ce0dd87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Like <a class="el" href="nvf_8h.html#a2c086e8adff730bea65fadf9c84523b1" title="Makes a string representation of root.">nvf_root_to_str()</a> with snprintf() passed as <em>fmt_fn</em>.  <a href="nvf_8h.html#a1b6fe204d8794f124615505a9ce0dd87">More...</a><br /></td></tr>
 <tr class="separator:a1b6fe204d8794f124615505a9ce0dd87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec6b5a475ae1f983f53f2b94b5e26596"><td class="memItemLeft" align="right" valign="top"><a id="aec6b5a475ae1f983f53f2b94b5e26596" name="aec6b5a475ae1f983f53f2b94b5e26596"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_err_str</b> (<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> e)</td></tr>
+<tr class="memitem:aec6b5a475ae1f983f53f2b94b5e26596"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aec6b5a475ae1f983f53f2b94b5e26596">nvf_err_str</a> (<a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> e)</td></tr>
+<tr class="memdesc:aec6b5a475ae1f983f53f2b94b5e26596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an NVF return code to a string.  <a href="nvf_8h.html#aec6b5a475ae1f983f53f2b94b5e26596">More...</a><br /></td></tr>
 <tr class="separator:aec6b5a475ae1f983f53f2b94b5e26596"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcd3bc83c9ba31d48361a2b749996741"><td class="memItemLeft" align="right" valign="top"><a id="adcd3bc83c9ba31d48361a2b749996741" name="adcd3bc83c9ba31d48361a2b749996741"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_bin_to_char</b> (uint8_t byte)</td></tr>
+<tr class="memitem:adcd3bc83c9ba31d48361a2b749996741"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#adcd3bc83c9ba31d48361a2b749996741">nvf_bin_to_char</a> (uint8_t byte)</td></tr>
+<tr class="memdesc:adcd3bc83c9ba31d48361a2b749996741"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a byte to a single hex charater.  <a href="nvf_8h.html#adcd3bc83c9ba31d48361a2b749996741">More...</a><br /></td></tr>
 <tr class="separator:adcd3bc83c9ba31d48361a2b749996741"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea40e996491e07acaf89af9316fc6735"><td class="memItemLeft" align="right" valign="top"><a id="aea40e996491e07acaf89af9316fc6735" name="aea40e996491e07acaf89af9316fc6735"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str</b> (<a class="el" href="nvf_8h.html#a749491eb41acd4e1d9aea7c5ac40c9e1">nvf_data_type</a> dt)</td></tr>
+<tr class="memitem:aea40e996491e07acaf89af9316fc6735"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nvf_8h.html#aea40e996491e07acaf89af9316fc6735">nvf_type_str</a> (<a class="el" href="nvf_8h.html#a749491eb41acd4e1d9aea7c5ac40c9e1">nvf_data_type</a> dt)</td></tr>
+<tr class="memdesc:aea40e996491e07acaf89af9316fc6735"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an NVF data type to a C string.  <a href="nvf_8h.html#aea40e996491e07acaf89af9316fc6735">More...</a><br /></td></tr>
 <tr class="separator:aea40e996491e07acaf89af9316fc6735"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -538,6 +539,843 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>nvf_type_str<
 </table>
 
 <p class="definition">Definition at line <a class="el" href="nvf_8h_source.html#l00098">98</a> of file <a class="el" href="nvf_8h_source.html">nvf.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="aa84f6a814b90c150863a2b532bc560cf" name="aa84f6a814b90c150863a2b532bc560cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa84f6a814b90c150863a2b532bc560cf">&#9670;&nbsp;</a></span>nvf_array_get_item()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structnvf__tag__value.html">nvf_tag_value</a> nvf_array_get_item </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structnvf__array.html">nvf_array</a> *&#160;</td>
+          <td class="paramname"><em>arr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>arr_i</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get an item from an NVF array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arr</td><td>The array to get an item from </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">out</td><td>arr_i The index of the item to get </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="adcd3bc83c9ba31d48361a2b749996741" name="adcd3bc83c9ba31d48361a2b749996741"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcd3bc83c9ba31d48361a2b749996741">&#9670;&nbsp;</a></span>nvf_bin_to_char()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char nvf_bin_to_char </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>byte</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts a byte to a single hex charater. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">the</td><td>byte to convert </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>'\0' if the value fits, the hex character otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a1b6fe204d8794f124615505a9ce0dd87" name="a1b6fe204d8794f124615505a9ce0dd87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b6fe204d8794f124615505a9ce0dd87">&#9670;&nbsp;</a></span>nvf_default_root_to_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_default_root_to_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uintptr_t *&#160;</td>
+          <td class="paramname"><em>out_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Like <a class="el" href="nvf_8h.html#a2c086e8adff730bea65fadf9c84523b1" title="Makes a string representation of root.">nvf_root_to_str()</a> with snprintf() passed as <em>fmt_fn</em>. </p>
+<p >The output string is allocaed using <em>root-&gt;realloc_inst()</em> and should be freed with <em>root-&gt;free_inst()</em>. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root used to generate the string </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The C string version of <em>root</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_len</td><td>The length of the output C string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="ad6b51c49595a0e4c670e14c0c2a1d039" name="ad6b51c49595a0e4c670e14c0c2a1d039"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6b51c49595a0e4c670e14c0c2a1d039">&#9670;&nbsp;</a></span>nvf_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_deinit </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>n_r</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Frees the memory associated with a root and zeros said root. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">n_r</td><td>The root to clean up. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="aec6b5a475ae1f983f53f2b94b5e26596" name="aec6b5a475ae1f983f53f2b94b5e26596"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec6b5a475ae1f983f53f2b94b5e26596">&#9670;&nbsp;</a></span>nvf_err_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * nvf_err_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a>&#160;</td>
+          <td class="paramname"><em>e</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts an NVF return code to a string. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>The return code to convert to a string </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A string if <em>e</em> has a match, NULL otherwise </dd></dl>
+
+</div>
+</div>
+<a id="aedf6a7662b33a46f17b9fb54e4d1611b" name="aedf6a7662b33a46f17b9fb54e4d1611b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedf6a7662b33a46f17b9fb54e4d1611b">&#9670;&nbsp;</a></span>nvf_get_array()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_array </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnvf__array.html">nvf_array</a> *&#160;</td>
+          <td class="paramname"><em>out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get an array from a data root. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="a092166f4e6f2458952ae564489cab2f7" name="a092166f4e6f2458952ae564489cab2f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a092166f4e6f2458952ae564489cab2f7">&#9670;&nbsp;</a></span>nvf_get_array_from_i()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_array_from_i </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>arr_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnvf__array.html">nvf_array</a> *&#160;</td>
+          <td class="paramname"><em>out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get an array from a data root using the array's index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to get the array from </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">arr_i</td><td>The index of the array to get </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">The</td><td>query result </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="af6b12da9124ecfd7e6dcf7da1ebc76ee" name="af6b12da9124ecfd7e6dcf7da1ebc76ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6b12da9124ecfd7e6dcf7da1ebc76ee">&#9670;&nbsp;</a></span>nvf_get_blob()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_blob </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>bin_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uintptr_t *&#160;</td>
+          <td class="paramname"><em>bin_out_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a BLOB from a data root. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">bin_out</td><td>The result of the query </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">bin_out_len</td><td>The length of <em>bin_out</em>. Set to the length of the queried BLOB on failure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="a548c4cf3efc2dc85db2d4310909df987" name="a548c4cf3efc2dc85db2d4310909df987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a548c4cf3efc2dc85db2d4310909df987">&#9670;&nbsp;</a></span>nvf_get_blob_alloc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_blob_alloc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uintptr_t *&#160;</td>
+          <td class="paramname"><em>out_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a BLOB from a data root. </p>
+<p >The returned BLOB uses memory from the root's realloc_inst() function and should be freed with the root's free_inst() function. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query, allocated from <em>root-&gt;realloc_inst()</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_len</td><td>The length of <em>bin_out</em> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="a497187dea4651d350f2fa52ca35d71fb" name="a497187dea4651d350f2fa52ca35d71fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a497187dea4651d350f2fa52ca35d71fb">&#9670;&nbsp;</a></span>nvf_get_float()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_float </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a floating point number from a data root. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="ae7e791874ec85c5cf8767afc02c0e9e0" name="ae7e791874ec85c5cf8767afc02c0e9e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7e791874ec85c5cf8767afc02c0e9e0">&#9670;&nbsp;</a></span>nvf_get_int()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_int </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t *&#160;</td>
+          <td class="paramname"><em>out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get an integer from a data root. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="a8ad9d130079cbeb3f2328694e3eacaa9" name="a8ad9d130079cbeb3f2328694e3eacaa9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ad9d130079cbeb3f2328694e3eacaa9">&#9670;&nbsp;</a></span>nvf_get_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_map </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>m_names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnvf__map.html">nvf_map</a> *&#160;</td>
+          <td class="paramname"><em>map_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a map from a root. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the map </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">map_out</td><td>The result of the query </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="a5029d87a312a288f87579e4e7ba86a74" name="a5029d87a312a288f87579e4e7ba86a74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5029d87a312a288f87579e4e7ba86a74">&#9670;&nbsp;</a></span>nvf_get_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>str_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uintptr_t *&#160;</td>
+          <td class="paramname"><em>str_out_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a C string from a data root. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">str_out</td><td>The result of the query </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">str_out_len</td><td>The length of <em>str_out</em>. Set to the length of the queried string on failure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="a20309c3e46e088511375894bb89c75da" name="a20309c3e46e088511375894bb89c75da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20309c3e46e088511375894bb89c75da">&#9670;&nbsp;</a></span>nvf_get_str_alloc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_get_str_alloc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **&#160;</td>
+          <td class="paramname"><em>names</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a5c338d25cc77d4f4e76668712944a863">nvf_num</a>&#160;</td>
+          <td class="paramname"><em>name_depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uintptr_t *&#160;</td>
+          <td class="paramname"><em>out_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a C string from a data root. </p>
+<p >The returned string uses memory from the root's realloc_inst() function and should be freed with the root's free_inst() function. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root to query </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">names</td><td>[in] names The path to the integer to get </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">name_depth</td><td>The number of path segments in <em>names</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The result of the query, allocated from <em>root-&gt;realloc_inst()</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_len</td><td>The length of <em>bin_out</em> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="aaa9ca38661b19edab178d802990f9c49" name="aaa9ca38661b19edab178d802990f9c49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa9ca38661b19edab178d802990f9c49">&#9670;&nbsp;</a></span>nvf_parse_buf()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structnvf__err__data__i.html">nvf_err_data_i</a> nvf_parse_buf </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uintptr_t&#160;</td>
+          <td class="paramname"><em>data_len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>out_root</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Parse text data from <em>data</em> and put it into <em>out_root</em>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>NVF text to parse </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">data_len</td><td>the length of <em>data</em> </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">out_root</td><td>The root where data is stored. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A struct with the parsing reults </dd></dl>
+
+</div>
+</div>
+<a id="ab1b8798561d656b55ac5f726d2f542f6" name="ab1b8798561d656b55ac5f726d2f542f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1b8798561d656b55ac5f726d2f542f6">&#9670;&nbsp;</a></span>nvf_root_default_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structnvf__root.html">nvf_root</a> nvf_root_default_init </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the root with the stdlib allocators (realloc() and free()). </p>
+<dl class="section return"><dt>Returns</dt><dd>An initialized root </dd></dl>
+
+</div>
+</div>
+<a id="afa6bad7892b17bd21885d4b24e03f33c" name="afa6bad7892b17bd21885d4b24e03f33c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa6bad7892b17bd21885d4b24e03f33c">&#9670;&nbsp;</a></span>nvf_root_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structnvf__root.html">nvf_root</a> nvf_root_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a6a76390bcd446ccd3bc5550460a50f77">realloc_fn</a>&#160;</td>
+          <td class="paramname"><em>realloc_inst</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#ac728a1a879612a5ebb351581594841eb">free_fn</a>&#160;</td>
+          <td class="paramname"><em>free_inst</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the root with a custom allocator. </p>
+<p >See <a class="el" href="nvf_8h.html#ab1b8798561d656b55ac5f726d2f542f6">nvf_root_default_init()</a> if you just want to use realloc() and free(). </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">realloc_inst</td><td>A reallloc()-like function to allocate memory </td></tr>
+    <tr><td class="paramname">free_inst</td><td>A free()-like function to free memory. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The initialized root </dd></dl>
+
+</div>
+</div>
+<a id="a2c086e8adff730bea65fadf9c84523b1" name="a2c086e8adff730bea65fadf9c84523b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c086e8adff730bea65fadf9c84523b1">&#9670;&nbsp;</a></span>nvf_root_to_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nvf_8h.html#a9356dc0e1ad84f4449aa5f9441a10e4a">nvf_err</a> nvf_root_to_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnvf__root.html">nvf_root</a> *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uintptr_t *&#160;</td>
+          <td class="paramname"><em>out_len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a6ec8aed236546291940da64decf092c7">str_fmt_fn</a>&#160;</td>
+          <td class="paramname"><em>fmt_fn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Makes a string representation of <em>root</em>. </p>
+<p >This string is allocated from <em>root-&gt;realloc_inst()</em> and should be freed with <em>root-&gt;free_inst()</em>. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>The root used to generate the string </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The C string version of <em>root</em> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_len</td><td>The length of the output C string. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">fmt_fn</td><td>A snprintf()-like function to make the string output </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error code indicating success or failure </dd></dl>
+
+</div>
+</div>
+<a id="aea40e996491e07acaf89af9316fc6735" name="aea40e996491e07acaf89af9316fc6735"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea40e996491e07acaf89af9316fc6735">&#9670;&nbsp;</a></span>nvf_type_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * nvf_type_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="nvf_8h.html#a749491eb41acd4e1d9aea7c5ac40c9e1">nvf_data_type</a>&#160;</td>
+          <td class="paramname"><em>dt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts an NVF data type to a C string. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dt</td><td>The data type to convert to a string </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A string if <em>dt</em> has a match, NULL otherwise </dd></dl>
 
 </div>
 </div>

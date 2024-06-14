@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['nvf_5farray_5fget_5fitem_0',['nvf_array_get_item',['../nvf_8h.html#aa84f6a814b90c150863a2b532bc560cf',1,'nvf.h']]],
+  ['nvf_5fbin_5fto_5fchar_1',['nvf_bin_to_char',['../nvf_8h.html#adcd3bc83c9ba31d48361a2b749996741',1,'nvf.h']]],
+  ['nvf_5fdefault_5froot_5fto_5fstr_2',['nvf_default_root_to_str',['../nvf_8h.html#a1b6fe204d8794f124615505a9ce0dd87',1,'nvf.h']]],
+  ['nvf_5fdeinit_3',['nvf_deinit',['../nvf_8h.html#ad6b51c49595a0e4c670e14c0c2a1d039',1,'nvf.h']]],
+  ['nvf_5ferr_5fstr_4',['nvf_err_str',['../nvf_8h.html#aec6b5a475ae1f983f53f2b94b5e26596',1,'nvf.h']]],
+  ['nvf_5fget_5farray_5',['nvf_get_array',['../nvf_8h.html#aedf6a7662b33a46f17b9fb54e4d1611b',1,'nvf.h']]],
+  ['nvf_5fget_5farray_5ffrom_5fi_6',['nvf_get_array_from_i',['../nvf_8h.html#a092166f4e6f2458952ae564489cab2f7',1,'nvf.h']]],
+  ['nvf_5fget_5fblob_7',['nvf_get_blob',['../nvf_8h.html#af6b12da9124ecfd7e6dcf7da1ebc76ee',1,'nvf.h']]],
+  ['nvf_5fget_5fblob_5falloc_8',['nvf_get_blob_alloc',['../nvf_8h.html#a548c4cf3efc2dc85db2d4310909df987',1,'nvf.h']]],
+  ['nvf_5fget_5ffloat_9',['nvf_get_float',['../nvf_8h.html#a497187dea4651d350f2fa52ca35d71fb',1,'nvf.h']]],
+  ['nvf_5fget_5fint_10',['nvf_get_int',['../nvf_8h.html#ae7e791874ec85c5cf8767afc02c0e9e0',1,'nvf.h']]],
+  ['nvf_5fget_5fmap_11',['nvf_get_map',['../nvf_8h.html#a8ad9d130079cbeb3f2328694e3eacaa9',1,'nvf.h']]],
+  ['nvf_5fget_5fstr_12',['nvf_get_str',['../nvf_8h.html#a5029d87a312a288f87579e4e7ba86a74',1,'nvf.h']]],
+  ['nvf_5fget_5fstr_5falloc_13',['nvf_get_str_alloc',['../nvf_8h.html#a20309c3e46e088511375894bb89c75da',1,'nvf.h']]],
+  ['nvf_5fparse_5fbuf_14',['nvf_parse_buf',['../nvf_8h.html#aaa9ca38661b19edab178d802990f9c49',1,'nvf.h']]],
+  ['nvf_5froot_5fdefault_5finit_15',['nvf_root_default_init',['../nvf_8h.html#ab1b8798561d656b55ac5f726d2f542f6',1,'nvf.h']]],
+  ['nvf_5froot_5finit_16',['nvf_root_init',['../nvf_8h.html#afa6bad7892b17bd21885d4b24e03f33c',1,'nvf.h']]],
+  ['nvf_5froot_5fto_5fstr_17',['nvf_root_to_str',['../nvf_8h.html#a2c086e8adff730bea65fadf9c84523b1',1,'nvf.h']]],
+  ['nvf_5ftype_5fstr_18',['nvf_type_str',['../nvf_8h.html#aea40e996491e07acaf89af9316fc6735',1,'nvf.h']]]
+];

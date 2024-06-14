@@ -225,56 +225,178 @@ typedef struct {
     nvf_err err;      ///< A return code
 } nvf_err_data_i;
 
+/// A NVF value's value and tag. The tag indicates what type of data the value
+/// is.
 typedef struct {
-    const nvf_value val;
-    const nvf_data_type type;
+    const nvf_value val;      ///< The value
+    const nvf_data_type type; ///< The value's type
 } nvf_tag_value;
 
+/** Initialize the root with a custom allocator.
+    See \ref nvf_root_default_init() if you just want to use realloc() and
+   free().
+   \param realloc_inst A reallloc()-like function to allocate memory
+   \param free_inst A free()-like function to free memory.
+   \return The initialized root
+*/
 nvf_root nvf_root_init(realloc_fn realloc_inst, free_fn free_inst);
 
+/** Initialize the root with the stdlib allocators (realloc() and free()).
+    \return An initialized root
+*/
 nvf_root nvf_root_default_init(void);
 
+/** Parse text data from \a data and put it into \a out_root.
+    \param [in] data NVF text to parse
+    \param data_len the length of \a data
+    \param [in,out] out_root The root where data is stored.
+    \return A struct with the parsing reults
+*/
 nvf_err_data_i nvf_parse_buf(const char *data, uintptr_t data_len,
                              nvf_root *out_root);
 
+/** Get an integer from a data root.
+    \param [in] root The root to query
+    \param names [in] names The path to the integer to get
+    \param name_depth The number of path segments in \a names
+    \param [out] out The result of the query
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_int(nvf_root *root, const char **names, nvf_num name_depth,
                     int64_t *out);
 
+/** Get a map from a root.
+    \param [in] root The root to query
+    \param names [in] names The path to the map
+    \param name_depth The number of path segments in \a names
+    \param [out] map_out The result of the query
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_map(nvf_root *root, const char **m_names, nvf_num name_depth,
                     nvf_map *map_out);
 
+/** Frees the memory associated with a root and zeros said root.
+    \param [in] n_r The root to clean up.
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_deinit(nvf_root *n_r);
 
+/** Get a floating point number from a data root.
+    \param [in] root The root to query
+    \param names [in] names The path to the integer to get
+    \param name_depth The number of path segments in \a names
+    \param [out] out The result of the query
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_float(nvf_root *root, const char **names, nvf_num name_depth,
                       double *out);
 
+/** Get a C string from a data root.
+    \param [in] root The root to query
+    \param names [in] names The path to the integer to get
+    \param name_depth The number of path segments in \a names
+    \param [out] str_out The result of the query
+    \param [in,out] str_out_len The length of \a str_out. Set to the length of the queried string on failure
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_str(nvf_root *root, const char **names, nvf_num name_depth,
                     char *str_out, uintptr_t *str_out_len);
 
+/** Get a BLOB from a data root.
+    \param [in] root The root to query
+    \param names [in] names The path to the integer to get
+    \param name_depth The number of path segments in \a names
+    \param [out] bin_out The result of the query
+    \param [in,out] bin_out_len The length of \a bin_out. Set to the length of the queried BLOB on failure
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_blob(nvf_root *root, const char **names, nvf_num name_depth,
                      uint8_t *bin_out, uintptr_t *bin_out_len);
 
+/** Get an array from a data root.
+    \param [in] root The root to query
+    \param names [in] names The path to the integer to get
+    \param name_depth The number of path segments in \a names
+    \param [out] out The result of the query
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_array(nvf_root *root, const char **names, nvf_num name_depth,
                       nvf_array *out);
 
+/** Get an item from an NVF array.
+    \param [in] arr The array to get an item from
+    \param out arr_i The index of the item to get
+    \return An error code indicating success or failure
+*/
 nvf_tag_value nvf_array_get_item(const nvf_array *arr, nvf_num arr_i);
 
+/** Get a BLOB from a data root. The returned BLOB uses memory from the root's 
+    realloc_inst() function and should be freed with the root's free_inst() function.
+    \param [in] root The root to query
+    \param names [in] names The path to the integer to get
+    \param name_depth The number of path segments in \a names
+    \param [out] out The result of the query, allocated from \a root->realloc_inst()
+    \param [out] out_len The length of \a bin_out
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_blob_alloc(nvf_root *root, const char **names,
                            nvf_num name_depth, uint8_t **out,
                            uintptr_t *out_len);
 
+/** Get a C string from a data root. The returned string uses memory from the root's 
+    realloc_inst() function and should be freed with the root's free_inst() function.
+    \param [in] root The root to query
+    \param names [in] names The path to the integer to get
+    \param name_depth The number of path segments in \a names
+    \param [out] out The result of the query, allocated from \a root->realloc_inst()
+    \param [out] out_len The length of \a bin_out
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_str_alloc(nvf_root *root, const char **names,
                           nvf_num name_depth, char **out, uintptr_t *out_len);
 
+/** Get an array from a data root using the array's index.
+    \param [in] root The root to get the array from
+    \param arr_i The index of the array to get
+    \param [out] The query result
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_get_array_from_i(nvf_root *root, nvf_num arr_i, nvf_array *out);
 
+/** Makes a string representation of \a root. This string is allocated from 
+    \a root->realloc_inst() and should be freed with \a root->free_inst().
+    \param [in] root The root used to generate the string
+    \param [out] out The C string version of \a root
+    \param [out] out_len The length of the output C string.
+    \param fmt_fn A snprintf()-like function to make the string output
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_root_to_str(nvf_root *root, char **out, uintptr_t *out_len,
                         str_fmt_fn fmt_fn);
 
+/** Like ::nvf_root_to_str() with snprintf() passed as \a fmt_fn. The output string
+    is allocaed using \a root->realloc_inst() and should be freed with \a root->free_inst().
+    \param [in] root The root used to generate the string
+    \param [out] out The C string version of \a root
+    \param [out] out_len The length of the output C string.
+    \return An error code indicating success or failure
+*/
 nvf_err nvf_default_root_to_str(nvf_root *root, char **out, uintptr_t *out_len);
 
+/** Converts an NVF return code to a string
+    \param e The return code to convert to a string
+    \returns A string if \a e has a match, NULL otherwise
+ */
 const char *nvf_err_str(nvf_err e);
 
+/** Converts a byte to a single hex charater.
+    \param the byte to convert
+    \returns '\0' if the value fits, the hex character otherwise.
+ */
 char nvf_bin_to_char(uint8_t byte);
 
+/** Converts an NVF data type to a C string
+    \param dt The data type to convert to a string
+    \returns A string if \a dt has a match, NULL otherwise
+ */
 const char *nvf_type_str(nvf_data_type dt);

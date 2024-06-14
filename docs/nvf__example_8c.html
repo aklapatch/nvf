@@ -135,10 +135,11 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keywordflow">do</span> {                                                                       \</div>
 <div class="line">        if (cond) {                                                            \</div>
-<div class="line">            printf(<span class="stringliteral">&quot;%s failed with error %s!\n&quot;</span>, label, nvf_err_str(rc));      \</div>
+<div class="line">            printf(<span class="stringliteral">&quot;%s failed with error %s!\n&quot;</span>, label, <a class="code hl_function" href="nvf_8h.html#aec6b5a475ae1f983f53f2b94b5e26596">nvf_err_str</a>(rc));      \</div>
 <div class="line">            goto goto_dest;                                                    \</div>
 <div class="line">        }                                                                      \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="anvf_8h_html_aec6b5a475ae1f983f53f2b94b5e26596"><div class="ttname"><a href="nvf_8h.html#aec6b5a475ae1f983f53f2b94b5e26596">nvf_err_str</a></div><div class="ttdeci">const char * nvf_err_str(nvf_err e)</div><div class="ttdoc">Converts an NVF return code to a string.</div></div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="nvf__example_8c_source.html#l00011">11</a> of file <a class="el" href="nvf__example_8c_source.html">nvf_example.c</a>.</p>
 
